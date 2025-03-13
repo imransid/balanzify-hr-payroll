@@ -1,0 +1,51 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["linux-musl-arm64-openssl-3.0.x", "linux-arm64-openssl-3.0.x", "debian-openssl-3.0.x"]
+  output        = "./generated/page-builder"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("PAGE_BUILDER_DATABASE_URI")
+}
+
+model campaigns {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime  @default(now())
+  updateAt  DateTime? @default(now())
+}
+
+model question {
+  id            Int       @id @default(autoincrement())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime? @default(now()) @updatedAt
+  questionText  String
+  correctAnswer String
+  answers       answer[]
+}
+
+model answer {
+  id         Int      @id @default(autoincrement())
+  answerText String
+  questionId Int
+  question   question @relation(fields: [questionId], references: [id])
+}
+
+model reportResult {
+  id            Int    @id @default(autoincrement())
+  email         String
+  transactionId String
+  mobile        String
+  result        String
+}
+
+model campaign {
+  id       Int    @id @default(autoincrement())
+  campaign String
+  code     String
+  url      String
+
+  createdAt DateTime  @default(now())
+  updateAt  DateTime? @default(now())
+}

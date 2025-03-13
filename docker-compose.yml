@@ -1,0 +1,110 @@
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: ./apps/api-gateway/Dockerfile
+      target: development
+    container_name: api-gateway
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - '4099:4099'
+    depends_on:
+      - rabbitmq
+
+  telegram:
+    build:
+      context: .
+      dockerfile: ./apps/telegram/Dockerfile
+      target: development
+    command: yarn start:dev telegram
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '4077:4077'
+  user-service:
+    build:
+      context: .
+      dockerfile: ./apps/user-service/Dockerfile
+      target: development
+    command: yarn start:dev user-service
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - user-db
+      - rabbitmq
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '4001:4001'
+
+  page-builder:
+    build:
+      context: .
+      dockerfile: ./apps/page-builder/Dockerfile
+      target: development
+    command: yarn start:dev user-service
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - page-builder-db
+      - rabbitmq
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '4002:4002'
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - '5673:5673'
+      - '15673:15672'
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
+      - RABBITMQ_NODE_PORT=5673
+
+  user-db:
+    container_name: user-db
+    image: postgres:16.0
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=user-db
+      - PGPORT=5433
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+    ports:
+      - '5433:5433'
+
+  page-builder-db:
+    container_name: page-builder-db
+    image: postgres:16.0
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=page-builder-db
+      - PGPORT=5434
+    volumes:
+      - page-builder-db-data:/var/lib/postgresql/data
+    ports:
+      - '5434:5434'
+
+volumes:
+  user-db-data:
+  page-builder-db-data:
