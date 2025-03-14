@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PageBuilderController } from './page-builder.controller';
+import { HrController } from './hr.controller';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PrismaModule } from '../../../prisma/prisma.module';
@@ -30,7 +30,7 @@ import { join } from 'path';
     }),
     ComponentsModule,
   ],
-  controllers: [PageBuilderController],
+  controllers: [HrController],
   providers: [JwtService, ConfigService],
 })
-export class PageBuilderModule {}
+export class HrModule {}

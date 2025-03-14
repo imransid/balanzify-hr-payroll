@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { PageBuilderModule } from '../src/page-builder.module';
+import { PageBuilderModule } from '../src/hr.module';
 
 describe('PageBuilderController (e2e)', () => {
   let app: INestApplication;

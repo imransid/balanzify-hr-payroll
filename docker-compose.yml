@@ -1,34 +1,19 @@
+version: '3.8'
+
 services:
-  api-gateway:
+  api-gateway-service: # Renamed api-gateway to api-gateway-service
     build:
       context: .
       dockerfile: ./apps/api-gateway/Dockerfile
       target: development
-    container_name: api-gateway
+    container_name: api-gateway-service # Updated container name
     restart: always
     env_file:
       - .env
     ports:
-      - '4099:4099'
+      - '4199:4199'
     depends_on:
-      - rabbitmq
-
-  telegram:
-    build:
-      context: .
-      dockerfile: ./apps/telegram/Dockerfile
-      target: development
-    command: yarn start:dev telegram
-    restart: always
-    env_file:
-      - .env
-    depends_on:
-      - rabbitmq
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-    ports:
-      - '4077:4077'
+      - rabbitmq-hr
   user-service:
     build:
       context: .
@@ -39,72 +24,72 @@ services:
     env_file:
       - .env
     depends_on:
-      - user-db
-      - rabbitmq
+      - user-db-service
+      - rabbitmq-hr
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - '4001:4001'
+      - '4004:4004'
 
-  page-builder:
+  hr:
     build:
       context: .
-      dockerfile: ./apps/page-builder/Dockerfile
+      dockerfile: ./apps/hr/Dockerfile
       target: development
-    command: yarn start:dev user-service
+    command: yarn start:dev hr
     restart: always
     env_file:
       - .env
     depends_on:
-      - page-builder-db
-      - rabbitmq
+      - hr-db
+      - rabbitmq-hr
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - '4002:4002'
+      - '4003:4003'
 
-  rabbitmq:
+  rabbitmq-hr:
     image: rabbitmq:management
-    container_name: rabbitmq
+    container_name: rabbitmq-hr # Updated container name to avoid conflict
     restart: always
     ports:
-      - '5673:5673'
-      - '15673:15672'
+      - '5672:5672' # Fix to default RabbitMQ port
+      - '15672:15672' # Management UI
     environment:
       - RABBITMQ_DEFAULT_USER=user
       - RABBITMQ_DEFAULT_PASS=password
-      - RABBITMQ_NODE_PORT=5673
+      - RABBITMQ_NODE_PORT=5672
 
-  user-db:
-    container_name: user-db
+  user-db-service: # Renamed user-db to user-db-service
+    container_name: user-db-service # Updated container name
     image: postgres:16.0
     restart: always
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=user-db
-      - PGPORT=5433
+      - PGPORT=5436
     volumes:
-      - user-db-data:/var/lib/postgresql/data
+      - user-hr-db-data:/var/lib/postgresql/data
     ports:
-      - '5433:5433'
+      - '5436:5436'
 
-  page-builder-db:
-    container_name: page-builder-db
+  hr-db:
+    container_name: hr-db
     image: postgres:16.0
     restart: always
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=page-builder-db
-      - PGPORT=5434
+      - POSTGRES_DB=hr-db
+      - PGPORT=5435
     volumes:
-      - page-builder-db-data:/var/lib/postgresql/data
+      - hr-db-data:/var/lib/postgresql/data
     ports:
-      - '5434:5434'
+      - '5435:5435'
 
 volumes:
-  user-db-data:
-  page-builder-db-data:
+  user-hr-db-data:
+  hr-db-data:

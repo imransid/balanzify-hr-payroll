@@ -1,14 +1,9 @@
 import { Module } from '@nestjs/common';
-
-import { QuestionService } from './question/question.service';
-import { QuestionResolver } from './question/question.resolver';
-import { CampaignService } from './campaign/campaign.service';
-import { CampaignResolver } from './campaign/campaign.resolver';
-import { ReportResolver } from './report/report.resolver';
-import { ReportService } from './report/report.service';
 import { PrismaModule } from '../../../../prisma/prisma.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { HolidayResolver } from './holiday/hoiday.resolver';
+import { HolidayService } from './holiday/holiday.service';
 
 @Module({
   imports: [
@@ -24,15 +19,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
     }),
   ],
-  providers: [
-    JwtService,
-    ConfigService,
-    QuestionService,
-    QuestionResolver,
-    ReportResolver,
-    ReportService,
-    CampaignService,
-    CampaignResolver,
-  ],
+  providers: [JwtService, ConfigService, HolidayResolver, HolidayService],
 })
 export class ComponentsModule {}

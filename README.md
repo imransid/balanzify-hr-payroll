@@ -63,7 +63,7 @@ GOOGLE_CALLBACK_URL='http://localhost:4000/auth/google/callback'
 
 USER_DB_URI=postgresql://user:pass@user-db:5432/user-db
 NOTICE_DB_URI=postgresql://user:pass@notice-db:5432/notice-db
-PAGE_BUILDER_DB_URI=postgresql://user:pass@page-builder-db:5432/page-builder-db
+PAGE_BUILDER_DB_URI=postgresql://user:pass@hr-db:5432/hr-db
 
 # Email Service
 
@@ -131,11 +131,11 @@ http://localhost:4099/graphql
    ```
 4. Create a Pull Request for review.
 
-docker exec d32097f9b1bc npx prisma generate --schema=./prisma/schema-page-builder.prisma
+docker exec 86df3834193b npx prisma generate --schema=./prisma/schema-hr.prisma
 docker exec b9be5ee14f91 npx prisma migrate deploy --schema=./prisma/schema-user.prisma
-docker exec b9be5ee14f91 npx prisma generate --schema=./prisma/schema-user.prisma
-docker exec b9be5ee14f91 npx prisma db push --force-reset --schema=./prisma/schema-user.prisma
-docker exec d32097f9b1bc npx prisma db push --force-reset --schema=./prisma/schema-page-builder.prisma
+docker exec 223b8d59755b npx prisma generate --schema=./prisma/schema-user.prisma
+docker exec 223b8d59755b npx prisma db push --force-reset --schema=./prisma/schema-user.prisma
+docker exec 86df3834193b npx prisma db push --force-reset --schema=./prisma/schema-hr.prisma
 
 sudo docker stop 570112f8996a f4ba3e931603 32384d0a59bc 6e71821497ba 90f54428b1b8
 sudo docker rm 570112f8996a f4ba3e931603 32384d0a59bc 6e71821497ba 90f54428b1b8

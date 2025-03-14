@@ -1,0 +1,25 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["linux-musl-arm64-openssl-3.0.x", "linux-arm64-openssl-3.0.x", "debian-openssl-3.0.x"]
+  output        = "./generated/hr"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("HR_DATABASE_URI")
+}
+
+model holiday {
+  id           Int      @id @default(autoincrement())
+  name         String
+  fromDate     DateTime
+  toDate       DateTime
+  country      String
+  weekend      String
+  totalHoliday String
+  status       Boolean
+
+  createdBy Int?
+  createdAt DateTime  @default(now())
+  updateAt  DateTime? @default(now())
+}

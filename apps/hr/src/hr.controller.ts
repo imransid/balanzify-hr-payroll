@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 
 @Controller()
-export class PageBuilderController {
+export class HrController {
   constructor() {}
 
   @Get()

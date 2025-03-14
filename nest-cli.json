@@ -35,13 +35,13 @@
         "tsConfigPath": "apps/user-service/tsconfig.app.json"
       }
     },
-    "page-builder": {
+    "hr": {
       "type": "application",
-      "root": "apps/page-builder",
+      "root": "apps/hr",
       "entryFile": "main",
-      "sourceRoot": "apps/page-builder/src",
+      "sourceRoot": "apps/hr/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/page-builder/tsconfig.app.json"
+        "tsConfigPath": "apps/hr/tsconfig.app.json"
       }
     },
     "telegram": {

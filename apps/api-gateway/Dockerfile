@@ -15,7 +15,7 @@ RUN  npm rebuild bcrypt --build-from-source
 
 RUN npx prisma generate --schema=./prisma/schema-user.prisma
 
-RUN npx prisma generate --schema=./prisma/schema-page-builder.prisma
+RUN npx prisma generate --schema=./prisma/schema-hr.prisma
 
 RUN yarn build
 
