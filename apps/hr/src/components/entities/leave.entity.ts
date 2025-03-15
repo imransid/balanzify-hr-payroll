@@ -1,27 +1,27 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 
 @ObjectType()
-export class Holiday {
+export class Leave {
   @Field(() => Int)
   id: number;
 
   @Field()
-  name: string;
+  leaveName: string;
 
   @Field()
-  toDate: Date;
+  displayName: string;
 
   @Field()
-  fromDate: Date;
+  definition: string;
 
   @Field()
-  country: string;
+  color: string;
 
   @Field()
-  weekend: string;
+  leaveType: string;
 
-  @Field()
-  totalHoliday: string;
+  @Field(() => Int)
+  maxLeaveAllocation: number;
 
   @Field()
   status: boolean;
