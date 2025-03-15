@@ -1,19 +1,20 @@
-version: '3.8'
+# version: '3.8'
 
 services:
-  api-gateway-service: # Renamed api-gateway to api-gateway-service
+  api-gateway:
     build:
       context: .
       dockerfile: ./apps/api-gateway/Dockerfile
       target: development
-    container_name: api-gateway-service # Updated container name
+    container_name: api-gateway
     restart: always
     env_file:
       - .env
     ports:
-      - '4199:4199'
+      - '4099:4099'
     depends_on:
-      - rabbitmq-hr
+      - rabbitmq
+
   user-service:
     build:
       context: .
@@ -24,13 +25,13 @@ services:
     env_file:
       - .env
     depends_on:
-      - user-db-service
-      - rabbitmq-hr
+      - user-db
+      - rabbitmq
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - '4004:4004'
+      - '4001:4001'
 
   hr:
     build:
@@ -43,38 +44,38 @@ services:
       - .env
     depends_on:
       - hr-db
-      - rabbitmq-hr
+      - rabbitmq
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - '4003:4003'
+      - '4002:4002'
 
-  rabbitmq-hr:
+  rabbitmq:
     image: rabbitmq:management
-    container_name: rabbitmq-hr # Updated container name to avoid conflict
+    container_name: rabbitmq
     restart: always
     ports:
-      - '5672:5672' # Fix to default RabbitMQ port
-      - '15672:15672' # Management UI
+      - '5673:5673'
+      - '15673:15672'
     environment:
       - RABBITMQ_DEFAULT_USER=user
       - RABBITMQ_DEFAULT_PASS=password
-      - RABBITMQ_NODE_PORT=5672
+      - RABBITMQ_NODE_PORT=5673
 
-  user-db-service: # Renamed user-db to user-db-service
-    container_name: user-db-service # Updated container name
+  user-db:
+    container_name: user-db
     image: postgres:16.0
     restart: always
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=user-db
-      - PGPORT=5436
+      - PGPORT=5433
     volumes:
-      - user-hr-db-data:/var/lib/postgresql/data
+      - user-db-data:/var/lib/postgresql/data
     ports:
-      - '5436:5436'
+      - '5433:5433'
 
   hr-db:
     container_name: hr-db
@@ -84,12 +85,12 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=hr-db
-      - PGPORT=5435
+      - PGPORT=5434
     volumes:
       - hr-db-data:/var/lib/postgresql/data
     ports:
-      - '5435:5435'
+      - '5434:5434'
 
 volumes:
-  user-hr-db-data:
+  user-db-data:
   hr-db-data:

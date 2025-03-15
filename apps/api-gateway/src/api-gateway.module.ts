@@ -19,7 +19,7 @@ import { join } from 'path';
         name: 'USER_SERVICE',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqp://user:password@rabbitmq-hr:5672'],
+          urls: ['amqp://user:password@rabbitmq:5673'],
           queue: 'user_queue',
           queueOptions: {
             durable: false,
@@ -27,11 +27,11 @@ import { join } from 'path';
         },
       },
       {
-        name: 'HR_SERVICE',
+        name: 'PAGE_BUILDER_SERVICE',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqp://user:password@rabbitmq-hr:5672'],
-          queue: 'Hr_queue',
+          urls: ['amqp://user:password@rabbitmq:5673'],
+          queue: 'page_builder_queue',
           queueOptions: {
             durable: false,
           },
@@ -42,6 +42,12 @@ import { join } from 'path';
       driver: ApolloDriver,
       autoSchemaFile: 'schema.gql',
       playground: true,
+      //sortSchema: true,
+      //typePaths: ['./**/*.graphql'],
+      // definitions: {
+      //   path: join(process.cwd(), '/apps/api-gateway/src/graphql.schema.ts'),
+      //   outputAs: 'class',
+      // },
       context: ({ req }) => ({ headers: req.headers }),
     }),
     JwtModule.registerAsync({

@@ -13,7 +13,7 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
-      urls: ['amqp://user:password@rabbitmq-hr:5672'], // RabbitMQ connection URL
+      urls: ['amqp://user:password@rabbitmq:5673'], // RabbitMQ connection URL
       queue: 'api_gateway_queue', // Queue name for API Gateway (optional)
       queueOptions: {
         durable: false, // Set to true if messages should survive RabbitMQ restarts
@@ -36,7 +36,7 @@ async function bootstrap() {
   app.use(graphqlUploadExpress({ maxFileSize: 10000000000, maxFiles: 10 }));
 
   // Start the HTTP server
-  await app.listen(4199);
-  console.log('API Gateway is running on port 4199');
+  await app.listen(4099);
+  console.log('API Gateway is running on port 4000');
 }
 bootstrap();
