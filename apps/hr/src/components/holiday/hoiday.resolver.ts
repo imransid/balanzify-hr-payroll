@@ -99,4 +99,22 @@ export class HolidayResolver {
       );
     }
   }
+
+  @Query(() => HolidayPaginatedResult)
+  async searchHolidays(
+    @Args('query', { type: () => String }) query: string,
+    @Args('page', { type: () => Int, nullable: true, defaultValue: 1 })
+    page: number,
+    @Args('limit', { type: () => Int, nullable: true, defaultValue: 10 })
+    limit: number,
+  ): Promise<HolidayPaginatedResult> {
+    try {
+      return await this.holidayService.search(query, page, limit);
+    } catch (error) {
+      throw new GraphQLException(
+        'Failed to search holidays',
+        'INTERNAL_SERVER_ERROR',
+      );
+    }
+  }
 }

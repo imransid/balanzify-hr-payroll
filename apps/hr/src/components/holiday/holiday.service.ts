@@ -61,4 +61,34 @@ export class HolidayService {
       where: { id },
     });
   }
+
+  async search(
+    query: string,
+    page = 1,
+    limit = 10,
+  ): Promise<HolidayPaginatedResult> {
+    const skip = (page - 1) * limit;
+
+    const [holidays, totalCount] = await Promise.all([
+      this.prisma.holiday.findMany({
+        where: {
+          name: { contains: query, mode: 'insensitive' }, // ✅ Corrected search filter
+        },
+        skip,
+        take: limit,
+      }),
+      this.prisma.holiday.count({
+        where: {
+          name: { contains: query, mode: 'insensitive' },
+        },
+      }),
+    ]);
+
+    return {
+      holidays: holidays, // ✅ Ensure it matches HolidayPaginatedResult type
+      totalCount, // ✅ Matches DTO property
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+    };
+  }
 }
