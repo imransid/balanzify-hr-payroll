@@ -145,3 +145,5 @@ AAFQEgAAGXTJv4NeP2Wo2YSSQNqPaXh_r0XjlSb_XkXpQg
 ## 📜 License
 
 This project is licensed under the [MIT License](LICENSE).
+
+db : HR_DATABASE_URI="postgresql://payroll_user:StrongPassword123@localhost:5432/payroll"

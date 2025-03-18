@@ -2,7 +2,6 @@ import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { UserServiceModule } from 'apps/user-service/src/user-service.module';
 import { ApiGatewayController } from './api-gateway.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
@@ -15,17 +14,6 @@ import { join } from 'path';
   imports: [
     Upload,
     ClientsModule.register([
-      {
-        name: 'USER_SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: ['amqp://user:password@rabbitmq:5673'],
-          queue: 'user_queue',
-          queueOptions: {
-            durable: false,
-          },
-        },
-      },
       {
         name: 'PAGE_BUILDER_SERVICE',
         transport: Transport.RMQ,
@@ -68,7 +56,6 @@ import { join } from 'path';
         index: false,
       },
     }),
-    UserServiceModule,
     HrModule,
   ],
   controllers: [ApiGatewayController],

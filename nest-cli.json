@@ -26,15 +26,6 @@
         "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
       }
     },
-    "user-service": {
-      "type": "application",
-      "root": "apps/user-service",
-      "entryFile": "main",
-      "sourceRoot": "apps/user-service/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/user-service/tsconfig.app.json"
-      }
-    },
     "hr": {
       "type": "application",
       "root": "apps/hr",
@@ -42,15 +33,6 @@
       "sourceRoot": "apps/hr/src",
       "compilerOptions": {
         "tsConfigPath": "apps/hr/tsconfig.app.json"
-      }
-    },
-    "telegram": {
-      "type": "application",
-      "root": "apps/telegram",
-      "entryFile": "main",
-      "sourceRoot": "apps/telegram/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/telegram/tsconfig.app.json"
       }
     }
   },
