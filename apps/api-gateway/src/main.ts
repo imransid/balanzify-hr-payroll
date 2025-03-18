@@ -36,7 +36,7 @@ async function bootstrap() {
   app.use(graphqlUploadExpress({ maxFileSize: 10000000000, maxFiles: 10 }));
 
   // Start the HTTP server
-  await app.listen(4099);
+  await app.listen(4097);
   console.log('API Gateway is running on port 4000');
 }
 bootstrap();

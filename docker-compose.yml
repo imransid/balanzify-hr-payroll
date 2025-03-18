@@ -11,27 +11,9 @@ services:
     env_file:
       - .env
     ports:
-      - '4099:4099'
+      - '4097:4097'
     depends_on:
       - rabbitmq
-
-  user-service:
-    build:
-      context: .
-      dockerfile: ./apps/user-service/Dockerfile
-      target: development
-    command: yarn start:dev user-service
-    restart: always
-    env_file:
-      - .env
-    depends_on:
-      - user-db
-      - rabbitmq
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-    ports:
-      - '4001:4001'
 
   hr:
     build:
@@ -63,20 +45,6 @@ services:
       - RABBITMQ_DEFAULT_PASS=password
       - RABBITMQ_NODE_PORT=5673
 
-  user-db:
-    container_name: user-db
-    image: postgres:16.0
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=user-db
-      - PGPORT=5433
-    volumes:
-      - user-db-data:/var/lib/postgresql/data
-    ports:
-      - '5433:5433'
-
   hr-db:
     container_name: hr-db
     image: postgres:16.0
@@ -92,5 +60,4 @@ services:
       - '5434:5434'
 
 volumes:
-  user-db-data:
   hr-db-data:
