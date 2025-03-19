@@ -28,7 +28,8 @@ WORKDIR /usr/src/app
 
 COPY package*.json yarn.lock./
 
-RUN npm install --only=production
+# Install dependencies using Yarn
+RUN yarn install --production
 
 COPY . .
 
