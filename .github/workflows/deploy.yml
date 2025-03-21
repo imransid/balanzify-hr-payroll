@@ -38,8 +38,8 @@ jobs:
 
       - name: Run tests
         run: yarn test --passWithNoTests --verbose
-        
-      - name: Run prisma
+
+      - name: Run Prisma
         run: npx prisma generate --schema=./prisma/schema-hr.prisma
 
       - name: Log in to Docker Hub
@@ -48,11 +48,18 @@ jobs:
       - name: Build and Push Docker Images
         run: |
           IMAGE_TAG=$(date +%Y%m%d%H%M%S)
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/api-gateway:$IMAGE_TAG -t ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest -f ./apps/api-gateway/Dockerfile .
+          
+          # Build and push API Gateway
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/api-gateway:$IMAGE_TAG \
+                       -t ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest \
+                       -f ./apps/api-gateway/Dockerfile .
           docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:$IMAGE_TAG
           docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest
           
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/hr:$IMAGE_TAG -t ${{ secrets.DOCKER_USERNAME }}/hr:latest -f ./apps/hr/Dockerfile .
+          # Build and push HR service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/hr:$IMAGE_TAG \
+                       -t ${{ secrets.DOCKER_USERNAME }}/hr:latest \
+                       -f ./apps/hr/Dockerfile .
           docker push ${{ secrets.DOCKER_USERNAME }}/hr:$IMAGE_TAG
           docker push ${{ secrets.DOCKER_USERNAME }}/hr:latest
 
@@ -62,7 +69,10 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
           script: |
+            mkdir -p ~/.ssh
+            echo "StrictHostKeyChecking no" >> ~/.ssh/config
             cd /root/payroll/balanzify-hr-payroll
             git pull origin main
             docker-compose down
