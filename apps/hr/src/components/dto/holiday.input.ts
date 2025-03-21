@@ -4,7 +4,7 @@ import {
   InputType,
   Field,
   ObjectType,
-} from '@nestjs/graphql';
+} from "@nestjs/graphql";
 import {
   IsNotEmpty,
   IsString,
@@ -12,8 +12,8 @@ import {
   IsBoolean,
   IsInt,
   IsOptional,
-} from 'class-validator';
-import { Holiday } from '../entities/holiday.entity';
+} from "class-validator";
+import { Holiday } from "../entities/holiday.entity";
 
 @InputType()
 export class CreateHolidayInput {
@@ -21,6 +21,11 @@ export class CreateHolidayInput {
   @IsNotEmpty()
   @IsString()
   name: string;
+
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  color: string;
 
   @Field()
   @IsNotEmpty()
@@ -59,6 +64,11 @@ export class UpdateHolidayInput extends PartialType(CreateHolidayInput) {
   @IsNotEmpty()
   @IsInt()
   id: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  color?: string;
 
   @Field({ nullable: true })
   @IsOptional()
@@ -114,7 +124,7 @@ export class HolidayPaginatedResult {
     holidays: Holiday[],
     totalPages: number,
     currentPage: number,
-    totalCount: number,
+    totalCount: number
   ) {
     this.holidays = holidays ?? [];
     this.totalPages = totalPages;

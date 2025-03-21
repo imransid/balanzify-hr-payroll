@@ -18,6 +18,7 @@ model holiday {
   weekend      String
   totalHoliday String
   status       Boolean
+  color        String
 
   createdBy Int?
   createdAt DateTime  @default(now())

@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, Int } from "@nestjs/graphql";
 
 @ObjectType()
 export class Holiday {
@@ -25,4 +25,7 @@ export class Holiday {
 
   @Field()
   status: boolean;
+
+  @Field()
+  color: boolean;
 }
