@@ -75,7 +75,7 @@ jobs:
             echo "StrictHostKeyChecking no" >> ~/.ssh/config
             cd /root/payroll/balanzify-hr-payroll
             git pull origin main
-            docker-compose down
-            docker-compose pull
-            docker-compose up -d --build
+            docker compose down
+            docker compose pull
+            docker compose up -d --build
             docker system prune -af
