@@ -27,5 +27,5 @@ export class Holiday {
   status: boolean;
 
   @Field()
-  color: boolean;
+  color: string;
 }

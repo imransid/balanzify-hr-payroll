@@ -131,11 +131,11 @@ http://localhost:4099/graphql
    ```
 4. Create a Pull Request for review.
 
-docker exec 3b2bbc65623d npx prisma generate --schema=./prisma/schema-hr.prisma
-docker exec 75de6584eea0 npx prisma migrate deploy --schema=./prisma/schema-hr.prisma
+docker exec 1731f5449a2f npx prisma generate --schema=./prisma/schema-hr.prisma
+docker exec 987a60f42c3f npx prisma migrate deploy --schema=./prisma/schema-hr.prisma
 docker exec 223b8d59755b npx prisma generate --schema=./prisma/schema-user.prisma
 docker exec 223b8d59755b npx prisma db push --force-reset --schema=./prisma/schema-user.prisma
-docker exec 3b2bbc65623d npx prisma db push --force-reset --schema=./prisma/schema-hr.prisma
+docker exec 1731f5449a2f npx prisma db push --force-reset --schema=./prisma/schema-hr.prisma
 
 sudo docker stop 570112f8996a f4ba3e931603 32384d0a59bc 6e71821497ba 90f54428b1b8
 sudo docker rm 570112f8996a f4ba3e931603 32384d0a59bc 6e71821497ba 90f54428b1b8
@@ -147,3 +147,5 @@ AAFQEgAAGXTJv4NeP2Wo2YSSQNqPaXh_r0XjlSb_XkXpQg
 This project is licensed under the [MIT License](LICENSE).
 
 ## db : HR_DATABASE_URI=HR_DATABASE_URI=postgresql://postgres:rafa_elu2005@145.223.75.199:5432/payroll
+
+test
