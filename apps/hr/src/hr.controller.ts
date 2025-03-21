@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get } from "@nestjs/common";
 
 @Controller()
 export class HrController {
@@ -6,6 +6,6 @@ export class HrController {
 
   @Get()
   getHello(): string {
-    return 'WELCOME :)';
+    return "WELCOME : TO HR)";
   }
 }
