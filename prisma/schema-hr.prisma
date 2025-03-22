@@ -39,3 +39,13 @@ model Leave {
   createdAt DateTime  @default(now())
   updatedAt DateTime? @default(now())
 }
+
+model Designation {
+  id              Int    @id @default(autoincrement())
+  designationName String
+  designation     String
+
+  createdBy Int?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @default(now())
+}

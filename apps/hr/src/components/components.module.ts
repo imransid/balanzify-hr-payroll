@@ -1,9 +1,13 @@
-import { Module } from '@nestjs/common';
-import { PrismaModule } from '../../../../prisma/prisma.module';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { HolidayResolver } from './holiday/hoiday.resolver';
-import { HolidayService } from './holiday/holiday.service';
+import { Module } from "@nestjs/common";
+import { PrismaModule } from "../../../../prisma/prisma.module";
+import { JwtModule, JwtService } from "@nestjs/jwt";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { HolidayResolver } from "./holiday/hoiday.resolver";
+import { HolidayService } from "./holiday/holiday.service";
+import { DesignationResolver } from "./designation/designation.resolver";
+import { DesignationService } from "./designation/designation.service";
+import { LeaveResolver } from "./leave/leave.resolver";
+import { LeaveService } from "./leave/leave.service";
 
 @Module({
   imports: [
@@ -12,13 +16,22 @@ import { HolidayService } from './holiday/holiday.service';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET'),
+        secret: configService.get("JWT_SECRET"),
         signOptions: {
           expiresIn: 3600,
         },
       }),
     }),
   ],
-  providers: [JwtService, ConfigService, HolidayResolver, HolidayService],
+  providers: [
+    JwtService,
+    ConfigService,
+    HolidayResolver,
+    HolidayService,
+    DesignationResolver,
+    DesignationService,
+    LeaveResolver,
+    LeaveService,
+  ],
 })
 export class ComponentsModule {}
