@@ -40,10 +40,23 @@ model Leave {
   updatedAt DateTime? @default(now())
 }
 
-model Designation {
+model designation {
   id              Int    @id @default(autoincrement())
   designationName String
   designation     String
+
+  createdBy Int?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @default(now())
+}
+
+model deductionContribution {
+  id                        Int     @id @default(autoincrement())
+  title                     String
+  deductionContributionType String
+  type                      String
+  taxOptions                String
+  status                    Boolean
 
   createdBy Int?
   createdAt DateTime  @default(now())

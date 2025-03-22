@@ -8,6 +8,8 @@ import { DesignationResolver } from "./designation/designation.resolver";
 import { DesignationService } from "./designation/designation.service";
 import { LeaveResolver } from "./leave/leave.resolver";
 import { LeaveService } from "./leave/leave.service";
+import { DeductionContributionResolver } from "./deductionContribution/deductionContribution.resolver";
+import { DeductionContributionService } from "./deductionContribution/deductionContribution.service";
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { LeaveService } from "./leave/leave.service";
     DesignationService,
     LeaveResolver,
     LeaveService,
+    DeductionContributionResolver,
+    DeductionContributionService,
   ],
 })
 export class ComponentsModule {}
