@@ -4,7 +4,7 @@ import {
   InputType,
   Field,
   ObjectType,
-} from '@nestjs/graphql';
+} from "@nestjs/graphql";
 import {
   IsNotEmpty,
   IsString,
@@ -12,8 +12,8 @@ import {
   IsBoolean,
   IsInt,
   IsOptional,
-} from 'class-validator';
-import { Leave } from '../entities/leave.entity';
+} from "class-validator";
+import { Leave } from "../entities/leave.entity";
 
 @InputType()
 export class CreateLeaveInput {
@@ -79,7 +79,7 @@ export class LeavePaginatedResult {
     leaves: Leave[],
     totalPages: number,
     currentPage: number,
-    totalCount: number,
+    totalCount: number
   ) {
     this.leaves = leaves ?? [];
     this.totalPages = totalPages;

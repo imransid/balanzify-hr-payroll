@@ -62,3 +62,42 @@ model deductionContribution {
   createdAt DateTime  @default(now())
   updatedAt DateTime? @default(now())
 }
+
+model LeaveType {
+  id          Int    @id @default(autoincrement())
+  leaveName   String
+  displayName String
+  definition  String
+  color       String
+
+  leaveTypeHourly  Int
+  leaveTypeMaxHour Int
+
+  maxLeaveAllocation         Int
+  allowLeaveApplicationAfter Int
+  maxConsecutiveLeave        Int
+
+  maxCarryForwardedLeaves    Int?
+  expireCarryForwardedLeaves Int?
+
+  allowEncashment     Boolean
+  maxEncashableLeaves Int?
+  minEncashableLeaves Int?
+  earningComponents   String?
+
+  isEarnedLeaves     Boolean
+  earnLeaveFragrancy String?
+  allocatedOnDays    String?
+  Rounders           String?
+
+  isLeaveWithoutPay                  Boolean @default(false)
+  isOptionalLeaves                   Boolean @default(false)
+  allowNegativeBalance               Boolean @default(false)
+  allowOverAllocation                Boolean @default(false)
+  includeHolidaysWithinLeavesONLeave Boolean @default(false)
+  isCompensatory                     Boolean @default(false)
+
+  createdBy Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
