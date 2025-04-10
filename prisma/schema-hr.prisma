@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["linux-musl-arm64-openssl-3.0.x", "linux-arm64-openssl-3.0.x", "debian-openssl-3.0.x"]
+  binaryTargets = ["linux-musl-arm64-openssl-3.0.x", "linux-arm64-openssl-3.0.x", "debian-openssl-3.0.x", "darwin-arm64"]
   output        = "./generated/hr"
 }
 
@@ -100,4 +100,33 @@ model LeaveType {
   createdBy Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum OnboardingType {
+  EMPLOYEE_SELF_ONBOARD_WITH_1_9 @map("EMPLOYEE_SELF_ONBOARD_WITH_1_9")
+  EMPLOYEE_SELF_ONBOARD          @map("EMPLOYEE_SELF_ONBOARD")
+  ENTER_ALL_THEIR_INFO_MYSELF    @map("ENTER_ALL_THEIR_INFO_MYSELF")
+}
+
+model Profile {
+  id Int @id @default(autoincrement())
+
+  email          String         @unique
+  employeeName   String
+  middleName     String
+  lastName       String
+  hireDate       DateTime
+  designation    String
+  department     String?
+  paySchedule    String?
+  employeeType   String?
+  mobilePhone    String?
+  status         Boolean
+  onboardingType OnboardingType
+
+  createdBy Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
 }
