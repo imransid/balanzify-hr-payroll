@@ -10,3 +10,13 @@ registerEnumType(OnboardingType, {
   name: "OnboardingType", // The name of the enum in GraphQL
   description: "Different types of onboarding for employees", // Optional description
 });
+
+export enum StatusType {
+  ACTIVE = "ACTIVE",
+  DE_ACTIVE = "DE_ACTIVE",
+}
+
+registerEnumType(StatusType, {
+  name: "StatusType", // The name of the enum in GraphQL
+  description: "Different Status Type", // Optional description
+});

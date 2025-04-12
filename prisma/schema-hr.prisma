@@ -63,6 +63,11 @@ model deductionContribution {
   updatedAt DateTime? @default(now())
 }
 
+enum StatusType {
+  ACTIVE    @map("ACTIVE")
+  DE_ACTIVE @map("DE_ACTIVE")
+}
+
 model LeaveType {
   id          Int    @id @default(autoincrement())
   leaveName   String
@@ -89,6 +94,8 @@ model LeaveType {
   earnLeaveFragrancy String?
   allocatedOnDays    String?
   Rounders           String?
+
+  status StatusType
 
   isLeaveWithoutPay                  Boolean @default(false)
   isOptionalLeaves                   Boolean @default(false)

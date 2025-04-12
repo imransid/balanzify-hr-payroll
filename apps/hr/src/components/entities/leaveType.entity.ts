@@ -1,4 +1,5 @@
 import { ObjectType, Field, Int } from "@nestjs/graphql";
+import { StatusType } from "../../prisma/OnboardingType.enum";
 
 @ObjectType()
 export class LeaveType {
@@ -85,4 +86,9 @@ export class LeaveType {
 
   @Field()
   isCompensatory: boolean;
+
+  @Field(() => StatusType, {
+    defaultValue: StatusType.DE_ACTIVE,
+  })
+  status: keyof typeof StatusType;
 }

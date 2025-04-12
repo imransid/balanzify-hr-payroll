@@ -13,6 +13,7 @@ import {
   IsOptional,
 } from "class-validator";
 import { LeaveType } from "../entities/leaveType.entity";
+import { StatusType } from "../../prisma/OnboardingType.enum";
 
 @InputType()
 export class CreateLeaveTypeInput {
@@ -153,6 +154,12 @@ export class CreateLeaveTypeInput {
   @IsNotEmpty()
   @IsBoolean()
   isCompensatory: boolean;
+
+  @Field(() => StatusType, {
+    defaultValue: StatusType.DE_ACTIVE,
+  }) // Change to use the enum
+  @IsNotEmpty()
+  status: keyof typeof StatusType;
 }
 
 @InputType()
