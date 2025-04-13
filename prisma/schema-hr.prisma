@@ -137,3 +137,31 @@ model Profile {
 
   @@index([email])
 }
+
+model Shift {
+  id Int @id @default(autoincrement())
+
+  shiftName        String
+  shiftCode        String
+  shiftDescription String
+  shiftType        String
+
+  regularHour String
+  shiftLate   String
+  shiftIn     String
+  shiftOut    String
+
+  lunchTime String
+  lunchIn   String
+  lunchOut  String
+
+  tiffinTime String
+  tiffinIn   String
+  tiffinOut  String
+
+  createdBy Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([shiftCode])
+}
