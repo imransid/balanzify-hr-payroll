@@ -16,6 +16,8 @@ import { ProfileResolver } from "../components/profile/profile.resolver";
 import { ProfileService } from "../components/profile/profile.service";
 import { ShiftService } from "./shift/shift.service";
 import { ShiftResolver } from "./shift/shift.resolver";
+import { LeaveEncashmentResolver } from "./leaveEncashment/leaveEncashment.resolver";
+import { LeaveEncashmentService } from "./leaveEncashment/leaveEncashment.service";
 
 @Module({
   imports: [
@@ -48,6 +50,8 @@ import { ShiftResolver } from "./shift/shift.resolver";
     ProfileService,
     ShiftService,
     ShiftResolver,
+    LeaveEncashmentResolver,
+    LeaveEncashmentService,
   ],
 })
 export class ComponentsModule {}

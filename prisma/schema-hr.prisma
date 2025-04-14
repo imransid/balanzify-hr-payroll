@@ -104,9 +104,10 @@ model LeaveType {
   includeHolidaysWithinLeavesONLeave Boolean @default(false)
   isCompensatory                     Boolean @default(false)
 
-  createdBy Int?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdBy       Int?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  leaveEncashment LeaveEncashment[]
 }
 
 enum OnboardingType {
@@ -164,4 +165,24 @@ model Shift {
   updatedAt DateTime @updatedAt
 
   @@index([shiftCode])
+}
+
+model LeaveEncashment {
+  id Int @id @default(autoincrement())
+
+  empId              String
+  employeeName       String
+  leavePeriod        String
+  leaveYear          String
+  currency           String
+  designation        String
+  department         String
+  leaveBalancePeriod String
+
+  leaveTypeID Int
+  leaveType   LeaveType @relation(fields: [leaveTypeID], references: [id])
+
+  createdBy Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
