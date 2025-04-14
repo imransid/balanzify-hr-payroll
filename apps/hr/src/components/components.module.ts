@@ -14,6 +14,8 @@ import { LeaveTypeResolver } from "../components/leaveType/leaveType.resolver";
 import { LeaveTypeService } from "../components/leaveType/leaveType.service";
 import { ProfileResolver } from "../components/profile/profile.resolver";
 import { ProfileService } from "../components/profile/profile.service";
+import { ShiftService } from "./shift/shift.service";
+import { ShiftResolver } from "./shift/shift.resolver";
 
 @Module({
   imports: [
@@ -44,6 +46,8 @@ import { ProfileService } from "../components/profile/profile.service";
     LeaveTypeService,
     ProfileResolver,
     ProfileService,
+    ShiftService,
+    ShiftResolver,
   ],
 })
 export class ComponentsModule {}
