@@ -89,7 +89,7 @@ export class PayScheduleService {
       }),
       this.prisma.paySchedule.count({
         where: {
-          scheduleName: { contains: query, mode: "insensitive" },
+          title: { contains: query, mode: "insensitive" },
         },
       }),
     ]);
