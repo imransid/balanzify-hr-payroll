@@ -18,6 +18,8 @@ import { ShiftService } from "./shift/shift.service";
 import { ShiftResolver } from "./shift/shift.resolver";
 import { LeaveEncashmentResolver } from "./leaveEncashment/leaveEncashment.resolver";
 import { LeaveEncashmentService } from "./leaveEncashment/leaveEncashment.service";
+import { PayScheduleResolver } from "./paySchedule/paySchedule.resolver";
+import { PayScheduleService } from "./paySchedule/paySchedule.service";
 
 @Module({
   imports: [
@@ -52,6 +54,8 @@ import { LeaveEncashmentService } from "./leaveEncashment/leaveEncashment.servic
     ShiftResolver,
     LeaveEncashmentResolver,
     LeaveEncashmentService,
+    PayScheduleResolver,
+    PayScheduleService,
   ],
 })
 export class ComponentsModule {}

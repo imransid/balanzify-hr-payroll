@@ -186,3 +186,31 @@ model LeaveEncashment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model PaySchedule {
+  id Int @id @default(autoincrement())
+
+  title              String
+  payFrequency       String
+  nextPayDay         String
+  endOfNextPayPeriod String
+  isDefault          Boolean
+
+  firstPayDayOfTheMonth          String?
+  endOfFirstPayPeriod            String?
+  dayBeforePayDayFirstPayOFMonth String?
+  month                          String?
+
+  secondPayDayOfTheMonth          String?
+  endOfSecondPayPeriod            String?
+  months                          String?
+  dayBeforePayDayFirstPayOFSecond String?
+
+  firstPayDayOfTheMonthTwice String?
+  endOfFirstPayPeriodTwice   String?
+  dayBeforePayDayTwice       String?
+
+  createdBy Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
