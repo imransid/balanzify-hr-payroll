@@ -22,7 +22,7 @@ export class PayScheduleResolver {
       return await this.payScheduleService.create(createPayScheduleInput);
     } catch (error) {
       throw new GraphQLException(
-        "Failed to create pay schedule",
+        "Failed to create pay schedule" + JSON.stringify(error),
         "INTERNAL_SERVER_ERROR"
       );
     }
