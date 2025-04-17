@@ -214,3 +214,20 @@ model PaySchedule {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model attendance {
+  id Int @id @default(autoincrement())
+
+  employeeId String
+  date       DateTime
+  checkIn    String
+  checkOut   String
+  shift      String?
+  worked     String?
+
+  status String?
+
+  createdBy Int?
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+}
