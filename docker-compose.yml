@@ -11,7 +11,7 @@ services:
     env_file:
       - .env
     ports:
-      - '4097:4097'
+      - "4097:4097"
     depends_on:
       - rabbitmq
 
@@ -31,15 +31,15 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - '4002:4002'
+      - "4002:4002"
 
   rabbitmq:
     image: rabbitmq:management
     container_name: rabbitmq
     restart: always
     ports:
-      - '5673:5673'
-      - '15673:15672'
+      - "5673:5673"
+      - "15673:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=user
       - RABBITMQ_DEFAULT_PASS=password
@@ -57,7 +57,7 @@ services:
     volumes:
       - hr-db-data:/var/lib/postgresql/data
     ports:
-      - '5434:5434'
+      - "5434:5434"
 
 volumes:
   hr-db-data:
