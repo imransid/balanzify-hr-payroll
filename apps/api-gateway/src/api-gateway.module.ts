@@ -18,7 +18,7 @@ import { join } from "path";
         name: "PAGE_BUILDER_SERVICE",
         transport: Transport.RMQ,
         options: {
-          urls: ["amqp://user:password@rabbitmq:5673"],
+          urls: ["amqp://user:password@rabbitmq:5672"],
           queue: "page_builder_queue",
           queueOptions: {
             durable: false,

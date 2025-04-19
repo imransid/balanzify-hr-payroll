@@ -13,7 +13,7 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
-      urls: ['amqp://user:password@rabbitmq:5673'], // RabbitMQ connection URL
+      urls: ['amqp://user:password@rabbitmq:5672'], // RabbitMQ connection URL
       queue: 'api_gateway_queue', // Queue name for API Gateway (optional)
       queueOptions: {
         durable: false, // Set to true if messages should survive RabbitMQ restarts
