@@ -13,22 +13,22 @@ import { join } from "path";
 @Module({
   imports: [
     Upload,
-    ClientsModule.register([
-      {
-        name: "PAGE_BUILDER_SERVICE",
-        transport: Transport.RMQ,
-        options: {
-          urls: ["amqp://user:password@rabbitmq:5672"],
-          queue: "page_builder_queue",
-          queueOptions: {
-            durable: false,
-          },
-          socketOptions: {
-            frameMax: 131072, // 👈 set frameMax to a safe value (>= 8192)
-          },
-        },
-      },
-    ]),
+    // ClientsModule.register([
+    //   {
+    //     name: "PAGE_BUILDER_SERVICE",
+    //     transport: Transport.RMQ,
+    //     options: {
+    //       urls: ["amqp://user:password@rabbitmq:5672"],
+    //       queue: "page_builder_queue",
+    //       queueOptions: {
+    //         durable: false,
+    //       },
+    //       socketOptions: {
+    //         frameMax: 131072, // 👈 set frameMax to a safe value (>= 8192)
+    //       },
+    //     },
+    //   },
+    // ]),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: "schema.gql",
