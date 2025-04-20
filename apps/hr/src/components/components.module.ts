@@ -20,6 +20,8 @@ import { LeaveEncashmentResolver } from "./leaveEncashment/leaveEncashment.resol
 import { LeaveEncashmentService } from "./leaveEncashment/leaveEncashment.service";
 import { PayScheduleResolver } from "./paySchedule/paySchedule.resolver";
 import { PayScheduleService } from "./paySchedule/paySchedule.service";
+import { ProfileDetailsResolver } from "./profileDetails/profileDetails.resolver";
+import { ProfileDetailsService } from "./profileDetails/profileDetails.service";
 
 @Module({
   imports: [
@@ -56,6 +58,8 @@ import { PayScheduleService } from "./paySchedule/paySchedule.service";
     LeaveEncashmentService,
     PayScheduleResolver,
     PayScheduleService,
+    ProfileDetailsResolver,
+    ProfileDetailsService,
   ],
 })
 export class ComponentsModule {}

@@ -132,9 +132,10 @@ model Profile {
   status         Boolean
   onboardingType OnboardingType
 
-  createdBy Int?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdBy      Int?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  profileDetails profileDetails?
 
   @@index([email])
 }
@@ -226,6 +227,140 @@ model attendance {
   worked     String?
 
   status String?
+
+  createdBy Int?
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+model profileDetails {
+  id Int @id @default(autoincrement())
+
+  series        String?
+  salutation    String?
+  firstName     String?
+  middleName    String?
+  lastName      String?
+  gender        String?
+  dateOfBirth   String?
+  ssn           String?
+  dateOfJoining String?
+  status        String?
+
+  company      String?
+  reportsTo    String?
+  department   String?
+  designation  String?
+  role         String?
+  workEmail    String?
+  WorkPhone    String?
+  employeeType String?
+
+  useCompanyAddress Boolean?
+  workAddress       String?
+  workState         String?
+  workZip           String?
+  workCity          String?
+  conformationDate  String?
+  noticeDate        String?
+  offerDate         String?
+  contractEndDate   String?
+
+  terminateDate  String?
+  lastDaysWorked String?
+  terminateType  String?
+  terminateDesc  String?
+
+  phoneNumber           String?
+  homePhone             String?
+  personalEmail         String?
+  preferredContactEmail String?
+
+  homeAddress String?
+  homeCity    String?
+  homeState   String?
+  homeZipCode String?
+
+  mailingAddressIsTheSame Boolean?
+  mailingAddress          String?
+  mailingState            String?
+  mailingCity             String?
+  mailingZipCode          String?
+
+  emergencyContactName String?
+  emergencyRelation    String?
+  emergencyPhone       String?
+
+  paymentMethod                  String?
+  accountingNumber               String?
+  accountType                    String?
+  accountBankName                String?
+  accountConfirmAccountingNumber String?
+  accountConfirmRoutingNumber    String?
+
+  attendanceDeviceIDBiometricRFtagID String?
+  holidayList                        String?
+  shift                              String?
+
+  stateWhereTheEmployeeLives                  String?
+  maritalStatus                               String?
+  totalNumberOfAllowances_box_f               String?
+  additionalWithHolding                       String?
+  exemptFromWithHolding_section_2NotExample   String?
+  IsThisEmployeeExemptFromMyState             String?
+  enterAmount                                 Boolean?
+  doesTheEmployeesWorkInTheStateWhereTheLives Boolean?
+  isThisEmployeeExemptFromMyState             Boolean?
+
+  which_W_4_DoesEmployeeHave         String?
+  WithHoldingStatus                  String?
+  multipleJobsOrSpouseWorks          String?
+  claimDepends                       String?
+  deductions                         String?
+  otherIncome                        String?
+  extraWithHolding                   String?
+  exemptFromWithHolding              String?
+  isThisEmployeeExemptFromFederalTax String?
+  employeeAccessToForm_W_4           Boolean?
+
+  paySchedule              String?
+  overTime                 Boolean?
+  payType                  String?
+  payFrequency             String?
+  salary                   String?
+  hoursPerDay              String?
+  dayForWeek               String?
+  doubleOverTimePay        Boolean?
+  holidayPay               Boolean?
+  bonus                    Boolean?
+  earning                  String[]
+  deduction_Contribution   String[]
+  garnishment              String[]
+  educationalQualification String[]
+  previousWorkExperience   String[]
+  historyInCompany         String[]
+
+  profileId Int     @unique // Ensures one-to-one relation
+  // Relation field
+  profile   Profile @relation(fields: [profileId], references: [id])
+
+  createdBy      Int?
+  createdAt      DateTime?       @default(now())
+  updatedAt      DateTime?       @updatedAt
+  documentations documentation[]
+}
+
+model documentation {
+  id Int @id @default(autoincrement())
+
+  profileDetailsId Int // 👈 No @unique here
+  profileDetail    profileDetails @relation(fields: [profileDetailsId], references: [id])
+
+  documentationName String
+  documentationSize String
+  lastUpdate        String
+  uploadedBy        String
+  documentationURL  String
 
   createdBy Int?
   createdAt DateTime? @default(now())
