@@ -6,7 +6,8 @@ import {
   ObjectType,
 } from "@nestjs/graphql";
 import { IsNotEmpty, IsOptional, IsString, IsInt } from "class-validator";
-import { Documentation } from "../entities/documantayio.entity";
+import { Documentation } from "../entities/documentation.entity";
+import { Upload } from "scalars/upload.scalar";
 
 @InputType()
 export class CreateDocumentationInput {
@@ -35,10 +36,11 @@ export class CreateDocumentationInput {
   @IsString()
   uploadedBy: string;
 
-  @Field()
-  @IsNotEmpty()
-  @IsString()
-  documentationURL: string;
+  @Field(() => [Upload], {
+    nullable: true,
+    description: "Input for File.",
+  })
+  documentationFile: Upload[];
 
   @Field(() => Int, { nullable: true })
   @IsOptional()

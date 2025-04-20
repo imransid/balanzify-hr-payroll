@@ -22,6 +22,8 @@ import { PayScheduleResolver } from "./paySchedule/paySchedule.resolver";
 import { PayScheduleService } from "./paySchedule/paySchedule.service";
 import { ProfileDetailsResolver } from "./profileDetails/profileDetails.resolver";
 import { ProfileDetailsService } from "./profileDetails/profileDetails.service";
+import { DocumentationResolver } from "./documentaion/documentation.resolver";
+import { DocumentationService } from "./documentaion/documentation.service";
 
 @Module({
   imports: [
@@ -60,6 +62,8 @@ import { ProfileDetailsService } from "./profileDetails/profileDetails.service";
     PayScheduleService,
     ProfileDetailsResolver,
     ProfileDetailsService,
+    DocumentationResolver,
+    DocumentationService,
   ],
 })
 export class ComponentsModule {}
