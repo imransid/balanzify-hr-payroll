@@ -146,7 +146,7 @@ export class DocumentationService {
     const [documentations, totalCount] = await Promise.all([
       this.prisma.documentation.findMany({
         where: {
-          title: { contains: query, mode: "insensitive" },
+          documentationName: { contains: query, mode: "insensitive" },
         },
         skip,
         take: limit,
@@ -156,7 +156,7 @@ export class DocumentationService {
       }),
       this.prisma.documentation.count({
         where: {
-          title: { contains: query, mode: "insensitive" },
+          documentationName: { contains: query, mode: "insensitive" },
         },
       }),
     ]);

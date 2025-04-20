@@ -11,11 +11,6 @@ import { Upload } from "scalars/upload.scalar";
 
 @InputType()
 export class CreateDocumentationInput {
-  @Field(() => Int)
-  @IsNotEmpty()
-  @IsInt()
-  profileDetailsId: number;
-
   @Field()
   @IsNotEmpty()
   @IsString()

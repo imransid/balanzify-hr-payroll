@@ -79,7 +79,7 @@ export class ProfileDetailsService {
     const [items, totalCount] = await Promise.all([
       this.prisma.profileDetails.findMany({
         where: {
-          name: { contains: query, mode: "insensitive" }, // Adjust field name based on your model
+          firstName: { contains: query, mode: "insensitive" }, // Adjust field name based on your model
         },
         skip,
         take: limit,
@@ -89,7 +89,7 @@ export class ProfileDetailsService {
       }),
       this.prisma.profileDetails.count({
         where: {
-          name: { contains: query, mode: "insensitive" },
+          firstName: { contains: query, mode: "insensitive" },
         },
       }),
     ]);

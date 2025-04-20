@@ -217,6 +217,11 @@ export class CreateProfileDetailsInput {
 
   @Field(() => Int) @IsNotEmpty() @IsInt() profileId: number;
 
+  @Field(() => [String], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  documentationsID?: string[];
+
   @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt()

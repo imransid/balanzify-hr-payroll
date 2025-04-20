@@ -344,17 +344,14 @@ model profileDetails {
   // Relation field
   profile   Profile @relation(fields: [profileId], references: [id])
 
-  createdBy      Int?
-  createdAt      DateTime?       @default(now())
-  updatedAt      DateTime?       @updatedAt
-  documentations documentation[]
+  createdBy        Int?
+  createdAt        DateTime? @default(now())
+  updatedAt        DateTime? @updatedAt
+  documentationsID String[]
 }
 
 model documentation {
   id Int @id @default(autoincrement())
-
-  profileDetailsId Int // 👈 No @unique here
-  profileDetail    profileDetails @relation(fields: [profileDetailsId], references: [id])
 
   documentationName String
   documentationSize String

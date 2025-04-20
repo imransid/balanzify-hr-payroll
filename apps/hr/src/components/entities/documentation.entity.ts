@@ -6,12 +6,6 @@ export class Documentation {
   @Field(() => Int)
   id: number;
 
-  @Field(() => Int)
-  profileDetailsId: number;
-
-  @Field(() => ProfileDetails)
-  profileDetail: ProfileDetails;
-
   @Field()
   documentationName: string;
 

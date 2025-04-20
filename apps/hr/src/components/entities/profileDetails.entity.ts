@@ -131,8 +131,8 @@ export class ProfileDetails {
   @Field(() => Int)
   profileId: number;
 
-  @Field(() => [Documentation], { nullable: true })
-  documentations?: Documentation[];
+  @Field(() => [String], { nullable: true })
+  profileDetailsId?: String[];
 
   // Metadata
   @Field(() => Int, { nullable: true }) createdBy?: number;
