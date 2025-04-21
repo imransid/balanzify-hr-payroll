@@ -24,6 +24,8 @@ import { ProfileDetailsResolver } from "./profileDetails/profileDetails.resolver
 import { ProfileDetailsService } from "./profileDetails/profileDetails.service";
 import { DocumentationResolver } from "./documentaion/documentation.resolver";
 import { DocumentationService } from "./documentaion/documentation.service";
+import { GeneralSettingsResolver } from "./generalSettings/generalSettings.resolver";
+import { GeneralSettingsService } from "./generalSettings/generalSettings.service";
 
 @Module({
   imports: [
@@ -64,6 +66,8 @@ import { DocumentationService } from "./documentaion/documentation.service";
     ProfileDetailsService,
     DocumentationResolver,
     DocumentationService,
+    GeneralSettingsResolver,
+    GeneralSettingsService,
   ],
 })
 export class ComponentsModule {}

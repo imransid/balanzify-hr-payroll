@@ -363,3 +363,22 @@ model documentation {
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
 }
+
+model generalSettings {
+  id Int @id @default(autoincrement())
+
+  calculatePayrollWorkingDaysBasedOn           String?
+  includeHolidaysInTotalNoOfWorkingDays        Boolean?
+  maxWorkingHoursAgainstTimeSheet              String?
+  fractionOfDailySalaryForHalfDay              String?
+  disableRoundTotal                            Boolean?
+  showLeaveBalancesInSalarySlip                Boolean?
+  encryptSalarySlipsInEmails                   Boolean?
+  emailSalarySlipToEmployee                    Boolean?
+  emailTemplate                                String?
+  processPayrollAccountingEntryBasedOnEmployee Boolean?
+
+  createdBy Int?
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+}
