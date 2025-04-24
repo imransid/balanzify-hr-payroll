@@ -382,3 +382,57 @@ model generalSettings {
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
 }
+
+model taxSettings {
+  id Int @id @default(autoincrement())
+
+  generalTaxInfo   String?
+  companyLegalName String?
+  state            String?
+  city             String?
+  zipCode          String?
+  companyType      String?
+  streetAddress    String?
+  createdBy        Int?
+  createdAt        DateTime? @default(now())
+  updatedAt        DateTime? @updatedAt
+}
+
+model federalFaxInfo {
+  id Int @id @default(autoincrement())
+
+  employerIdentificationNumberEN         String?
+  whichPayrollTaxFormDoYouFileWithTheIRS String?
+  howOftenDoYouPayYourTaxes              String?
+  effectiveDate                          String?
+
+  createdBy Int?
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+model californiaTaxInfo {
+  id Int @id @default(autoincrement())
+
+  eDDEmployerPayrollTaxAccountNumber String
+  howOftenDoYouPayYourTaxes          String
+  effectiveDate                      String
+
+  createdBy Int?
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+model timeSheet {
+  id Int @id @default(autoincrement())
+
+  employeeId Int
+  remarks    String
+  startTime  DateTime
+  endTime    DateTime
+  totalTime  String
+
+  createdBy Int?
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+}

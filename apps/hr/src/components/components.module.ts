@@ -26,6 +26,8 @@ import { DocumentationResolver } from "./documentaion/documentation.resolver";
 import { DocumentationService } from "./documentaion/documentation.service";
 import { GeneralSettingsResolver } from "./generalSettings/generalSettings.resolver";
 import { GeneralSettingsService } from "./generalSettings/generalSettings.service";
+import { TimeSheetResolver } from "./timesheet/timesheet.resolver";
+import { TimeSheetService } from "./timesheet/timesheet.service";
 
 @Module({
   imports: [
@@ -68,6 +70,8 @@ import { GeneralSettingsService } from "./generalSettings/generalSettings.servic
     DocumentationService,
     GeneralSettingsResolver,
     GeneralSettingsService,
+    TimeSheetResolver,
+    TimeSheetService,
   ],
 })
 export class ComponentsModule {}
