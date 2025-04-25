@@ -22,7 +22,7 @@ export class ProfileDetailsResolver {
       return await this.profileDetailsService.create(createProfileDetailsInput);
     } catch (error) {
       throw new GraphQLException(
-        "Failed to create profile details",
+        "Failed to create profile details" + error.toString(),
         "INTERNAL_SERVER_ERROR"
       );
     }

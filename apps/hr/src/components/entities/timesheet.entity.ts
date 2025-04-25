@@ -18,6 +18,12 @@ export class TimeSheet {
   endTime: Date;
 
   @Field()
+  startProcessDate: Date;
+
+  @Field()
+  endProcessDate: Date;
+
+  @Field()
   totalTime: string;
 
   @Field(() => Int, { nullable: true })

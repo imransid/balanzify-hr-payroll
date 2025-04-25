@@ -426,11 +426,13 @@ model californiaTaxInfo {
 model timeSheet {
   id Int @id @default(autoincrement())
 
-  employeeId Int
-  remarks    String
-  startTime  DateTime
-  endTime    DateTime
-  totalTime  String
+  employeeId       Int
+  remarks          String
+  startTime        DateTime
+  endTime          DateTime
+  totalTime        String
+  startProcessDate DateTime
+  endProcessDate   DateTime
 
   createdBy Int?
   createdAt DateTime? @default(now())

@@ -38,6 +38,16 @@ export class CreateTimeSheetInput {
 
   @Field()
   @IsNotEmpty()
+  @IsDate()
+  startProcessDate: Date;
+
+  @Field()
+  @IsNotEmpty()
+  @IsDate()
+  endProcessDate: Date;
+
+  @Field()
+  @IsNotEmpty()
   @IsString()
   totalTime: string;
 

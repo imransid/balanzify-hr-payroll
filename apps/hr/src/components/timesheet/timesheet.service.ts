@@ -15,6 +15,12 @@ export class TimeSheetService {
     return this.prisma.timeSheet.create({
       data: createTimeSheetInput,
     });
+
+    // process :
+    // 1. holiday  check
+    // 2. leave ace kina
+    // 3. shift time comple korce kina , over time .. 9 hour to -1 hour to lunch break
+    // leave table // shift table
   }
 
   async findAll(page = 1, limit = 10): Promise<TimeSheetsPaginatedResult> {
