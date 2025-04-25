@@ -39,7 +39,7 @@ export class ProfileDetailsResolver {
       return await this.profileDetailsService.findAll(page, limit);
     } catch (error) {
       throw new GraphQLException(
-        "Failed to fetch profile details",
+        "Failed to fetch profile details" + error.toString(),
         "INTERNAL_SERVER_ERROR"
       );
     }
