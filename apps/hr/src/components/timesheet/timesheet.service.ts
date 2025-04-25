@@ -31,7 +31,7 @@ export class TimeSheetService {
         skip,
         take: limit,
         orderBy: {
-          date: "desc",
+          createdAt: "desc",
         },
       }),
       this.prisma.timeSheet.count(),
@@ -82,21 +82,22 @@ export class TimeSheetService {
   ): Promise<TimeSheetsPaginatedResult> {
     const skip = (page - 1) * limit;
 
+    const numericQuery = Number(query);
+    const isNumeric = !isNaN(numericQuery);
+
+    const whereClause = isNumeric ? { employeeId: numericQuery } : {}; // optionally expand with relation fields if needed
+
     const [timeSheets, totalCount] = await Promise.all([
       this.prisma.timeSheet.findMany({
-        where: {
-          employeeId: { contains: query, mode: "insensitive" },
-        },
+        where: whereClause,
         skip,
         take: limit,
         orderBy: {
-          date: "desc",
+          createdAt: "desc", // or whatever valid field
         },
       }),
       this.prisma.timeSheet.count({
-        where: {
-          employeeId: { contains: query, mode: "insensitive" },
-        },
+        where: whereClause,
       }),
     ]);
 
