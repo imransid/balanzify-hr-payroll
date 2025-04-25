@@ -46,5 +46,5 @@ export class Profile {
   onboardingType: keyof typeof OnboardingType;
 
   @Field()
-  profileDetails: ProfileDetails;
+  profileDetails?: ProfileDetails;
 }
