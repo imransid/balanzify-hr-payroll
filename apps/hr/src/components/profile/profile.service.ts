@@ -79,6 +79,9 @@ export class ProfileService {
       this.prisma.profile.findMany({
         skip,
         take: limit,
+        include: {
+          profileDetails: true,
+        },
       }) || [],
       this.prisma.profile.count(),
     ]);
@@ -92,7 +95,12 @@ export class ProfileService {
   }
 
   async findOne(id: number): Promise<Profile> {
-    const profile = await this.prisma.profile.findUnique({ where: { id } });
+    const profile = await this.prisma.profile.findUnique({
+      where: { id },
+      include: {
+        profileDetails: true,
+      },
+    });
     if (!profile) {
       throw new NotFoundException(`Profile with ID ${id} not found`);
     }
