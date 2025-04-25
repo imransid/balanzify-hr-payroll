@@ -1,5 +1,6 @@
 import { ObjectType, Field, Int } from "@nestjs/graphql";
 import { OnboardingType } from "../../prisma/OnboardingType.enum";
+import { ProfileDetails } from "./profileDetails.entity";
 
 @ObjectType()
 export class Profile {
@@ -43,4 +44,7 @@ export class Profile {
     defaultValue: OnboardingType.EMPLOYEE_SELF_ONBOARD,
   })
   onboardingType: keyof typeof OnboardingType;
+
+  @Field()
+  profileDetails: ProfileDetails;
 }
