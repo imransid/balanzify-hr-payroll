@@ -68,6 +68,13 @@ enum StatusType {
   DE_ACTIVE @map("DE_ACTIVE")
 }
 
+enum FrequencyType {
+  EVERY_WEEK      @map("EVERY_WEEK")
+  EVERY_ONCE_WEEK @map("EVERY_ONCE_WEEK")
+  TWICE_A_MONTH   @map("TWICE_A_MONTH")
+  EVERY_MONTH     @map("EVERY_MONTH")
+}
+
 model LeaveType {
   id          Int    @id @default(autoincrement())
   leaveName   String
@@ -191,25 +198,27 @@ model LeaveEncashment {
 model PaySchedule {
   id Int @id @default(autoincrement())
 
-  title              String
-  payFrequency       String
-  nextPayDay         String
-  endOfNextPayPeriod String
-  isDefault          Boolean
+  payScheduleName          String
+  payFrequency             FrequencyType
+  isDefaultForNewEmployees Boolean
+  // weekly
+  nextPayDay               DateTime?
+  endOfNextPayPeriod       DateTime?
 
-  firstPayDayOfTheMonth          String?
-  endOfFirstPayPeriod            String?
-  dayBeforePayDayFirstPayOFMonth String?
-  month                          String?
+  // month
+  firstPayPeriodOfTheMonth        String?
+  paydayOfTheMonth                String?
+  endOfEachMonthPayPeriodTimeLine String?
+  endOfEachMonthPayDay            String?
+  daysBeforePayday                String? /// Payday of the month - daysBeforePayday = End date
 
-  secondPayDayOfTheMonth          String?
-  endOfSecondPayPeriod            String?
-  months                          String?
-  dayBeforePayDayFirstPayOFSecond String?
+  // twice month
 
-  firstPayDayOfTheMonthTwice String?
-  endOfFirstPayPeriodTwice   String?
-  dayBeforePayDayTwice       String?
+  secondPayPeriodOfTheMonth             String?
+  secondPaydayOfTheMonth                String?
+  secondEndOfEachMonthPayPeriodTimeLine String?
+  secondEndOfEachMonthPayDay            String?
+  secondDaysBeforePayday                String? /// Payday of the month - daysBeforePayday = End date
 
   createdBy Int?
   createdAt DateTime @default(now())

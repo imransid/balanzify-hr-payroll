@@ -28,6 +28,8 @@ import { GeneralSettingsResolver } from "./generalSettings/generalSettings.resol
 import { GeneralSettingsService } from "./generalSettings/generalSettings.service";
 import { TimeSheetResolver } from "./timesheet/timesheet.resolver";
 import { TimeSheetService } from "./timesheet/timesheet.service";
+import { PayrollTaxResolver } from "./payrollTax/payroll-tax.resolver";
+import { PayrollTaxService } from "./payrollTax/payroll-tax.service";
 
 @Module({
   imports: [
@@ -72,6 +74,8 @@ import { TimeSheetService } from "./timesheet/timesheet.service";
     GeneralSettingsService,
     TimeSheetResolver,
     TimeSheetService,
+    PayrollTaxResolver,
+    PayrollTaxService,
   ],
 })
 export class ComponentsModule {}

@@ -1,4 +1,5 @@
 import { ObjectType, Field, Int } from "@nestjs/graphql";
+import { FrequencyType } from "../../prisma/OnboardingType.enum";
 
 @ObjectType()
 export class PaySchedule {
@@ -6,52 +7,53 @@ export class PaySchedule {
   id: number;
 
   @Field()
-  title: string;
+  payScheduleName: string;
+
+  @Field(() => FrequencyType, {
+    defaultValue: FrequencyType.EVERY_MONTH,
+  })
+  payFrequency: keyof typeof FrequencyType;
 
   @Field()
-  payFrequency: string;
-
-  @Field()
-  nextPayDay: string;
-
-  @Field()
-  endOfNextPayPeriod: string;
-
-  @Field()
-  isDefault: boolean;
+  isDefaultForNewEmployees: boolean;
 
   @Field({ nullable: true })
-  firstPayDayOfTheMonth?: string;
+  nextPayDay?: Date;
 
   @Field({ nullable: true })
-  endOfFirstPayPeriod?: string;
+  endOfNextPayPeriod?: Date;
+
+  // Monthly Pay Fields
+  @Field({ nullable: true })
+  firstPayPeriodOfTheMonth?: string;
 
   @Field({ nullable: true })
-  dayBeforePayDayFirstPayOFMonth?: string;
+  paydayOfTheMonth?: string;
 
   @Field({ nullable: true })
-  month?: string;
+  endOfEachMonthPayPeriodTimeLine?: string;
 
   @Field({ nullable: true })
-  secondPayDayOfTheMonth?: string;
+  endOfEachMonthPayDay?: string;
 
   @Field({ nullable: true })
-  endOfSecondPayPeriod?: string;
+  daysBeforePayday?: string;
+
+  // Twice a Month Pay Fields
+  @Field({ nullable: true })
+  secondPayPeriodOfTheMonth?: string;
 
   @Field({ nullable: true })
-  months?: string;
+  secondPaydayOfTheMonth?: string;
 
   @Field({ nullable: true })
-  dayBeforePayDayFirstPayOFSecond?: string;
+  secondEndOfEachMonthPayPeriodTimeLine?: string;
 
   @Field({ nullable: true })
-  firstPayDayOfTheMonthTwice?: string;
+  secondEndOfEachMonthPayDay?: string;
 
   @Field({ nullable: true })
-  endOfFirstPayPeriodTwice?: string;
-
-  @Field({ nullable: true })
-  dayBeforePayDayTwice?: string;
+  secondDaysBeforePayday?: string;
 
   @Field({ nullable: true })
   createdBy?: number;

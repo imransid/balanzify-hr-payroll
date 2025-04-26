@@ -82,14 +82,14 @@ export class PayScheduleService {
     const [paySchedules, totalCount] = await Promise.all([
       this.prisma.paySchedule.findMany({
         where: {
-          title: { contains: query, mode: "insensitive" }, // Case-insensitive search
+          payScheduleName: { contains: query, mode: "insensitive" }, // Case-insensitive search
         },
         skip,
         take: limit,
       }),
       this.prisma.paySchedule.count({
         where: {
-          title: { contains: query, mode: "insensitive" },
+          payScheduleName: { contains: query, mode: "insensitive" },
         },
       }),
     ]);

@@ -11,90 +11,90 @@ import {
   IsBoolean,
   IsOptional,
   IsInt,
+  IsDateString,
 } from "class-validator";
 import { PaySchedule } from "../entities/paySchedule.entity";
+import { FrequencyType } from "../../prisma/OnboardingType.enum";
 
 @InputType()
 export class CreatePayScheduleInput {
   @Field()
   @IsNotEmpty()
   @IsString()
-  title: string;
+  payScheduleName: string;
 
-  @Field()
+  @Field(() => FrequencyType, {
+    defaultValue: FrequencyType.EVERY_MONTH,
+  }) // Change to use the enum
   @IsNotEmpty()
-  @IsString()
-  payFrequency: string;
-
-  @Field()
-  @IsNotEmpty()
-  @IsString()
-  nextPayDay: string;
-
-  @Field()
-  @IsNotEmpty()
-  @IsString()
-  endOfNextPayPeriod: string;
+  payFrequency: keyof typeof FrequencyType;
 
   @Field()
   @IsNotEmpty()
   @IsBoolean()
-  isDefault: boolean;
+  isDefaultForNewEmployees: boolean;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsDateString()
+  nextPayDay?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsDateString()
+  endOfNextPayPeriod?: string;
+
+  // Monthly Pay Fields
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  firstPayPeriodOfTheMonth?: string;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  firstPayDayOfTheMonth?: string;
+  paydayOfTheMonth?: string;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  endOfFirstPayPeriod?: string;
+  endOfEachMonthPayPeriodTimeLine?: string;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  dayBeforePayDayFirstPayOFMonth?: string;
+  endOfEachMonthPayDay?: string;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  month?: string;
+  daysBeforePayday?: string;
+
+  // Twice a Month Pay Fields
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  secondPayPeriodOfTheMonth?: string;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  secondPayDayOfTheMonth?: string;
+  secondPaydayOfTheMonth?: string;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  endOfSecondPayPeriod?: string;
+  secondEndOfEachMonthPayPeriodTimeLine?: string;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  months?: string;
+  secondEndOfEachMonthPayDay?: string;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  dayBeforePayDayFirstPayOFSecond?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  firstPayDayOfTheMonthTwice?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  endOfFirstPayPeriodTwice?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  dayBeforePayDayTwice?: string;
+  secondDaysBeforePayday?: string;
 
   @Field({ nullable: true })
   @IsOptional()
