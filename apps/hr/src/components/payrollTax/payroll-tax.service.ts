@@ -1,11 +1,17 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { PrismaHrService } from "../../../../../prisma/prisma-hr.service";
 import { taxTable2025 } from "./taxTable2025"; // Assume taxTable2025 is already defined
 import { TaxRate } from "../entities/taxRate.entity";
+import { PayrollTaxCalculationService } from "./payrollTaxCalculation.service";
+import { Tax } from "../entities/payrollTax.entity";
+import { FilingStatus } from "../../prisma/OnboardingType.enum";
 
 @Injectable()
 export class PayrollTaxService {
-  constructor(private readonly prisma: PrismaHrService) {}
+  constructor(
+    private readonly prisma: PrismaHrService,
+    private readonly payrollTaxCalculationService: PayrollTaxCalculationService
+  ) {}
 
   // Social Security Tax
   private socialSecurityTax(salary: number, rate: number = 6.2): number {
@@ -33,58 +39,43 @@ export class PayrollTaxService {
   }
 
   // Federal Tax Withholding Calculation based on Filing Status
-  private federalTaxWithHolding(
+  private async federalTaxWithHolding(
     employee: boolean,
     filingStatus: string,
     income: number
-  ): number {
+  ): Promise<Tax> {
     if (employee) {
       // Function to calculate tax based on tax bracket
-      const calculateTax = (
-        bracketTable: Array<{ range: number[]; tax: number }>,
-        income: number
-      ) => {
-        for (let i = 0; i < bracketTable.length; i++) {
-          const bracket = bracketTable[i];
-          // Check if income falls within the range
-          if (income >= bracket.range[0] && income <= bracket.range[1]) {
-            return bracket.tax;
-          }
-        }
-        return 0; // Default return if no match
-      };
 
       switch (filingStatus) {
         case "single":
-          return calculateTax(taxTable2025.single, income);
+          return await this.payrollTaxCalculationService.createTaxRat(income);
         case "married_filing_jointly":
-          return calculateTax(taxTable2025.married_filing_jointly, income);
-        case "married_filing_separately":
-          return calculateTax(taxTable2025.married_filing_separately, income);
+          return await this.payrollTaxCalculationService.calculateMarriedTax(
+            income
+          );
         case "head_of_household":
-          return calculateTax(taxTable2025.head_of_household, income);
-        case "qualifying_window":
-          return calculateTax(taxTable2025.married_filing_jointly, income); // Assumed same as married filing jointly for now
-        default:
-          return 0; // Default return if no match for filing status
+          return await this.payrollTaxCalculationService.calculateHeadOfHouseholdTax(
+            income
+          );
       }
     } else {
       // Employer contribution logic (if required)
-      return 0;
+      // return 0;
     }
   }
 
   // Main method to calculate all tax components
-  async taxRate(amount: number): Promise<TaxRate> {
+  async taxRate(amount: number, filingStatus: FilingStatus): Promise<TaxRate> {
     // You need to calculate the tax amount based on filing status and income
-    const filingStatus = "married_filing_jointly"; // Assuming this is dynamically passed in practice
     const taxAmount = this.federalTaxWithHolding(true, filingStatus, amount);
     const medicareTax = this.medicareTax(amount);
     const socialSecurityTax = this.socialSecurityTax(amount);
 
     // Return the calculated tax rates in the TaxRate entity
     return {
-      federalTaxWithHolding: taxAmount,
+      federalTaxWithHolding: (await taxAmount).totalTax,
+      taxableIncome: (await taxAmount).taxableIncome,
       medicareTax: medicareTax,
       socialSecurityTax: socialSecurityTax,
     };

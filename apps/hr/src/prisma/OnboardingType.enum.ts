@@ -32,3 +32,14 @@ registerEnumType(StatusType, {
   name: "StatusType", // The name of the enum in GraphQL
   description: "Different Status Type", // Optional description
 });
+
+export enum FilingStatus {
+  SINGLE = "single",
+  MARRIED = "married_filing_jointly",
+  HEAD_OF_HOUSEHOLD = "head_of_household",
+}
+
+registerEnumType(FilingStatus, {
+  name: "FilingStatus", // This name will appear in GraphQL Schema
+  description: "The filing status of the taxpayer",
+});

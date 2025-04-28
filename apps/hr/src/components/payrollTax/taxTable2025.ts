@@ -1,8 +1,8 @@
 // data/taxTable2025.ts
 export const taxTable2025 = {
   married_filing_jointly: [
-    { range: [0, 9999], tax: 0 },
-    { range: [10000, 19999], tax: 700 },
+    { range: [0, 9999], tax: 10 },
+    { range: [10000, 19999], tax: 12 },
     { range: [20000, 29999], tax: 2760 },
     { range: [30000, 39999], tax: 3460 },
     { range: [40000, 49999], tax: 3860 },

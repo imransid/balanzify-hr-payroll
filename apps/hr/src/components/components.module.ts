@@ -30,6 +30,7 @@ import { TimeSheetResolver } from "./timesheet/timesheet.resolver";
 import { TimeSheetService } from "./timesheet/timesheet.service";
 import { PayrollTaxResolver } from "./payrollTax/payroll-tax.resolver";
 import { PayrollTaxService } from "./payrollTax/payroll-tax.service";
+import { PayrollTaxCalculationService } from "./payrollTax/payrollTaxCalculation.service";
 
 @Module({
   imports: [
@@ -76,6 +77,7 @@ import { PayrollTaxService } from "./payrollTax/payroll-tax.service";
     TimeSheetService,
     PayrollTaxResolver,
     PayrollTaxService,
+    PayrollTaxCalculationService,
   ],
 })
 export class ComponentsModule {}

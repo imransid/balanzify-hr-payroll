@@ -10,4 +10,7 @@ export class TaxRate {
 
   @Field()
   socialSecurityTax: number;
+
+  @Field()
+  taxableIncome: number;
 }
