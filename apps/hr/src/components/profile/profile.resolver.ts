@@ -97,7 +97,7 @@ export class ProfileResolver {
         );
       }
       throw new GraphQLException(
-        "Failed to remove profile",
+        "Failed to remove profile" + error.toString(),
         "INTERNAL_SERVER_ERROR"
       );
     }
