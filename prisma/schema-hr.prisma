@@ -245,6 +245,8 @@ model attendance {
 model profileDetails {
   id Int @id @default(autoincrement())
 
+  displayName String?
+
   series        String?
   salutation    String?
   firstName     String?

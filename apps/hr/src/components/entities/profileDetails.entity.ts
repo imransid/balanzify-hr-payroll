@@ -39,6 +39,7 @@ export class ProfileDetails {
   @Field({ nullable: true }) offerDate?: string;
   @Field({ nullable: true }) contractEndDate?: string;
   @Field({ nullable: true }) photo?: string;
+  @Field({ nullable: true }) displayName?: string;
 
   // Termination
   @Field({ nullable: true }) terminateDate?: string;

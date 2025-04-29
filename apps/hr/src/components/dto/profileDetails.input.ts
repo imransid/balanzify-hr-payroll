@@ -81,6 +81,7 @@ export class CreateProfileDetailsInput {
   @Field({ nullable: true }) @IsOptional() @IsString() mailingZipCode?: string;
 
   @Field({ nullable: true }) @IsOptional() @IsString() photo?: string;
+  @Field({ nullable: true }) @IsOptional() @IsString() displayName?: string;
 
   @Field({ nullable: true })
   @IsOptional()
