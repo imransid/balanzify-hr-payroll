@@ -42,7 +42,9 @@ export class ProfileDetails {
   @Field({ nullable: true }) displayName?: string;
 
   @Field({ nullable: true }) citizenship?: string;
-  @Field({ nullable: true }) signNameotherCountryName?: string;
+  @Field({ nullable: true }) signName?: string;
+
+  @Field({ nullable: true }) otherCountryName?: string;
 
   @Field({ nullable: true }) uscis_alien_regis_number?: string;
   @Field({ nullable: true }) formi9?: string;
