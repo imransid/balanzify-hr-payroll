@@ -26,7 +26,7 @@ export class LeaveBalanceDetailsService {
     // Seed leaveBalanceDetails if empty and profileList exists
     if (profileList.length > 0 && detailsList.length === 0) {
       const createInputs = profileList.map((profile) => ({
-        EMPCode: profile.id,
+        EMPCode: profile.id.toString(),
         EMPName: profile.employeeName,
         createdBy: profile.createdBy ?? null,
         Sick: "0",
