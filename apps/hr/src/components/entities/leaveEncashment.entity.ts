@@ -1,4 +1,5 @@
 import { ObjectType, Field, Int } from "@nestjs/graphql";
+import { LeaveType } from "./leaveType.entity";
 
 @ObjectType()
 export class LeaveEncashment {
@@ -29,6 +30,16 @@ export class LeaveEncashment {
   @Field()
   leaveBalancePeriod: string;
 
+  // ✅ Many-to-many relation with LeaveType
+  @Field(() => [LeaveType])
+  leaveTypes: LeaveType[];
+
+  @Field(() => Int, { nullable: true })
+  createdBy?: number;
+
   @Field()
-  leaveTypeID: number;
+  createdAt: Date;
+
+  @Field()
+  updatedAt: Date;
 }
