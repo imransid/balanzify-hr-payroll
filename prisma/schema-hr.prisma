@@ -188,6 +188,8 @@ model LeaveEncashment {
   department         String
   leaveBalancePeriod String
 
+  encashmentDate DateTime
+
   leaveTypes LeaveType[]
 
   createdBy Int?
