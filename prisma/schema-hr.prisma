@@ -351,6 +351,11 @@ model profileDetails {
   previousWorkExperience   String[]
   historyInCompany         String[]
 
+  uscis_alien_regis_number String?
+  formi9                   String?
+  foreignPasswordNumber    String?
+  includeSSN               Boolean?
+
   photo String?
 
   profileId Int     @unique // Ensures one-to-one relation

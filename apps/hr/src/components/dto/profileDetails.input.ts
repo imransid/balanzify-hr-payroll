@@ -80,6 +80,26 @@ export class CreateProfileDetailsInput {
   @Field({ nullable: true }) @IsOptional() @IsString() mailingCity?: string;
   @Field({ nullable: true }) @IsOptional() @IsString() mailingZipCode?: string;
 
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  uscis_alien_regis_number?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  formi9?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  foreignPasswordNumber?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  includeSSN?: boolean;
+
   @Field({ nullable: true }) @IsOptional() @IsString() photo?: string;
   @Field({ nullable: true }) @IsOptional() @IsString() displayName?: string;
 

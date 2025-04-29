@@ -41,6 +41,11 @@ export class ProfileDetails {
   @Field({ nullable: true }) photo?: string;
   @Field({ nullable: true }) displayName?: string;
 
+  @Field({ nullable: true }) uscis_alien_regis_number?: string;
+  @Field({ nullable: true }) formi9?: string;
+  @Field({ nullable: true }) foreignPasswordNumber?: string;
+  @Field({ nullable: true }) includeSSN?: boolean;
+
   // Termination
   @Field({ nullable: true }) terminateDate?: string;
   @Field({ nullable: true }) lastDaysWorked?: string;
