@@ -103,7 +103,12 @@ export class CreateProfileDetailsInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  signNameotherCountryName?: string;
+  signName?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  otherCountryName?: string;
 
   @Field({ nullable: true })
   @IsOptional()

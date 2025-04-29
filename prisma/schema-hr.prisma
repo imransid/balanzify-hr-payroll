@@ -358,7 +358,8 @@ model profileDetails {
   foreignPassportNumber    String?
   includeSSN               Boolean?
   citizenship              String?
-  signNameotherCountryName String?
+  signName                 String?
+  otherCountryName         String?
 
   photo String?
 
