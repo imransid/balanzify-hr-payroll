@@ -89,7 +89,7 @@ export class ProfileDetails {
   @Field({ nullable: true }) additionalWithHolding?: string;
   @Field({ nullable: true }) exemptFromWithHolding_section_2NotExample?: string;
   @Field({ nullable: true }) IsThisEmployeeExemptFromMyState?: string;
-  @Field({ nullable: true }) enterAmount?: boolean;
+  @Field({ nullable: true }) enterAmount?: number;
   @Field({ nullable: true })
   doesTheEmployeesWorkInTheStateWhereTheLives?: boolean;
   @Field({ nullable: true }) isThisEmployeeExemptFromMyState?: boolean;

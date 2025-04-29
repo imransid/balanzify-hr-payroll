@@ -317,7 +317,7 @@ model profileDetails {
   additionalWithHolding                       String?
   exemptFromWithHolding_section_2NotExample   String?
   IsThisEmployeeExemptFromMyState             String?
-  enterAmount                                 Boolean?
+  enterAmount                                 Int?
   doesTheEmployeesWorkInTheStateWhereTheLives Boolean?
   isThisEmployeeExemptFromMyState             Boolean?
 

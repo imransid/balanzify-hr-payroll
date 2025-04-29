@@ -42,9 +42,6 @@ export class ProfileDetailsService {
   }
 
   async findOne(id: number): Promise<ProfileDetails> {
-
-    
-
     const item = await this.prisma.profileDetails.findUnique({
       where: { id },
     });

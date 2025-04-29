@@ -134,7 +134,9 @@ export class CreateProfileDetailsInput {
   @IsOptional()
   @IsString()
   IsThisEmployeeExemptFromMyState?: string;
-  @Field({ nullable: true }) @IsOptional() @IsBoolean() enterAmount?: boolean;
+  @Field({ nullable: true })
+  @IsOptional()
+  enterAmount?: number;
   @Field({ nullable: true })
   @IsOptional()
   @IsBoolean()
