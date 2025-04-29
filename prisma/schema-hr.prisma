@@ -461,3 +461,27 @@ model timeSheet {
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
 }
+
+model leaveBalance {
+  id        Int       @id @default(autoincrement())
+  title     String?
+  leaveYear DateTime?
+  fromDate  DateTime?
+  toDate    DateTime?
+
+  createdBy Int?
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
+  details leaveBalanceDetails[] @relation("LeaveBalanceToDetails")
+}
+
+model leaveBalanceDetails {
+  id        Int       @id @default(autoincrement())
+  createdBy Int?
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
+  leaveBalanceId Int? // Optional foreign key
+  leaveBalance   leaveBalance? @relation("LeaveBalanceToDetails", fields: [leaveBalanceId], references: [id])
+}

@@ -32,6 +32,9 @@ import { PayrollTaxResolver } from "./payrollTax/payroll-tax.resolver";
 import { PayrollTaxService } from "./payrollTax/payroll-tax.service";
 import { PayrollTaxCalculationService } from "./payrollTax/payrollTaxCalculation.service";
 
+import { LeaveBalanceResolver } from "./leaveBalance/leaveBalance.resolver";
+import { LeaveBalanceService } from "./leaveBalance/leaveBalance.service";
+
 @Module({
   imports: [
     PrismaModule,
@@ -78,6 +81,8 @@ import { PayrollTaxCalculationService } from "./payrollTax/payrollTaxCalculation
     PayrollTaxResolver,
     PayrollTaxService,
     PayrollTaxCalculationService,
+    LeaveBalanceResolver,
+    LeaveBalanceService,
   ],
 })
 export class ComponentsModule {}
