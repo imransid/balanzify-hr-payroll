@@ -355,7 +355,7 @@ model profileDetails {
 
   profileId Int     @unique // Ensures one-to-one relation
   // Relation field
-  profile   Profile @relation(fields: [profileId], references: [id])
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   createdBy        Int?
   createdAt        DateTime? @default(now())
