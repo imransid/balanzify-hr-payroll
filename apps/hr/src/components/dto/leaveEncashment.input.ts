@@ -5,7 +5,15 @@ import {
   Field,
   ObjectType,
 } from "@nestjs/graphql";
-import { IsNotEmpty, IsString, IsInt, IsOptional } from "class-validator";
+import {
+  IsNotEmpty,
+  IsString,
+  IsInt,
+  IsOptional,
+  IsIn,
+  ArrayNotEmpty,
+  IsArray,
+} from "class-validator";
 import { LeaveEncashment } from "../entities/leaveEncashment.entity";
 
 // Create Leave Encashment Input Type
@@ -51,9 +59,13 @@ export class CreateLeaveEncashmentInput {
   @IsString()
   leaveBalancePeriod: string;
 
-  @Field(() => Int)
+  @Field(() => [Int])
   @IsNotEmpty()
-  leaveTypeID: number;
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsInt({ each: true })
+  @IsIn([1, 2, 3, 4], { each: true }) // Each item must be 1, 2, 3, or 4
+  leaveTypeID: number[];
 
   @Field(() => Int, { nullable: true })
   @IsOptional()
@@ -110,10 +122,13 @@ export class UpdateLeaveEncashmentInput extends PartialType(
   @IsString()
   leaveBalancePeriod?: string;
 
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsInt()
-  leaveTypeID?: number;
+  @Field(() => [Int])
+  @IsNotEmpty()
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsInt({ each: true })
+  @IsIn([1, 2, 3, 4], { each: true }) // Each item must be 1, 2, 3, or 4
+  leaveTypeID: number[];
 
   @Field(() => Int, { nullable: true })
   @IsOptional()

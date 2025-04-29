@@ -80,6 +80,8 @@ export class CreateProfileDetailsInput {
   @Field({ nullable: true }) @IsOptional() @IsString() mailingCity?: string;
   @Field({ nullable: true }) @IsOptional() @IsString() mailingZipCode?: string;
 
+  @Field({ nullable: true }) @IsOptional() @IsString() photo?: string;
+
   @Field({ nullable: true })
   @IsOptional()
   @IsString()

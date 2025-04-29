@@ -349,6 +349,8 @@ model profileDetails {
   previousWorkExperience   String[]
   historyInCompany         String[]
 
+  photo String?
+
   profileId Int     @unique // Ensures one-to-one relation
   // Relation field
   profile   Profile @relation(fields: [profileId], references: [id])
