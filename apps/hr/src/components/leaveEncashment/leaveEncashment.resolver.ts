@@ -26,7 +26,7 @@ export class LeaveEncashmentResolver {
       );
     } catch (error) {
       throw new GraphQLException(
-        "Failed to create leave encashment",
+        "Failed to create leave encashment" + error.toString(),
         "INTERNAL_SERVER_ERROR"
       );
     }

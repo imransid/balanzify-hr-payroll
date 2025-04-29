@@ -482,6 +482,16 @@ model leaveBalanceDetails {
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
 
+  EMPCode String?
+  EMPName String?
+  Sick    String?
+  Casual  String?
+  Earn    String?
+  LWP     String?
+  PL      String?
+  CO      String?
+  ShortL  String?
+
   leaveBalanceId Int? // Optional foreign key
   leaveBalance   leaveBalance? @relation("LeaveBalanceToDetails", fields: [leaveBalanceId], references: [id])
 }

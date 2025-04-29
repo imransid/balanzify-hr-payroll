@@ -35,6 +35,9 @@ import { PayrollTaxCalculationService } from "./payrollTax/payrollTaxCalculation
 import { LeaveBalanceResolver } from "./leaveBalance/leaveBalance.resolver";
 import { LeaveBalanceService } from "./leaveBalance/leaveBalance.service";
 
+import { LeaveBalanceDetailsResolver } from "./leaveBalanceDetails/leaveBalanceDetails.resolver";
+import { LeaveBalanceDetailsService } from "./leaveBalanceDetails/leaveBalanceDetails.service";
+
 @Module({
   imports: [
     PrismaModule,
@@ -83,6 +86,8 @@ import { LeaveBalanceService } from "./leaveBalance/leaveBalance.service";
     PayrollTaxCalculationService,
     LeaveBalanceResolver,
     LeaveBalanceService,
+    LeaveBalanceDetailsResolver,
+    LeaveBalanceDetailsService,
   ],
 })
 export class ComponentsModule {}
