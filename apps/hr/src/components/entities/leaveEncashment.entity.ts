@@ -30,6 +30,9 @@ export class LeaveEncashment {
   @Field()
   leaveBalancePeriod: string;
 
+  @Field()
+  encashmentDate: Date;
+
   // ✅ Many-to-many relation with LeaveType
   @Field(() => [LeaveType])
   leaveTypes: LeaveType[];

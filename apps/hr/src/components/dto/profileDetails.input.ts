@@ -93,7 +93,17 @@ export class CreateProfileDetailsInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  foreignPasswordNumber?: string;
+  foreignPassportNumber?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  citizenship?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  signNameotherCountryName?: string;
 
   @Field({ nullable: true })
   @IsOptional()

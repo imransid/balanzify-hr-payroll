@@ -353,8 +353,10 @@ model profileDetails {
 
   uscis_alien_regis_number String?
   formi9                   String?
-  foreignPasswordNumber    String?
+  foreignPassportNumber    String?
   includeSSN               Boolean?
+  citizenship              String?
+  signNameotherCountryName String?
 
   photo String?
 

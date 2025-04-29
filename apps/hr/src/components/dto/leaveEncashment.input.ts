@@ -13,6 +13,7 @@ import {
   IsIn,
   ArrayNotEmpty,
   IsArray,
+  IsDate,
 } from "class-validator";
 import { LeaveEncashment } from "../entities/leaveEncashment.entity";
 
@@ -58,6 +59,11 @@ export class CreateLeaveEncashmentInput {
   @IsNotEmpty()
   @IsString()
   leaveBalancePeriod: string;
+
+  @Field()
+  @IsNotEmpty()
+  @IsDate()
+  encashmentDate: Date;
 
   @Field(() => [Int])
   @IsNotEmpty()
