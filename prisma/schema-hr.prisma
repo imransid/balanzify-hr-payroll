@@ -450,12 +450,13 @@ model timeSheet {
   id Int @id @default(autoincrement())
 
   employeeId       Int
-  remarks          String
-  startTime        DateTime
-  endTime          DateTime
-  totalTime        String
-  startProcessDate DateTime
-  endProcessDate   DateTime
+  remarks          String?
+  startTime        DateTime? @default(now())
+  endTime          DateTime?
+  totalTime        String?
+  startProcessDate DateTime?
+  endProcessDate   DateTime?
+  status           String?
 
   createdBy Int?
   createdAt DateTime? @default(now())

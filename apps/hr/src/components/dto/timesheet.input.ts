@@ -17,39 +17,39 @@ import { TimeSheet } from "../entities/timesheet.entity";
 @InputType()
 export class CreateTimeSheetInput {
   @Field(() => Int)
-  @IsNotEmpty()
   @IsInt()
   employeeId: number;
 
-  @Field()
-  @IsNotEmpty()
+  @Field({ nullable: true })
+  @IsOptional()
   @IsString()
-  remarks: string;
+  remarks?: string;
 
-  @Field()
-  @IsNotEmpty()
-  @IsDate()
-  startTime: Date;
+  @Field({ nullable: true })
+  @IsOptional()
+  startTime?: Date;
 
-  @Field()
-  @IsNotEmpty()
-  @IsDate()
-  endTime: Date;
+  @Field({ nullable: true })
+  @IsOptional()
+  endTime?: Date;
 
-  @Field()
-  @IsNotEmpty()
-  @IsDate()
-  startProcessDate: Date;
+  @Field({ nullable: true })
+  @IsOptional()
+  startProcessDate?: Date;
 
-  @Field()
-  @IsNotEmpty()
-  @IsDate()
-  endProcessDate: Date;
+  @Field({ nullable: true })
+  @IsOptional()
+  endProcessDate?: Date;
 
-  @Field()
-  @IsNotEmpty()
+  @Field({ nullable: true })
+  @IsOptional()
   @IsString()
-  totalTime: string;
+  totalTime?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  status?: string;
 
   @Field(() => Int, { nullable: true })
   @IsOptional()
