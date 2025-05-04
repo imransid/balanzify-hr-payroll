@@ -37,6 +37,8 @@ import { LeaveBalanceService } from "./leaveBalance/leaveBalance.service";
 
 import { LeaveBalanceDetailsResolver } from "./leaveBalanceDetails/leaveBalanceDetails.resolver";
 import { LeaveBalanceDetailsService } from "./leaveBalanceDetails/leaveBalanceDetails.service";
+import { TimeSheetProcessResolver } from "./timeSheetProcess/timeSheetProcess.resolver";
+import { TimeSheetProcessService } from "./timeSheetProcess/timeSheetProcess.service";
 
 @Module({
   imports: [
@@ -88,6 +90,8 @@ import { LeaveBalanceDetailsService } from "./leaveBalanceDetails/leaveBalanceDe
     LeaveBalanceService,
     LeaveBalanceDetailsResolver,
     LeaveBalanceDetailsService,
+    TimeSheetProcessResolver,
+    TimeSheetProcessService,
   ],
 })
 export class ComponentsModule {}

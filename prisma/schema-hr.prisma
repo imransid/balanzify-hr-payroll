@@ -140,10 +140,12 @@ model Profile {
   status         Boolean
   onboardingType OnboardingType
 
-  createdBy      Int?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  profileDetails profileDetails?
+  createdBy          Int?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  profileDetails     profileDetails?
+  // 👇 One-to-many relation
+  timeSheetProcesses TimeSheetProcess[]
 
   @@index([email])
 }
@@ -457,6 +459,28 @@ model timeSheet {
   startProcessDate DateTime?
   endProcessDate   DateTime?
   status           String?
+
+  createdBy Int?
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+model TimeSheetProcess {
+  id Int @id @default(autoincrement())
+
+  employeeId String
+
+  startTime        DateTime
+  endTime          DateTime
+  status           String
+  startProcessTime DateTime
+  endProcessTIme   DateTime
+  dateType         String
+  remark           String
+  totalWorked      String
+
+  profileId Int
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   createdBy Int?
   createdAt DateTime? @default(now())
