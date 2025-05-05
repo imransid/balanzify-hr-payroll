@@ -19,7 +19,11 @@ export class ProfileDetailsService {
     return this.prisma.profileDetails.create({
       data: {
         ...rest,
-        ...(shiftId && { shiftId }), // ✅ this handles optional foreign key cleanly
+        shiftId: shiftId ?? null, // ✅ Use shiftId directly
+      },
+      include: {
+        shift: true, // Optional: include shift info in result
+        profile: true, // Optional: include profile info in result
       },
     });
   }
@@ -33,6 +37,9 @@ export class ProfileDetailsService {
         take: limit,
         orderBy: {
           id: "desc",
+        },
+        include: {
+          shift: true,
         },
       }),
       this.prisma.profileDetails.count(),

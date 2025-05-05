@@ -17,20 +17,9 @@ export class TimeSheetProcessService {
 
   async create(input: CreateTimeSheetProcessInput): Promise<TimeSheetProcess> {
     try {
-      const profile = await this.prisma.profile.findUnique({
-        where: { id: input.profileId },
-      });
-
-      if (!profile) {
-        throw new NotFoundException("Profile not found");
-      }
-
-      const employeeId = profile.id;
-
       // 1. Get all timeSheet entries within the process window
       const timeSheets = await this.prisma.timeSheet.findMany({
         where: {
-          employeeId: employeeId,
           startTime: {
             gte: input.startProcessTime,
           },
@@ -75,7 +64,7 @@ export class TimeSheetProcessService {
       // 4. Create TimeSheetProcess
       return await this.prisma.timeSheetProcess.create({
         data: {
-          employeeId: employeeId.toString(),
+          employeeId: input.profileId.toString(),
           startTime: timeSheets[0].startTime,
           endTime: timeSheets[timeSheets.length - 1].endTime,
           status: status,
@@ -102,13 +91,29 @@ export class TimeSheetProcessService {
   ): Promise<TimeSheetProcessPaginatedResult> {
     const skip = (page - 1) * limit;
 
-    const [items, totalCount] = await Promise.all([
+    const [rawItems, totalCount] = await Promise.all([
       this.prisma.timeSheetProcess.findMany({
         skip,
         take: limit,
+        include: {
+          profile: {
+            include: {
+              profileDetails: {
+                select: {
+                  shift: true,
+                },
+              },
+            },
+          },
+        },
       }),
       this.prisma.timeSheetProcess.count(),
     ]);
+
+    const items = rawItems.map((item) => ({
+      ...item,
+      shift: item.profile?.profileDetails?.shift ?? null,
+    }));
 
     return new TimeSheetProcessPaginatedResult(
       items,

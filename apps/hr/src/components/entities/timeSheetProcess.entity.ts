@@ -1,4 +1,5 @@
 import { ObjectType, Field, Int } from "@nestjs/graphql";
+import { Shift } from "./shift.entity";
 
 @ObjectType()
 export class TimeSheetProcess {
@@ -43,4 +44,8 @@ export class TimeSheetProcess {
 
   @Field()
   updatedAt: Date;
+
+  // 👇 Add this to expose shift
+  @Field(() => Shift, { nullable: true })
+  shift?: Shift;
 }
