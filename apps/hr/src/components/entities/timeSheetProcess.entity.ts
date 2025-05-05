@@ -6,31 +6,31 @@ export class TimeSheetProcess {
   @Field(() => Int)
   id: number;
 
-  @Field()
+  @Field({ nullable: true })
   employeeId: string;
 
-  @Field()
+  @Field({ nullable: true })
   startTime: Date;
 
-  @Field()
+  @Field({ nullable: true })
   endTime: Date;
 
-  @Field()
+  @Field({ nullable: true })
   status: string;
 
-  @Field()
+  @Field({ nullable: true })
   startProcessTime: Date;
 
-  @Field()
+  @Field({ nullable: true })
   endProcessTIme: Date;
 
-  @Field()
+  @Field({ nullable: true })
   dateType: string;
 
-  @Field()
+  @Field({ nullable: true })
   remark: string;
 
-  @Field()
+  @Field({ nullable: true })
   totalWorked: string;
 
   @Field(() => String, { nullable: true })
@@ -45,7 +45,7 @@ export class TimeSheetProcess {
   @Field({ nullable: true })
   createdAt?: Date;
 
-  @Field()
+  @Field({ nullable: true })
   updatedAt: Date;
 
   // 👇 Add this to expose shift

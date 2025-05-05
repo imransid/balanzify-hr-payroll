@@ -15,11 +15,11 @@ export class TimeSheetProcessResolver {
     private readonly timeSheetProcessService: TimeSheetProcessService
   ) {}
 
-  @Mutation(() => TimeSheetProcess)
+  @Mutation(() => [TimeSheetProcess])
   async createTimeSheetProcess(
     @Args("createTimeSheetProcessInput")
     input: CreateTimeSheetProcessInput
-  ): Promise<TimeSheetProcess> {
+  ): Promise<TimeSheetProcess[]> {
     try {
       return await this.timeSheetProcessService.create(input);
     } catch (error) {

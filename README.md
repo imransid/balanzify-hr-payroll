@@ -136,8 +136,8 @@ docker exec 987a60f42c3f npx prisma migrate deploy --schema=./prisma/schema-hr.p
 docker exec 223b8d59755b npx prisma generate --schema=./prisma/schema-user.prisma
 docker exec fd638e1bb0d6 npx prisma db push --force-reset --schema=./prisma/schema-user.prisma
 
-docker exec 29c3cbf5810c npx prisma generate --schema=./prisma/schema-hr.prisma
-docker exec 29c3cbf5810c npx prisma db push --force-reset --schema=./prisma/schema-hr.prisma
+docker exec e1ce955807ac npx prisma generate --schema=./prisma/schema-hr.prisma
+docker exec e1ce955807ac npx prisma db push --force-reset --schema=./prisma/schema-hr.prisma
 
 sudo docker stop 570112f8996a f4ba3e931603 32384d0a59bc 6e71821497ba 90f54428b1b8
 sudo docker rm 570112f8996a f4ba3e931603 32384d0a59bc 6e71821497ba 90f54428b1b8

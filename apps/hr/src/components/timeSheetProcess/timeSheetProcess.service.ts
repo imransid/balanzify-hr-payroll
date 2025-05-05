@@ -15,68 +15,124 @@ import { TimeSheetProcess } from "../entities/timeSheetProcess.entity";
 export class TimeSheetProcessService {
   constructor(private readonly prisma: PrismaHrService) {}
 
-  async create(input: CreateTimeSheetProcessInput): Promise<TimeSheetProcess> {
+  async create(
+    input: CreateTimeSheetProcessInput
+  ): Promise<TimeSheetProcess[]> {
     try {
-      // 1. Get all timeSheet entries within the process window
-      const timeSheets = await this.prisma.timeSheet.findMany({
-        where: {
-          startTime: {
-            gte: input.startProcessTime,
-          },
-          endTime: {
-            lte: input.endProcessTIme,
+      const profiles = await this.prisma.profile.findMany({
+        include: {
+          profileDetails: {
+            include: {
+              shift: true,
+            },
           },
         },
       });
 
-      if (!timeSheets.length) {
-        throw new NotFoundException(
-          "No timesheet data found for given time range."
-        );
-      }
+      const timeSheetProcesses = await Promise.all(
+        profiles.map(async (e) => {
+          // 1. Get all timeSheet entries within the process window
+          const timeSheets = await this.prisma.timeSheet.findMany({
+            where: {
+              employeeId: e.id,
+              startTime: {
+                gte: input.startProcessTime,
+              },
+              endTime: {
+                lte: input.endProcessTIme,
+              },
+            },
+          });
 
-      // 2. Get the status and remark from timeSheets
-      const statuses = new Set<string>();
-      const remarks: string[] = [];
+          if (!timeSheets.length) {
+            return null; // skip if no timesheets
+          }
 
-      timeSheets.forEach((sheet) => {
-        if (sheet.status) statuses.add(sheet.status);
-        if (sheet.remarks) remarks.push(sheet.remarks);
-      });
+          // 2. Gather statuses and remarks
+          const statuses = new Set<string>();
+          const remarks: string[] = [];
 
-      // Convert the statuses and remarks to string values
-      const status = Array.from(statuses).join(", "); // If multiple statuses, join with commas
-      const remark = remarks.join("; "); // Join all remarks with a semicolon
+          timeSheets.forEach((sheet) => {
+            if (sheet.status) statuses.add(sheet.status);
+            if (sheet.remarks) remarks.push(sheet.remarks);
+          });
 
-      // 3. Calculate total worked time
-      let totalMinutes = 0;
-      timeSheets.forEach((sheet) => {
-        const start = new Date(sheet.startTime);
-        const end = new Date(sheet.endTime);
-        const diff = (end.getTime() - start.getTime()) / 1000 / 60; // minutes
-        totalMinutes += diff;
-      });
+          const status = Array.from(statuses).join(", ");
+          const remark = remarks.join("; ");
 
-      const hours = Math.floor(totalMinutes / 60);
-      const minutes = totalMinutes % 60;
-      const totalWorked = `${hours}h ${minutes}m`;
+          // 3. Calculate total worked time
+          let totalMinutes = 0;
+          timeSheets.forEach((sheet) => {
+            const start = new Date(sheet.startTime);
+            const end = new Date(sheet.endTime);
+            const diff = (end.getTime() - start.getTime()) / 1000 / 60;
+            totalMinutes += diff;
+          });
 
-      // 4. Create TimeSheetProcess
-      return await this.prisma.timeSheetProcess.create({
-        data: {
-          employeeId: input.profileId.toString(),
-          startTime: timeSheets[0].startTime,
-          endTime: timeSheets[timeSheets.length - 1].endTime,
-          status: status,
-          remark: remark,
-          totalWorked,
-          startProcessTime: input.startProcessTime,
-          endProcessTIme: input.endProcessTIme,
-          dateType: input.dateType,
-          profileId: input.profileId,
-          createdBy: input.createdBy || null,
-        },
-      });
+          const hours = Math.floor(totalMinutes / 60);
+          const minutes = totalMinutes % 60;
+          const totalWorked = `${hours}h ${minutes}m`;
+
+          // 4. Create TimeSheetProcess
+          // return this.prisma.timeSheetProcess.create({
+          //   data: {
+          //     employeeId: e.id.toString(),
+          //     startTime: timeSheets[0].startTime,
+          //     endTime: timeSheets[timeSheets.length - 1].endTime,
+          //     status,
+          //     remark,
+          //     totalWorked,
+          //     startProcessTime: input.startProcessTime,
+          //     endProcessTIme: input.endProcessTIme,
+          //     dateType: input.dateType,
+          //     profileId: e.id,
+          //     createdBy: input.createdBy || null,
+          //   },
+          // });
+
+          const created = await this.prisma.timeSheetProcess.create({
+            data: {
+              employeeId: e.id.toString(),
+              startTime: timeSheets[0].startTime,
+              endTime: timeSheets[timeSheets.length - 1].endTime,
+              status,
+              remark,
+              totalWorked,
+              startProcessTime: input.startProcessTime,
+              endProcessTIme: input.endProcessTIme,
+              dateType: input.dateType,
+              profileId: e.id,
+              createdBy: input.createdBy || null,
+            },
+          });
+
+          // fetch the created TimeSheetProcess with shift
+          const fullRecord = await this.prisma.timeSheetProcess.findUnique({
+            where: {
+              id: created.id,
+            },
+            include: {
+              profile: {
+                include: {
+                  profileDetails: {
+                    include: {
+                      shift: true,
+                    },
+                  },
+                },
+              },
+            },
+          });
+
+          // map to match your GraphQL model, attaching shift
+          return {
+            ...fullRecord,
+            shift: fullRecord.profile?.profileDetails?.shift || null,
+          };
+        })
+      );
+
+      return timeSheetProcesses.filter(Boolean);
     } catch (error) {
       console.error("Error creating TimeSheetProcess:", error);
       throw new InternalServerErrorException(
