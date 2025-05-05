@@ -175,6 +175,9 @@ model Shift {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // 👇 One-to-one relation (optional from Shift side)
+  profileDetails profileDetails[]
+
   @@index([shiftCode])
 }
 
@@ -315,7 +318,6 @@ model profileDetails {
 
   attendanceDeviceIDBiometricRFtagID String?
   holidayList                        String?
-  shift                              String?
 
   stateWhereTheEmployeeLives                  String?
   maritalStatus                               String?
@@ -368,6 +370,10 @@ model profileDetails {
   profileId Int     @unique // Ensures one-to-one relation
   // Relation field
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  // 👇 Foreign key to Shift
+  shiftId Int?
+  shift   Shift? @relation(fields: [shiftId], references: [id], onDelete: Cascade)
 
   createdBy        Int?
   createdAt        DateTime? @default(now())

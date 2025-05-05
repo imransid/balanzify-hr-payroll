@@ -14,8 +14,13 @@ export class ProfileDetailsService {
   async create(
     createProfileDetailsInput: CreateProfileDetailsInput
   ): Promise<ProfileDetails> {
+    const { shiftId, ...rest } = createProfileDetailsInput;
+
     return this.prisma.profileDetails.create({
-      data: createProfileDetailsInput,
+      data: {
+        ...rest,
+        ...(shiftId && { shiftId }), // ✅ this handles optional foreign key cleanly
+      },
     });
   }
 

@@ -92,7 +92,7 @@ export class ProfileDetails {
   // Attendance & Shift
   @Field({ nullable: true }) attendanceDeviceIDBiometricRFtagID?: string;
   @Field({ nullable: true }) holidayList?: string;
-  @Field({ nullable: true }) shift?: string;
+  // @Field({ nullable: true }) shift?: string;
 
   // Tax Info (State & Federal)
   @Field({ nullable: true }) stateWhereTheEmployeeLives?: string;
