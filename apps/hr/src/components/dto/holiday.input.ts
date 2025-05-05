@@ -16,6 +16,29 @@ import {
 import { Holiday } from "../entities/holiday.entity";
 
 @InputType()
+export class HolidayDetailsInput {
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  No?: number;
+
+  @Field()
+  @IsNotEmpty()
+  @IsDate()
+  Date: Date;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  Type?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  Description?: string;
+}
+
+@InputType()
 export class CreateHolidayInput {
   @Field()
   @IsNotEmpty()
@@ -41,6 +64,10 @@ export class CreateHolidayInput {
   @IsNotEmpty()
   @IsString()
   country: string;
+
+  @Field(() => [HolidayDetailsInput], { nullable: true })
+  @IsOptional()
+  details?: HolidayDetailsInput[];
 
   @Field()
   @IsNotEmpty()

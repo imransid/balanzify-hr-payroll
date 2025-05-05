@@ -1,19 +1,53 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaHrService } from '../../../../../prisma/prisma-hr.service';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaHrService } from "../../../../../prisma/prisma-hr.service";
 import {
   CreateHolidayInput,
   HolidayPaginatedResult,
   UpdateHolidayInput,
-} from '../dto/holiday.input';
-import { Holiday } from '../entities/holiday.entity';
+} from "../dto/holiday.input";
+import { Holiday } from "../entities/holiday.entity";
 
 @Injectable()
 export class HolidayService {
   constructor(private readonly prisma: PrismaHrService) {}
 
   async create(createHolidayInput: CreateHolidayInput): Promise<Holiday> {
+    const {
+      details,
+      name,
+      color,
+      fromDate,
+      toDate,
+      country,
+      weekend,
+      totalHoliday,
+      status,
+    } = createHolidayInput;
+
     return this.prisma.holiday.create({
-      data: createHolidayInput,
+      data: {
+        name,
+        color,
+        fromDate,
+        toDate,
+        country,
+        weekend,
+        totalHoliday,
+        status,
+        details: details
+          ? {
+              create: details.map((d) => ({
+                No: d.No,
+                Date: d.Date,
+                Type: d.Type,
+                Description: d.Description,
+              })),
+            }
+          : undefined,
+      },
+      include: {
+        details: true, // Optional: include holidayDetails in the response
+      },
     });
   }
 
@@ -24,6 +58,9 @@ export class HolidayService {
       this.prisma.holiday.findMany({
         skip,
         take: limit,
+        include: {
+          details: true,
+        },
       }) || [], // Ensure it's always an array
       this.prisma.holiday.count(),
     ]);
@@ -46,12 +83,35 @@ export class HolidayService {
 
   async update(
     id: number,
-    updateHolidayInput: UpdateHolidayInput,
+    updateHolidayInput: UpdateHolidayInput
   ): Promise<Holiday> {
     await this.findOne(id);
+
+    const {
+      details, // extract details
+      ...rest // everything else goes in rest
+    } = updateHolidayInput;
+
     return this.prisma.holiday.update({
       where: { id },
-      data: updateHolidayInput,
+      data: {
+        ...rest,
+        ...(details && {
+          // First delete old details, then create new
+          details: {
+            deleteMany: {}, // remove all previous details
+            create: details.map((d) => ({
+              No: d.No,
+              Date: d.Date,
+              Type: d.Type,
+              Description: d.Description,
+            })),
+          },
+        }),
+      },
+      include: {
+        details: true,
+      },
     });
   }
 
@@ -65,21 +125,21 @@ export class HolidayService {
   async search(
     query: string,
     page = 1,
-    limit = 10,
+    limit = 10
   ): Promise<HolidayPaginatedResult> {
     const skip = (page - 1) * limit;
 
     const [holidays, totalCount] = await Promise.all([
       this.prisma.holiday.findMany({
         where: {
-          name: { contains: query, mode: 'insensitive' }, // ✅ Corrected search filter
+          name: { contains: query, mode: "insensitive" }, // ✅ Corrected search filter
         },
         skip,
         take: limit,
       }),
       this.prisma.holiday.count({
         where: {
-          name: { contains: query, mode: 'insensitive' },
+          name: { contains: query, mode: "insensitive" },
         },
       }),
     ]);

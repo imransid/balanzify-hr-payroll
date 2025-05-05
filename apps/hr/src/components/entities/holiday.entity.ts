@@ -28,4 +28,31 @@ export class Holiday {
 
   @Field()
   color: string;
+
+  @Field(() => [HolidayDetails], { nullable: true })
+  details?: HolidayDetails[];
+}
+
+@ObjectType()
+export class HolidayDetails {
+  @Field(() => Int)
+  id: number;
+
+  @Field(() => Int, { nullable: true })
+  No?: number;
+
+  @Field()
+  Date: Date;
+
+  @Field({ nullable: true })
+  Type?: string;
+
+  @Field({ nullable: true })
+  Description?: string;
+
+  @Field(() => Int)
+  holidayId: number;
+
+  @Field(() => Holiday, { nullable: true })
+  holiday?: Holiday;
 }

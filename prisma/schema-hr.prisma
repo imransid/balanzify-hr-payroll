@@ -23,6 +23,25 @@ model holiday {
   createdBy Int?
   createdAt DateTime  @default(now())
   updateAt  DateTime? @default(now())
+
+  // Relation field
+  details holidayDetails[]
+}
+
+model holidayDetails {
+  id          Int      @id @default(autoincrement())
+  No          Int?
+  Date        DateTime
+  Type        String?
+  Description String?
+
+  createdBy Int?
+  createdAt DateTime  @default(now())
+  updateAt  DateTime? @default(now())
+
+  // Foreign key and relation
+  holidayId Int
+  holiday   holiday @relation(fields: [holidayId], references: [id])
 }
 
 model Leave {
