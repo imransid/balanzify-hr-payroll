@@ -113,6 +113,7 @@ export class TimeSheetProcessService {
     const items = rawItems.map((item) => ({
       ...item,
       shift: item.profile?.profileDetails?.shift ?? null,
+      profileName: item?.profile?.employeeName ?? null,
     }));
 
     return new TimeSheetProcessPaginatedResult(

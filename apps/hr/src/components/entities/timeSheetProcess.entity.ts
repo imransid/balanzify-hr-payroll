@@ -33,6 +33,9 @@ export class TimeSheetProcess {
   @Field()
   totalWorked: string;
 
+  @Field(() => String, { nullable: true })
+  profileName?: string;
+
   @Field(() => Int)
   profileId: number;
 
