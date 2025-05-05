@@ -21,7 +21,7 @@ export class LeaveBalanceDetailsResolver {
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
     limit: number
-  ): Promise<LeaveBalanceDetailsPaginatedResult> {
+  ): Promise<any> {
     try {
       return await this.leaveBalanceDetailsService.findAll(page, limit);
     } catch (error) {
@@ -32,25 +32,25 @@ export class LeaveBalanceDetailsResolver {
     }
   }
 
-  @Query(() => LeaveBalanceDetails)
-  async leaveBalanceDetail(
-    @Args("id", { type: () => Int }) id: number
-  ): Promise<LeaveBalanceDetails> {
-    try {
-      return await this.leaveBalanceDetailsService.findOne(id);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new GraphQLException(
-          `Leave balance detail with ID ${id} not found`,
-          "NOT_FOUND"
-        );
-      }
-      throw new GraphQLException(
-        "Failed to fetch leave balance detail",
-        "INTERNAL_SERVER_ERROR"
-      );
-    }
-  }
+  // @Query(() => LeaveBalanceDetails)
+  // async leaveBalanceDetail(
+  //   @Args("id", { type: () => Int }) id: number
+  // ): Promise<LeaveBalanceDetails> {
+  //   try {
+  //     return await this.leaveBalanceDetailsService.findOne(id);
+  //   } catch (error) {
+  //     if (error instanceof NotFoundException) {
+  //       throw new GraphQLException(
+  //         `Leave balance detail with ID ${id} not found`,
+  //         "NOT_FOUND"
+  //       );
+  //     }
+  //     throw new GraphQLException(
+  //       "Failed to fetch leave balance detail",
+  //       "INTERNAL_SERVER_ERROR"
+  //     );
+  //   }
+  // }
 
   @Mutation(() => LeaveBalanceDetails)
   async updateLeaveBalanceDetails(
@@ -97,21 +97,21 @@ export class LeaveBalanceDetailsResolver {
     }
   }
 
-  @Query(() => LeaveBalanceDetailsPaginatedResult)
-  async searchLeaveBalanceDetails(
-    @Args("query", { type: () => String }) query: string,
-    @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
-    page: number,
-    @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
-  ): Promise<LeaveBalanceDetailsPaginatedResult> {
-    try {
-      return await this.leaveBalanceDetailsService.search(query, page, limit);
-    } catch (error) {
-      throw new GraphQLException(
-        "Failed to search leave balance details",
-        "INTERNAL_SERVER_ERROR"
-      );
-    }
-  }
+  // @Query(() => LeaveBalanceDetailsPaginatedResult)
+  // async searchLeaveBalanceDetails(
+  //   @Args("query", { type: () => String }) query: string,
+  //   @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
+  //   page: number,
+  //   @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
+  //   limit: number
+  // ): Promise<LeaveBalanceDetailsPaginatedResult> {
+  //   try {
+  //     return await this.leaveBalanceDetailsService.search(query, page, limit);
+  //   } catch (error) {
+  //     throw new GraphQLException(
+  //       "Failed to search leave balance details",
+  //       "INTERNAL_SERVER_ERROR"
+  //     );
+  //   }
+  // }
 }

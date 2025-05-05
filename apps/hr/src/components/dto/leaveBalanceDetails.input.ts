@@ -16,51 +16,6 @@ import { LeaveBalanceDetails } from "../entities/leave-balance-details.entity";
 
 @InputType()
 export class CreateLeaveBalanceDetailsInput {
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  EMPCode?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  EMPName?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  Sick?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  Casual?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  Earn?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  LWP?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  PL?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  CO?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  ShortL?: string;
-
   @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt()
@@ -70,6 +25,11 @@ export class CreateLeaveBalanceDetailsInput {
   @IsOptional()
   @IsInt()
   createdBy?: number;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  data?: string;
 }
 
 @InputType()
@@ -84,8 +44,8 @@ export class UpdateLeaveBalanceDetailsInput extends PartialType(
 
 @ObjectType()
 export class LeaveBalanceDetailsPaginatedResult {
-  @Field(() => [LeaveBalanceDetails], { defaultValue: [] })
-  leaveBalanceDetails: LeaveBalanceDetails[] = [];
+  @Field(() => [LeaveBalanceDetails], { defaultValue: null })
+  leaveBalanceDetails: LeaveBalanceDetails = null;
 
   @Field(() => Int)
   totalPages: number;
@@ -97,12 +57,12 @@ export class LeaveBalanceDetailsPaginatedResult {
   totalCount: number;
 
   constructor(
-    leaveBalanceDetails: LeaveBalanceDetails[],
+    leaveBalanceDetails: LeaveBalanceDetails,
     totalPages: number,
     currentPage: number,
     totalCount: number
   ) {
-    this.leaveBalanceDetails = leaveBalanceDetails ?? [];
+    this.leaveBalanceDetails = leaveBalanceDetails ?? null;
     this.totalPages = totalPages;
     this.currentPage = currentPage;
     this.totalCount = totalCount;

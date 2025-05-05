@@ -95,33 +95,33 @@ enum FrequencyType {
 }
 
 model LeaveType {
-  id          Int    @id @default(autoincrement())
-  leaveName   String
-  displayName String
-  definition  String
-  color       String
+  id          Int     @id @default(autoincrement())
+  leaveName   String?
+  displayName String?
+  definition  String?
+  color       String?
 
-  leaveTypeHourly  Int
-  leaveTypeMaxHour Int
+  leaveTypeHourly  Int?
+  leaveTypeMaxHour Int?
 
-  maxLeaveAllocation         Int
-  allowLeaveApplicationAfter Int
-  maxConsecutiveLeave        Int
+  maxLeaveAllocation         Int?
+  allowLeaveApplicationAfter Int?
+  maxConsecutiveLeave        Int?
 
   maxCarryForwardedLeaves    Int?
   expireCarryForwardedLeaves Int?
 
-  allowEncashment     Boolean
+  allowEncashment     Boolean? @default(false)
   maxEncashableLeaves Int?
   minEncashableLeaves Int?
   earningComponents   String?
 
-  isEarnedLeaves     Boolean
+  isEarnedLeaves     Boolean? @default(false)
   earnLeaveFragrancy String?
   allocatedOnDays    String?
   Rounders           String?
 
-  status StatusType
+  status StatusType? @default(DE_ACTIVE)
 
   isLeaveWithoutPay                  Boolean @default(false)
   isOptionalLeaves                   Boolean @default(false)
@@ -136,6 +136,49 @@ model LeaveType {
 
   encashments LeaveEncashment[]
 }
+
+// model LeaveType {
+//   id          Int    @id @default(autoincrement())
+//   leaveName   String
+//   displayName String
+//   definition  String
+//   color       String
+
+//   leaveTypeHourly  Int
+//   leaveTypeMaxHour Int
+
+//   maxLeaveAllocation         Int
+//   allowLeaveApplicationAfter Int
+//   maxConsecutiveLeave        Int
+
+//   maxCarryForwardedLeaves    Int?
+//   expireCarryForwardedLeaves Int?
+
+//   allowEncashment     Boolean
+//   maxEncashableLeaves Int?
+//   minEncashableLeaves Int?
+//   earningComponents   String?
+
+//   isEarnedLeaves     Boolean
+//   earnLeaveFragrancy String?
+//   allocatedOnDays    String?
+//   Rounders           String?
+
+//   status StatusType
+
+//   isLeaveWithoutPay                  Boolean @default(false)
+//   isOptionalLeaves                   Boolean @default(false)
+//   allowNegativeBalance               Boolean @default(false)
+//   allowOverAllocation                Boolean @default(false)
+//   includeHolidaysWithinLeavesONLeave Boolean @default(false)
+//   isCompensatory                     Boolean @default(false)
+
+//   createdBy Int?
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   encashments LeaveEncashment[]
+// }
 
 enum OnboardingType {
   EMPLOYEE_SELF_ONBOARD_WITH_1_9 @map("EMPLOYEE_SELF_ONBOARD_WITH_1_9")
@@ -526,20 +569,11 @@ model leaveBalance {
 }
 
 model leaveBalanceDetails {
-  id        Int       @id @default(autoincrement())
+  id        Int  @id @default(autoincrement())
   createdBy Int?
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
+  companyId Int?
 
-  EMPCode String?
-  EMPName String?
-  Sick    String?
-  Casual  String?
-  Earn    String?
-  LWP     String?
-  PL      String?
-  CO      String?
-  ShortL  String?
+  data String // Store dynamic leave types as a JSON field
 
   leaveBalanceId Int? // Optional foreign key
   leaveBalance   leaveBalance? @relation("LeaveBalanceToDetails", fields: [leaveBalanceId], references: [id])
