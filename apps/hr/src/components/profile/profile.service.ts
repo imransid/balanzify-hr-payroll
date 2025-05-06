@@ -38,7 +38,7 @@ export class ProfileService {
           status: createProfileInput.status,
           onboardingType: createProfileInput.onboardingType, // Use enum here
           department: createProfileInput.department || null,
-          paySchedule: createProfileInput.paySchedule || null,
+          companyID: createProfileInput.companyID || null,
           employeeType: createProfileInput.employeeType || null,
           mobilePhone: createProfileInput.mobilePhone || null,
         },
