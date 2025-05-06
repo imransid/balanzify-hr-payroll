@@ -128,6 +128,7 @@ export class TimeSheetProcessService {
           return {
             ...fullRecord,
             shift: fullRecord.profile?.profileDetails?.shift || null,
+            profileName: fullRecord.profile.employeeName,
           };
         })
       );
