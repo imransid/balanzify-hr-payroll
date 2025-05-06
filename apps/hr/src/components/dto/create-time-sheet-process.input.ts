@@ -50,6 +50,11 @@ export class UpdateTimeSheetProcessInput extends PartialType(
   @IsNotEmpty()
   @IsInt()
   id: number;
+
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  status: string;
 }
 
 @ObjectType()
