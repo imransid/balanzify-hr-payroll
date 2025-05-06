@@ -14,46 +14,62 @@ export class LeaveBalanceDetailsService {
   async findAll(page = 1, limit = 10) {
     const skip = (page - 1) * limit;
 
-    // Fetch profiles, existing leave balance details, and leave types
-    const [profileList, detailsList, leaveTypes] = await Promise.all([
+    const [profileList, , leaveTypes] = await Promise.all([
       this.prisma.profile.findMany(),
       this.prisma.leaveBalanceDetails.findMany(),
       this.prisma.leaveType.findMany(),
     ]);
 
-    // Map leave types to key names with "0"
     const leaveTypeMap = leaveTypes.reduce((acc, leaveType) => {
       acc[leaveType.displayName] = "0";
       return acc;
     }, {});
 
-    // Seed leaveBalanceDetails if empty
-    if (profileList.length > 0 && detailsList.length === 0) {
-      const createInputs = profileList.map((profile) => ({
+    if (profileList.length < 1) {
+      return this.fetchAllData(skip, limit, page);
+    }
+
+    // Loop through each profile
+    for (const profile of profileList) {
+      const leaveData = {
         EMPCode: profile.id.toString(),
         EMPName: profile.employeeName,
         createdBy: profile.createdBy ?? null,
         ...leaveTypeMap,
-      }));
+      };
 
-      console.log("createInputs >>", createInputs);
-
-      await this.prisma.leaveBalanceDetails.createMany({
-        data: createInputs,
+      // Check if this EMPCode already exists in the `data` JSON string
+      const exists = await this.prisma.leaveBalanceDetails.findFirst({
+        where: {
+          leaveBalances: {
+            contains: `"EMPCode":"${leaveData.EMPCode}"`, // crude check inside stringified JSON
+          },
+        },
       });
+
+      // Only insert if not exists
+      if (!exists) {
+        await this.prisma.leaveBalanceDetails.create({
+          data: {
+            createdBy: profile.createdBy ?? null,
+            leaveBalances: JSON.stringify(leaveData),
+          },
+        });
+      }
     }
 
+    return this.fetchAllData(skip, limit, page);
+  }
+
+  async fetchAllData(skip: number, limit: number, page: number) {
     // Fetch paginated data
     const [leaveBalanceDetails, totalCount] = await Promise.all([
       this.prisma.leaveBalanceDetails.findMany({
         skip,
         take: limit,
-        // orderBy: { createdAt: "desc" },
       }),
       this.prisma.leaveBalanceDetails.count(),
     ]);
-
-    console.log("leaveBalanceDetails", leaveBalanceDetails);
 
     return {
       leaveBalanceDetails,

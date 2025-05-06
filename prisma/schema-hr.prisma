@@ -573,7 +573,7 @@ model leaveBalanceDetails {
   createdBy Int?
   companyId Int?
 
-  data String // Store dynamic leave types as a JSON field
+  leaveBalances String // Store dynamic leave types as a JSON field
 
   leaveBalanceId Int? // Optional foreign key
   leaveBalance   leaveBalance? @relation("LeaveBalanceToDetails", fields: [leaveBalanceId], references: [id])

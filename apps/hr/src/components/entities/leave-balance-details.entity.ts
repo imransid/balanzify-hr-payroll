@@ -13,7 +13,7 @@ export class LeaveBalanceDetails {
   companyId?: number;
 
   @Field(() => String, { nullable: true })
-  data?: string; // Holds EMPCode, EMPName, and leave type values
+  leaveBalances?: string; // Holds EMPCode, EMPName, and leave type values
 
   @Field(() => Int, { nullable: true })
   leaveBalanceId?: number;
