@@ -29,7 +29,7 @@ export class Profile {
   department?: string;
 
   @Field({ nullable: true })
-  paySchedule?: string;
+  companyID?: string;
 
   @Field({ nullable: true })
   employeeType?: string;

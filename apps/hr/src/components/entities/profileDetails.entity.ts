@@ -130,6 +130,9 @@ export class ProfileDetails {
   @Field({ nullable: true }) payType?: string;
   @Field({ nullable: true }) payFrequency?: string;
   @Field({ nullable: true }) salary?: string;
+
+  @Field({ nullable: true }) companyID?: string;
+
   @Field({ nullable: true }) hoursPerDay?: string;
   @Field({ nullable: true }) dayForWeek?: string;
   @Field({ nullable: true }) doubleOverTimePay?: boolean;

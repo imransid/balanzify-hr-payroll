@@ -61,7 +61,7 @@ export class CreateProfileInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  paySchedule?: string;
+  companyID?: string;
 
   @Field({ nullable: true })
   @IsOptional()

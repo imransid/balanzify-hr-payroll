@@ -40,6 +40,7 @@ export class ProfileDetailsService {
         },
         include: {
           shift: true,
+          paySchedule: true,
         },
       }),
       this.prisma.profileDetails.count(),
