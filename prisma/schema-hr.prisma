@@ -269,23 +269,27 @@ model PaySchedule {
   payScheduleName          String
   payFrequency             FrequencyType
   isDefaultForNewEmployees Boolean
+
+  companyID          String?
   // weekly
-  nextPayDay               DateTime?
-  endOfNextPayPeriod       DateTime?
+  nextPayDay         DateTime? //
+  endOfNextPayPeriod DateTime?
+
+  status String?
 
   // month
-  firstPayPeriodOfTheMonth        String?
-  paydayOfTheMonth                String?
-  endOfEachMonthPayPeriodTimeLine String?
-  endOfEachMonthPayDay            String?
+  firstPayPeriodOfTheMonth        DateTime?
+  paydayOfTheMonth                DateTime?
+  endOfEachMonthPayPeriodTimeLine DateTime?
+  endOfEachMonthPayDay            DateTime?
   daysBeforePayday                String? /// Payday of the month - daysBeforePayday = End date
 
   // twice month
 
-  secondPayPeriodOfTheMonth             String?
-  secondPaydayOfTheMonth                String?
-  secondEndOfEachMonthPayPeriodTimeLine String?
-  secondEndOfEachMonthPayDay            String?
+  secondPayPeriodOfTheMonth             DateTime?
+  secondPaydayOfTheMonth                DateTime?
+  secondEndOfEachMonthPayPeriodTimeLine DateTime?
+  secondEndOfEachMonthPayDay            DateTime?
   secondDaysBeforePayday                String? /// Payday of the month - daysBeforePayday = End date
 
   createdBy Int?

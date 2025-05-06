@@ -12,6 +12,7 @@ import {
   IsOptional,
   IsInt,
   IsDateString,
+  IsDate,
 } from "class-validator";
 import { PaySchedule } from "../entities/paySchedule.entity";
 import { FrequencyType } from "../../prisma/OnboardingType.enum";
@@ -36,34 +37,39 @@ export class CreatePayScheduleInput {
 
   @Field({ nullable: true })
   @IsOptional()
-  @IsDateString()
-  nextPayDay?: string;
+  @IsDate()
+  nextPayDay?: Date;
 
   @Field({ nullable: true })
   @IsOptional()
-  @IsDateString()
-  endOfNextPayPeriod?: string;
+  @IsDate()
+  endOfNextPayPeriod?: Date;
 
   // Monthly Pay Fields
   @Field({ nullable: true })
   @IsOptional()
-  @IsString()
-  firstPayPeriodOfTheMonth?: string;
+  @IsDate()
+  firstPayPeriodOfTheMonth?: Date;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  paydayOfTheMonth?: string;
+  companyID?: string;
 
   @Field({ nullable: true })
   @IsOptional()
-  @IsString()
-  endOfEachMonthPayPeriodTimeLine?: string;
+  @IsDate()
+  paydayOfTheMonth?: Date;
 
   @Field({ nullable: true })
   @IsOptional()
-  @IsString()
-  endOfEachMonthPayDay?: string;
+  @IsDate()
+  endOfEachMonthPayPeriodTimeLine?: Date;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsDate()
+  endOfEachMonthPayDay?: Date;
 
   @Field({ nullable: true })
   @IsOptional()
@@ -73,28 +79,33 @@ export class CreatePayScheduleInput {
   // Twice a Month Pay Fields
   @Field({ nullable: true })
   @IsOptional()
-  @IsString()
-  secondPayPeriodOfTheMonth?: string;
+  @IsDate()
+  secondPayPeriodOfTheMonth?: Date;
 
   @Field({ nullable: true })
   @IsOptional()
-  @IsString()
-  secondPaydayOfTheMonth?: string;
+  @IsDate()
+  secondPaydayOfTheMonth?: Date;
 
   @Field({ nullable: true })
   @IsOptional()
-  @IsString()
-  secondEndOfEachMonthPayPeriodTimeLine?: string;
+  @IsDate()
+  secondEndOfEachMonthPayPeriodTimeLine?: Date;
 
   @Field({ nullable: true })
   @IsOptional()
-  @IsString()
-  secondEndOfEachMonthPayDay?: string;
+  @IsDate()
+  secondEndOfEachMonthPayDay?: Date;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
   secondDaysBeforePayday?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  status?: string;
 
   @Field({ nullable: true })
   @IsOptional()

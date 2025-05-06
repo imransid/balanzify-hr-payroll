@@ -21,36 +21,42 @@ export class PaySchedule {
   nextPayDay?: Date;
 
   @Field({ nullable: true })
+  companyID?: string;
+
+  @Field({ nullable: true })
   endOfNextPayPeriod?: Date;
 
   // Monthly Pay Fields
   @Field({ nullable: true })
-  firstPayPeriodOfTheMonth?: string;
+  firstPayPeriodOfTheMonth?: Date;
 
   @Field({ nullable: true })
-  paydayOfTheMonth?: string;
+  paydayOfTheMonth?: Date;
 
   @Field({ nullable: true })
-  endOfEachMonthPayPeriodTimeLine?: string;
+  endOfEachMonthPayPeriodTimeLine?: Date;
 
   @Field({ nullable: true })
-  endOfEachMonthPayDay?: string;
+  endOfEachMonthPayDay?: Date;
 
   @Field({ nullable: true })
   daysBeforePayday?: string;
 
   // Twice a Month Pay Fields
   @Field({ nullable: true })
-  secondPayPeriodOfTheMonth?: string;
+  secondPayPeriodOfTheMonth?: Date;
 
   @Field({ nullable: true })
-  secondPaydayOfTheMonth?: string;
+  secondPaydayOfTheMonth?: Date;
 
   @Field({ nullable: true })
-  secondEndOfEachMonthPayPeriodTimeLine?: string;
+  status?: string;
 
   @Field({ nullable: true })
-  secondEndOfEachMonthPayDay?: string;
+  secondEndOfEachMonthPayPeriodTimeLine?: Date;
+
+  @Field({ nullable: true })
+  secondEndOfEachMonthPayDay?: Date;
 
   @Field({ nullable: true })
   secondDaysBeforePayday?: string;
