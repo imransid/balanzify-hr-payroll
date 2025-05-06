@@ -12,6 +12,7 @@ import {
   IsArray,
   IsInt,
   IsNotEmpty,
+  IsNumber,
 } from "class-validator";
 import { ProfileDetails } from "../entities/profileDetails.entity";
 
@@ -216,7 +217,7 @@ export class CreateProfileDetailsInput {
   @IsBoolean()
   employeeAccessToForm_W_4?: boolean;
 
-  @Field({ nullable: true }) @IsOptional() @IsString() paySchedule?: string;
+  @Field({ nullable: true }) @IsOptional() @IsNumber() payScheduleID?: number;
   @Field({ nullable: true }) @IsOptional() @IsBoolean() overTime?: boolean;
   @Field({ nullable: true }) @IsOptional() @IsString() payType?: string;
   @Field({ nullable: true }) @IsOptional() @IsString() payFrequency?: string;

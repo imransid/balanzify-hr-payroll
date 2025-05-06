@@ -202,6 +202,8 @@ model Profile {
   status         Boolean
   onboardingType OnboardingType
 
+  companyID String?
+
   createdBy          Int?
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
@@ -291,6 +293,8 @@ model PaySchedule {
   secondEndOfEachMonthPayPeriodTimeLine DateTime?
   secondEndOfEachMonthPayDay            DateTime?
   secondDaysBeforePayday                String? /// Payday of the month - daysBeforePayday = End date
+
+  profileDetails profileDetails[]
 
   createdBy Int?
   createdAt DateTime @default(now())
@@ -405,7 +409,6 @@ model profileDetails {
   isThisEmployeeExemptFromFederalTax String?
   employeeAccessToForm_W_4           Boolean?
 
-  paySchedule              String?
   overTime                 Boolean?
   payType                  String?
   payFrequency             String?
@@ -431,6 +434,9 @@ model profileDetails {
   otherCountryName         String?
 
   photo String?
+
+  payScheduleID Int?
+  paySchedule   PaySchedule? @relation(fields: [payScheduleID], references: [id], onDelete: Cascade)
 
   profileId Int     @unique // Ensures one-to-one relation
   // Relation field

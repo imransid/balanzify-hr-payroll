@@ -1,6 +1,7 @@
 import { ObjectType, Field, Int } from "@nestjs/graphql";
 import { Documentation } from "./documentation.entity";
 import { Shift } from "./shift.entity";
+import { PaySchedule } from "./paySchedule.entity";
 
 @ObjectType()
 export class ProfileDetails {
@@ -124,7 +125,7 @@ export class ProfileDetails {
   @Field({ nullable: true }) employeeAccessToForm_W_4?: boolean;
 
   // Payroll Info
-  @Field({ nullable: true }) paySchedule?: string;
+
   @Field({ nullable: true }) overTime?: boolean;
   @Field({ nullable: true }) payType?: string;
   @Field({ nullable: true }) payFrequency?: string;
@@ -150,6 +151,11 @@ export class ProfileDetails {
 
   @Field(() => [String], { nullable: true })
   profileDetailsId?: String[];
+
+  @Field({ nullable: true }) payScheduleID?: number;
+
+  @Field(() => PaySchedule, { nullable: true })
+  paySchedule?: PaySchedule;
 
   // Metadata
   @Field(() => Int, { nullable: true }) createdBy?: number;
