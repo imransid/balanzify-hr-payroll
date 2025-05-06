@@ -5,7 +5,11 @@ import {
   UpdateLeaveBalanceDetailsInput,
   LeaveBalanceDetailsPaginatedResult,
 } from "../dto/leaveBalanceDetails.input";
-import { LeaveBalanceDetails } from "../entities/leave-balance-details.entity";
+import {
+  LeaveBalanceDetails,
+  LeaveBalanceSummary,
+  LeaveTypeTotal,
+} from "../entities/leave-balance-details.entity";
 
 @Injectable()
 export class LeaveBalanceDetailsService {
@@ -24,11 +28,6 @@ export class LeaveBalanceDetailsService {
       acc[leaveType.displayName] = "0";
       return acc;
     }, {});
-
-    if (profileList.length < 1) {
-      return this.fetchAllData(skip, limit, page);
-    }
-
     // Loop through each profile
     for (const profile of profileList) {
       const leaveData = {
@@ -38,27 +37,45 @@ export class LeaveBalanceDetailsService {
         ...leaveTypeMap,
       };
 
-      // Check if this EMPCode already exists in the `data` JSON string
       const exists = await this.prisma.leaveBalanceDetails.findFirst({
         where: {
           leaveBalances: {
-            contains: `"EMPCode":"${leaveData.EMPCode}"`, // crude check inside stringified JSON
+            contains: `"EMPCode":"${leaveData.EMPCode}"`,
           },
         },
       });
 
-      // Only insert if not exists
       if (!exists) {
+        // Create if not exists
         await this.prisma.leaveBalanceDetails.create({
           data: {
             createdBy: profile.createdBy ?? null,
             leaveBalances: JSON.stringify(leaveData),
           },
         });
+      } else {
+        // Parse existing JSON
+        const existingBalances = JSON.parse(exists.leaveBalances);
+
+        // Merge or update existing fields with new data
+        const updatedBalances = {
+          ...existingBalances,
+          ...leaveData,
+        };
+
+        // Update the record
+        await this.prisma.leaveBalanceDetails.update({
+          where: {
+            id: exists.id,
+          },
+          data: {
+            leaveBalances: JSON.stringify(updatedBalances),
+          },
+        });
       }
     }
 
-    return this.fetchAllData(skip, limit, page);
+    return await this.fetchAllData(skip, limit, page);
   }
 
   async fetchAllData(skip: number, limit: number, page: number) {
@@ -122,5 +139,75 @@ export class LeaveBalanceDetailsService {
     return await this.prisma.leaveBalanceDetails.delete({
       where: { id },
     });
+  }
+
+  // async totalLeaveTypeAva(): Promise<LeaveBalanceSummary> {
+  //   const leaveBalanceDetails = await this.prisma.leaveBalanceDetails.findMany({
+  //     select: {
+  //       leaveBalances: true,
+  //     },
+  //   });
+
+  //   const totals: Record<string, number> = {};
+
+  //   for (const detail of leaveBalanceDetails) {
+  //     const balance = JSON.parse(detail.leaveBalances);
+
+  //     for (const [key, value] of Object.entries(balance)) {
+  //       const numericValue = Number(value);
+  //       if (!isNaN(numericValue)) {
+  //         totals[key] = (totals[key] || 0) + numericValue;
+  //       }
+  //     }
+  //   }
+
+  //   // Convert totals object to LeaveTypeTotal[]
+  //   const data: LeaveTypeTotal[] = Object.entries(totals).map(
+  //     ([type, total]) => ({
+  //       type,
+  //       total,
+  //     })
+  //   );
+
+  //   return {
+  //     message: "Total Leave Type Summary",
+  //     data,
+  //   };
+  // }
+
+  async totalLeaveTypeAva(): Promise<LeaveBalanceSummary> {
+    const leaveBalanceDetails = await this.prisma.leaveBalanceDetails.findMany({
+      select: {
+        leaveBalances: true,
+      },
+    });
+
+    const ignoreKeys = ["EMPCode", "EMPName", "createdBy"];
+    const totals: Record<string, number> = {};
+
+    for (const detail of leaveBalanceDetails) {
+      const balance = JSON.parse(detail.leaveBalances);
+
+      for (const [key, value] of Object.entries(balance)) {
+        if (ignoreKeys.includes(key)) continue;
+
+        const numericValue = Number(value);
+        if (!isNaN(numericValue)) {
+          totals[key] = (totals[key] || 0) + numericValue;
+        }
+      }
+    }
+
+    const data: LeaveTypeTotal[] = Object.entries(totals).map(
+      ([type, total]) => ({
+        type,
+        total,
+      })
+    );
+
+    return {
+      message: "Total Leave Type Summary",
+      data,
+    };
   }
 }

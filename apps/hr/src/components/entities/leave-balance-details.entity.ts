@@ -21,3 +21,21 @@ export class LeaveBalanceDetails {
   @Field(() => LeaveBalance, { nullable: true })
   leaveBalance?: LeaveBalance;
 }
+
+@ObjectType()
+export class LeaveBalanceSummary {
+  @Field()
+  message: string;
+
+  @Field(() => [LeaveTypeTotal])
+  data: LeaveTypeTotal[];
+}
+
+@ObjectType()
+export class LeaveTypeTotal {
+  @Field()
+  type: string;
+
+  @Field(() => Int)
+  total: number;
+}

@@ -1,6 +1,9 @@
 import { Resolver, Query, Mutation, Args, Int } from "@nestjs/graphql";
 
-import { LeaveBalanceDetails } from "../entities/leave-balance-details.entity";
+import {
+  LeaveBalanceDetails,
+  LeaveBalanceSummary,
+} from "../entities/leave-balance-details.entity";
 import { NotFoundException } from "@nestjs/common";
 import { GraphQLException } from "exceptions/graphql-exception";
 import {
@@ -32,25 +35,19 @@ export class LeaveBalanceDetailsResolver {
     }
   }
 
-  // @Query(() => LeaveBalanceDetails)
-  // async leaveBalanceDetail(
-  //   @Args("id", { type: () => Int }) id: number
-  // ): Promise<LeaveBalanceDetails> {
-  //   try {
-  //     return await this.leaveBalanceDetailsService.findOne(id);
-  //   } catch (error) {
-  //     if (error instanceof NotFoundException) {
-  //       throw new GraphQLException(
-  //         `Leave balance detail with ID ${id} not found`,
-  //         "NOT_FOUND"
-  //       );
-  //     }
-  //     throw new GraphQLException(
-  //       "Failed to fetch leave balance detail",
-  //       "INTERNAL_SERVER_ERROR"
-  //     );
-  //   }
-  // }
+  @Query(() => LeaveBalanceSummary)
+  async totalLeaveTypeAva(): Promise<LeaveBalanceSummary> {
+    try {
+      return await this.leaveBalanceDetailsService.totalLeaveTypeAva();
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+      }
+      throw new GraphQLException(
+        "Failed to fetch leave balance detail",
+        "INTERNAL_SERVER_ERROR"
+      );
+    }
+  }
 
   @Mutation(() => LeaveBalanceDetails)
   async updateLeaveBalanceDetails(

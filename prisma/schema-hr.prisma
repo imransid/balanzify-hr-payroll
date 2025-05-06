@@ -358,6 +358,8 @@ model profileDetails {
   terminateType  String?
   terminateDesc  String?
 
+  ratePerHour String?
+
   phoneNumber           String?
   homePhone             String?
   personalEmail         String?

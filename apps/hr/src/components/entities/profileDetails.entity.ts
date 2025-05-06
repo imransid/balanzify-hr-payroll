@@ -133,6 +133,8 @@ export class ProfileDetails {
 
   @Field({ nullable: true }) companyID?: string;
 
+  @Field({ nullable: true }) ratePerHour?: string;
+
   @Field({ nullable: true }) hoursPerDay?: string;
   @Field({ nullable: true }) dayForWeek?: string;
   @Field({ nullable: true }) doubleOverTimePay?: boolean;

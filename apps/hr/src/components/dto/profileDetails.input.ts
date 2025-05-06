@@ -224,6 +224,9 @@ export class CreateProfileDetailsInput {
   @Field({ nullable: true }) @IsOptional() @IsString() salary?: string;
   @Field({ nullable: true }) @IsOptional() @IsString() hoursPerDay?: string;
   @Field({ nullable: true }) @IsOptional() @IsString() dayForWeek?: string;
+
+  @Field({ nullable: true }) @IsOptional() @IsString() ratePerHour?: string;
+
   @Field({ nullable: true })
   @IsOptional()
   @IsBoolean()
