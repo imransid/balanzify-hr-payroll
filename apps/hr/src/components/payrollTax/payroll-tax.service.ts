@@ -72,12 +72,39 @@ export class PayrollTaxService {
     const medicareTax = this.medicareTax(amount);
     const socialSecurityTax = this.socialSecurityTax(amount);
 
+    const monthlyRate = (await taxAmount).totalTax / 12;
+    const weeklyRate = (await taxAmount).totalTax / 52;
+
     // Return the calculated tax rates in the TaxRate entity
     return {
-      federalTaxWithHolding: (await taxAmount).totalTax,
+      federalTaxWithHoldingYearly: (await taxAmount).totalTax,
       taxableIncome: (await taxAmount).taxableIncome,
       medicareTax: medicareTax,
       socialSecurityTax: socialSecurityTax,
+      federalTaxWithHoldingMonthlyRate: monthlyRate,
+      federalTaxWithHoldingWeeklyRate: weeklyRate,
+    };
+  }
+
+  // Main method to calculate all tax components
+  async taxRateEmployee(amount: number): Promise<TaxRate> {
+    // You need to calculate the tax amount based on filing status and income
+    const taxAmount = 12;
+    //this.federalTaxWithHolding(true, filingStatus, amount);
+    const medicareTax = this.medicareTax(amount);
+    const socialSecurityTax = this.socialSecurityTax(amount);
+
+    const monthlyRate = 122; //(await taxAmount).totalTax / 12;
+    const weeklyRate = 12; //(await taxAmount).totalTax / 52;
+
+    // Return the calculated tax rates in the TaxRate entity
+    return {
+      federalTaxWithHoldingYearly: 12, //(await taxAmount).totalTax,
+      taxableIncome: 12, //(await taxAmount).taxableIncome,
+      medicareTax: medicareTax,
+      socialSecurityTax: socialSecurityTax,
+      federalTaxWithHoldingMonthlyRate: monthlyRate,
+      federalTaxWithHoldingWeeklyRate: weeklyRate,
     };
   }
 }

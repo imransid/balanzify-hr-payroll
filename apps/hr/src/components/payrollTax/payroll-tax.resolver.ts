@@ -11,10 +11,25 @@ export class PayrollTaxResolver {
   @Query(() => TaxRate)
   async taxRateCalculation(
     @Args("amount", { type: () => Int }) amount: number,
-    @Args("filingStatus", { type: () => FilingStatus }) filingStatus: FilingStatus
+    @Args("filingStatus", { type: () => FilingStatus })
+    filingStatus: FilingStatus
   ): Promise<TaxRate> {
     try {
       return await this.payrollTaxService.taxRate(amount, filingStatus);
+    } catch (error) {
+      throw new GraphQLException(
+        "Failed to tax" + error.toString(),
+        "INTERNAL_SERVER_ERROR"
+      );
+    }
+  }
+
+  @Query(() => TaxRate)
+  async taxRateCalculationForEmployer(
+    @Args("amount", { type: () => Int }) amount: number
+  ): Promise<TaxRate> {
+    try {
+      return await this.payrollTaxService.taxRateEmployee(amount);
     } catch (error) {
       throw new GraphQLException(
         "Failed to tax" + error.toString(),

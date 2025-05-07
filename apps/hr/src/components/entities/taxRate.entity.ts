@@ -3,7 +3,7 @@ import { ObjectType, Field, Int } from "@nestjs/graphql";
 @ObjectType()
 export class TaxRate {
   @Field()
-  federalTaxWithHolding: number;
+  federalTaxWithHoldingYearly: number;
 
   @Field()
   medicareTax: number;
@@ -13,4 +13,10 @@ export class TaxRate {
 
   @Field()
   taxableIncome: number;
+
+  @Field()
+  federalTaxWithHoldingMonthlyRate: number;
+
+  @Field()
+  federalTaxWithHoldingWeeklyRate: number;
 }
