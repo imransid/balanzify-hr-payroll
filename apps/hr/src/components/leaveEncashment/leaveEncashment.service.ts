@@ -18,14 +18,6 @@ export class LeaveEncashmentService {
     return this.prisma.leaveEncashment.create({
       data: {
         ...createLeaveEncashmentInput,
-        leaveTypes: {
-          connect: createLeaveEncashmentInput.leaveTypeID.map((id) => ({
-            id,
-          })),
-        },
-      },
-      include: {
-        leaveTypes: true, // Optional: include related types in the response
       },
     });
   }
@@ -57,9 +49,6 @@ export class LeaveEncashmentService {
   async findOne(id: number): Promise<LeaveEncashment> {
     const leaveEncashment = await this.prisma.leaveEncashment.findUnique({
       where: { id },
-      include: {
-        leaveTypes: true, // ✅ Include related leave types
-      },
     });
 
     if (!leaveEncashment) {
@@ -76,20 +65,13 @@ export class LeaveEncashmentService {
   ): Promise<LeaveEncashment> {
     await this.findOne(id); // Ensure the leave encashment exists
 
-    const { leaveTypeID, ...rest } = updateLeaveEncashmentInput;
+    const { ...rest } = updateLeaveEncashmentInput;
 
     return this.prisma.leaveEncashment.update({
       where: { id },
       data: {
         ...rest,
         // Update the relation by resetting and connecting new ones
-        leaveTypes: {
-          set: [], // Remove existing relations
-          connect: leaveTypeID.map((id) => ({ id })),
-        },
-      },
-      include: {
-        leaveTypes: true, // Include related leaveTypes
       },
     });
   }
@@ -100,9 +82,6 @@ export class LeaveEncashmentService {
 
     return this.prisma.leaveEncashment.delete({
       where: { id },
-      include: {
-        leaveTypes: true, // Optional: include related data before deletion
-      },
     });
   }
 
@@ -134,9 +113,7 @@ export class LeaveEncashmentService {
         },
         skip,
         take: limit,
-        include: {
-          leaveTypes: true, // Include related leaveTypes
-        },
+
         orderBy: { createdAt: "desc" }, // Optional: order results by creation date
       }),
       this.prisma.leaveEncashment.count({
@@ -162,7 +139,6 @@ export class LeaveEncashmentService {
     return {
       leaveEncashment: leaveEncashments.map((leaveEncashment) => ({
         ...leaveEncashment,
-        leaveTypes: leaveEncashment.leaveTypes || [], // Ensure the leaveTypes field is populated
       })),
       totalCount,
       totalPages: Math.ceil(totalCount / limit),

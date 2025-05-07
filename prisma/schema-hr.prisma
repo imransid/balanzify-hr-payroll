@@ -133,8 +133,6 @@ model LeaveType {
   createdBy Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  encashments LeaveEncashment[]
 }
 
 // model LeaveType {
