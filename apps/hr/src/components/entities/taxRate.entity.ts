@@ -20,3 +20,17 @@ export class TaxRate {
   @Field()
   federalTaxWithHoldingWeeklyRate: number;
 }
+@ObjectType()
+export class TaxRateEmployer {
+  @Field()
+  futaTax: number;
+
+  @Field()
+  additionalMedicareTax: number;
+
+  @Field()
+  socialSecurityTax: number;
+
+  @Field()
+  medicareTax: number;
+}

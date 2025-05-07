@@ -41,6 +41,31 @@ export class EmployeePayrollService {
         const { rate, salary, OT, doubleOT, bonus, workingHours } =
           this.calculatePayrollFields(details, timeSheet);
 
+        let employeeDeduction = 0;
+        let netPay = 0;
+        let employeeContribution = 0;
+
+        const strArray = profile.profileDetails.deduction_Contribution;
+
+        // Convert each string item to a valid JSON object
+        const parsedArray = strArray.map((item) => {
+          const validJsonStr = item.replace(/'/g, '"');
+          return JSON.parse(validJsonStr);
+        });
+
+        if (parsedArray.length > 0) {
+          const totalCompanyAnnualMax = parsedArray.reduce((sum, item) => {
+            return sum + Number(item.compnay_annual_max);
+          }, 0);
+
+          const totalEmployeeAnnualMax = parsedArray.reduce((sum, item) => {
+            return sum + Number(item.employee_annual_max);
+          }, 0);
+
+          employeeContribution = totalCompanyAnnualMax;
+          employeeDeduction = totalEmployeeAnnualMax;
+        }
+
         return {
           id: index + 1,
           employeeName:
@@ -60,6 +85,8 @@ export class EmployeePayrollService {
           paySchedule: paySchedule as any,
           createdAt: new Date(),
           updatedAt: new Date(),
+          employeeContribution: employeeContribution,
+          employeeDeduction: employeeDeduction,
         };
       }
     );

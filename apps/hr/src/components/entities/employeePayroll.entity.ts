@@ -41,6 +41,12 @@ export class EmployeePayrollProcess {
   total?: string;
 
   @Field({ nullable: true })
+  employeeContribution?: number;
+
+  @Field({ nullable: true })
+  employeeDeduction?: number;
+
+  @Field({ nullable: true })
   grossPay?: string;
 
   @Field(() => Profile, { nullable: true })

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaHrService } from "../../../../../prisma/prisma-hr.service";
 import { taxTable2025 } from "./taxTable2025"; // Assume taxTable2025 is already defined
-import { TaxRate } from "../entities/taxRate.entity";
+import { TaxRate, TaxRateEmployer } from "../entities/taxRate.entity";
 import { PayrollTaxCalculationService } from "./payrollTaxCalculation.service";
 import { Tax } from "../entities/payrollTax.entity";
 import { FilingStatus } from "../../prisma/OnboardingType.enum";
@@ -19,23 +19,45 @@ export class PayrollTaxService {
     return salary * (rate / 100);
   }
 
+  private additionalMedicareTax(
+    salary: number,
+    rate: number = 0.9,
+    employeeStatus: boolean
+  ) {
+    // Additional
+    if (employeeStatus) {
+      // employee
+      if (salary > 200000) {
+        let employeeSalary = salary - 200000;
+        return employeeSalary * (rate / 100);
+      } else {
+        return 0;
+      }
+    } else {
+      // employer
+      return 0;
+    }
+  }
+
   // Medicare Tax
   private medicareTax(salary: number, rate: number = 1.45): number {
     // Employee contribution 1.45%
     return salary * (rate / 100);
   }
 
-  // Federal Tax (for Unemployment)
-  private federalTax(
+  // FUTA(for Unemployment)
+  private futaTax(
     amount: number,
     rate: number = 6,
-    isFirstPay: boolean,
-    creditReduction: boolean
+    isFirstPay: boolean = false,
+    creditReduction: boolean = false
   ): number {
+    let fixedAmount = 7000;
+
     if (isFirstPay && creditReduction && amount <= 7000) {
-      return amount * (0.6 / 100);
+      return fixedAmount * (0.6 / 100);
     }
-    return amount * (rate / 100);
+    return amount <= 7000 ? fixedAmount * (rate / 100) : 0;
   }
 
   // Federal Tax Withholding Calculation based on Filing Status
@@ -97,6 +119,8 @@ export class PayrollTaxService {
     const monthlyRate = 122; //(await taxAmount).totalTax / 12;
     const weeklyRate = 12; //(await taxAmount).totalTax / 52;
 
+    const additionalMedicareTax = this.additionalMedicareTax(amount, 0.9, true);
+
     // Return the calculated tax rates in the TaxRate entity
     return {
       federalTaxWithHoldingYearly: 12, //(await taxAmount).totalTax,
@@ -105,6 +129,25 @@ export class PayrollTaxService {
       socialSecurityTax: socialSecurityTax,
       federalTaxWithHoldingMonthlyRate: monthlyRate,
       federalTaxWithHoldingWeeklyRate: weeklyRate,
+    };
+  }
+
+  async taxRateEmployer(amount: number): Promise<TaxRateEmployer> {
+    // You need to calculate the tax amount based on filing status and income
+
+    //this.federalTaxWithHolding(true, filingStatus, amount);
+    const medicareTax = this.medicareTax(amount);
+    const socialSecurityTax = this.socialSecurityTax(amount);
+
+    const additionalMedicareTax = this.additionalMedicareTax(amount, 0.9, true);
+    const futaTax = this.futaTax(amount);
+
+    // Return the calculated tax rates in the TaxRate entity
+    return {
+      medicareTax: medicareTax,
+      socialSecurityTax: socialSecurityTax,
+      additionalMedicareTax: additionalMedicareTax,
+      futaTax: futaTax,
     };
   }
 }
