@@ -208,6 +208,7 @@ model Profile {
   profileDetails     profileDetails?
   // 👇 One-to-many relation
   timeSheetProcesses TimeSheetProcess[]
+  payrolls           EmployeePayroll[] // 👈 One-to-many relation
 
   @@index([email])
 }
@@ -587,4 +588,26 @@ model leaveBalanceDetails {
 
   leaveBalanceId Int? // Optional foreign key
   leaveBalance   leaveBalance? @relation("LeaveBalanceToDetails", fields: [leaveBalanceId], references: [id])
+}
+
+model EmployeePayroll {
+  id           Int     @id @default(autoincrement())
+  employeeName String?
+  workingHrs   String?
+  rate         String?
+  salary       String?
+  OT           String?
+  doubleOT     String?
+  PTO          String?
+  holidayPay   String?
+  bonus        String?
+  commission   String?
+  total        String?
+  grossPay     String?
+
+  profileId Int? // 👈 Foreign key
+  profile   Profile? @relation(fields: [profileId], references: [id])
+
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
 }

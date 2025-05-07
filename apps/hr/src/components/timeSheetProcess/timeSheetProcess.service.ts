@@ -74,21 +74,6 @@ export class TimeSheetProcessService {
           const totalWorked = `${hours}h ${minutes}m`;
 
           // 4. Create TimeSheetProcess
-          // return this.prisma.timeSheetProcess.create({
-          //   data: {
-          //     employeeId: e.id.toString(),
-          //     startTime: timeSheets[0].startTime,
-          //     endTime: timeSheets[timeSheets.length - 1].endTime,
-          //     status,
-          //     remark,
-          //     totalWorked,
-          //     startProcessTime: input.startProcessTime,
-          //     endProcessTIme: input.endProcessTIme,
-          //     dateType: input.dateType,
-          //     profileId: e.id,
-          //     createdBy: input.createdBy || null,
-          //   },
-          // });
 
           const created = await this.prisma.timeSheetProcess.create({
             data: {

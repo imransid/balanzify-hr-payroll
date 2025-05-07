@@ -39,6 +39,8 @@ import { LeaveBalanceDetailsResolver } from "./leaveBalanceDetails/leaveBalanceD
 import { LeaveBalanceDetailsService } from "./leaveBalanceDetails/leaveBalanceDetails.service";
 import { TimeSheetProcessResolver } from "./timeSheetProcess/timeSheetProcess.resolver";
 import { TimeSheetProcessService } from "./timeSheetProcess/timeSheetProcess.service";
+import { EmployeePayrollProcessResolver } from "./selaryProcess/selaryProcess.resolver";
+import { EmployeePayrollService } from "./selaryProcess/selaryProcess.service";
 
 @Module({
   imports: [
@@ -92,6 +94,8 @@ import { TimeSheetProcessService } from "./timeSheetProcess/timeSheetProcess.ser
     LeaveBalanceDetailsService,
     TimeSheetProcessResolver,
     TimeSheetProcessService,
+    EmployeePayrollProcessResolver,
+    EmployeePayrollService,
   ],
 })
 export class ComponentsModule {}
