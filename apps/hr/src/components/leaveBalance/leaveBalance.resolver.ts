@@ -109,14 +109,18 @@ export class LeaveBalanceResolver {
 
   @Query(() => LeaveBalancePaginatedResult)
   async searchLeaveBalances(
-    @Args("query", { type: () => String }) query: string,
+    @Args("query", { type: () => String, nullable: true }) query?: string,
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
-    page: number,
+    page?: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit?: number
   ): Promise<LeaveBalancePaginatedResult> {
     try {
-      return await this.leaveBalanceService.search(query, page, limit);
+      return await this.leaveBalanceService.search(
+        query ?? "",
+        page ?? 1,
+        limit ?? 10
+      );
     } catch (error) {
       throw new GraphQLException(
         "Failed to search leave balances",
