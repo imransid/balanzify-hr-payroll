@@ -139,6 +139,10 @@ export class EmployeePayrollService {
         let employeeDeduction = 0;
         let employeeContribution = 0;
 
+        const netPaySummary = await this.netPaySummaryCalculation(
+          parseInt(salary)
+        );
+
         const netPay = await this.netPayCalculation(parseInt(salary));
 
         const strArray = profile.profileDetails.deduction_Contribution;
@@ -182,7 +186,8 @@ export class EmployeePayrollService {
           updatedAt: new Date(),
           employeeContribution,
           employeeDeduction,
-          netPaySummary: netPay,
+          netPaySummary: netPaySummary,
+          netPay: netPay,
         };
       })
     );
@@ -190,9 +195,11 @@ export class EmployeePayrollService {
     return payrollList;
   }
 
-  private async netPayCalculation(amount: number): Promise<NetPaySummary> {
+  private async netPaySummaryCalculation(
+    amount: number
+  ): Promise<NetPaySummary> {
     let employeeDta = await this.payrollTaxService.taxRate(
-      amount * 50,
+      amount * 12,
       FilingStatus.SINGLE
     );
 
@@ -202,6 +209,30 @@ export class EmployeePayrollService {
       employeeDta,
       employerDta,
     };
+  }
+
+  private async netPayCalculation(amount: number) {
+    let employeeDta = await this.payrollTaxService.taxRate(
+      amount * 12,
+      FilingStatus.SINGLE
+    );
+
+    let employerDta = await this.payrollTaxService.taxRateEmployer(amount * 12);
+
+    const employeeTotalTax =
+      employeeDta.federalTaxWithHoldingYearly +
+      employeeDta.medicareTax +
+      employeeDta.socialSecurityTax;
+
+    const employerTotalTax =
+      employerDta.medicareTax +
+      employerDta.socialSecurityTax +
+      employerDta.additionalMedicareTax +
+      employerDta.futaTax;
+
+    const totalTax = employeeTotalTax + employerTotalTax;
+
+    return amount - totalTax;
   }
 
   private calculatePayrollFields(
