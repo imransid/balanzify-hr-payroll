@@ -10,6 +10,7 @@ import {
   LeaveBalanceSummary,
   LeaveTypeTotal,
 } from "../entities/leave-balance-details.entity";
+import { GraphQLException } from "exceptions/graphql-exception";
 
 @Injectable()
 export class LeaveBalanceDetailsService {
@@ -112,15 +113,25 @@ export class LeaveBalanceDetailsService {
       );
     }
 
-    const updatedLeaveBalanceDetail =
-      await this.prisma.leaveBalanceDetails.update({
-        where: { id },
-        data: updateData,
-      });
+    try {
+      const updatedLeaveBalanceDetail =
+        await this.prisma.leaveBalanceDetails.update({
+          where: { id },
+          data: {
+            leaveBalances: JSON.stringify(updateData.data),
+          },
+        });
 
-    console.log(`Leave Balance Detail with ID ${id} has been updated`);
+      return updatedLeaveBalanceDetail;
+    } catch (error) {
+      console.error("Update failed:", error); // 👈 LOG THE ACTUAL ERROR
+      throw new GraphQLException(
+        "Failed to update leave balance detail" + error.toString(),
+        "INTERNAL_SERVER_ERROR"
+      );
+    }
 
-    return updatedLeaveBalanceDetail;
+    // return updatedLeaveBalanceDetail;
   }
 
   async remove(id: number) {
@@ -140,40 +151,6 @@ export class LeaveBalanceDetailsService {
       where: { id },
     });
   }
-
-  // async totalLeaveTypeAva(): Promise<LeaveBalanceSummary> {
-  //   const leaveBalanceDetails = await this.prisma.leaveBalanceDetails.findMany({
-  //     select: {
-  //       leaveBalances: true,
-  //     },
-  //   });
-
-  //   const totals: Record<string, number> = {};
-
-  //   for (const detail of leaveBalanceDetails) {
-  //     const balance = JSON.parse(detail.leaveBalances);
-
-  //     for (const [key, value] of Object.entries(balance)) {
-  //       const numericValue = Number(value);
-  //       if (!isNaN(numericValue)) {
-  //         totals[key] = (totals[key] || 0) + numericValue;
-  //       }
-  //     }
-  //   }
-
-  //   // Convert totals object to LeaveTypeTotal[]
-  //   const data: LeaveTypeTotal[] = Object.entries(totals).map(
-  //     ([type, total]) => ({
-  //       type,
-  //       total,
-  //     })
-  //   );
-
-  //   return {
-  //     message: "Total Leave Type Summary",
-  //     data,
-  //   };
-  // }
 
   async totalLeaveTypeAva(): Promise<LeaveBalanceSummary> {
     const leaveBalanceDetails = await this.prisma.leaveBalanceDetails.findMany({
