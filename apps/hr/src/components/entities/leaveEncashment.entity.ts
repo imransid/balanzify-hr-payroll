@@ -37,8 +37,8 @@ export class LeaveEncashment {
   @Field(() => [LeaveType])
   leaveTypes: LeaveType[];
 
-  @Field(() => Int, { nullable: true })
-  createdBy?: number;
+  @Field({ nullable: true })
+  leaveEncasementDetails?: string;
 
   @Field()
   createdAt: Date;

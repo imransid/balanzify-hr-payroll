@@ -128,13 +128,10 @@ export class UpdateLeaveEncashmentInput extends PartialType(
   @IsString()
   leaveBalancePeriod?: string;
 
-  @Field(() => [Int])
-  @IsNotEmpty()
-  @IsArray()
-  @ArrayNotEmpty()
-  @IsInt({ each: true })
-  @IsIn([1, 2, 3, 4], { each: true }) // Each item must be 1, 2, 3, or 4
-  leaveTypeID: number[];
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  leaveEncasementDetails: number[];
 
   @Field(() => Int, { nullable: true })
   @IsOptional()

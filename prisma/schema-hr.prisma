@@ -258,7 +258,7 @@ model LeaveEncashment {
 
   encashmentDate DateTime
 
-  leaveTypes LeaveType[]
+  leaveEncasementDetails String?
 
   createdBy Int?
   createdAt DateTime @default(now())

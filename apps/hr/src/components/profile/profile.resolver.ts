@@ -105,11 +105,11 @@ export class ProfileResolver {
 
   @Query(() => ProfilePaginatedResult)
   async searchProfiles(
-    @Args("query", { type: () => String }) query: string,
+    @Args("query", { type: () => String, nullable: true }) query?: string,
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
-    page: number,
+    page = 1,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit = 10
   ): Promise<ProfilePaginatedResult> {
     try {
       return await this.profileService.search(query, page, limit);
