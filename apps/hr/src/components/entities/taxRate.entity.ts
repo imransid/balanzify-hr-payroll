@@ -34,3 +34,24 @@ export class TaxRateEmployer {
   @Field()
   medicareTax: number;
 }
+
+export interface EmployeeTaxData {
+  federalTaxWithHoldingYearly: number;
+  taxableIncome: number;
+  medicareTax: number;
+  socialSecurityTax: number;
+  federalTaxWithHoldingMonthlyRate: number;
+  federalTaxWithHoldingWeeklyRate: number;
+}
+
+export interface EmployerTaxData {
+  medicareTax: number;
+  socialSecurityTax: number;
+  additionalMedicareTax: number;
+  futaTax: number;
+}
+
+export interface NetPaySummary {
+  employeeDta: EmployeeTaxData;
+  employerDta: EmployerTaxData;
+}

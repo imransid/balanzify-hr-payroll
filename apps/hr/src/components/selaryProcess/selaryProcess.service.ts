@@ -1,10 +1,105 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaHrService } from "../../../../../prisma/prisma-hr.service";
 import { EmployeePayrollProcess } from "../entities/employeePayroll.entity";
+import { PayrollTaxService } from "../payrollTax/payroll-tax.service";
+import { FilingStatus } from "../../prisma/OnboardingType.enum";
+import { NetPaySummary } from "../entities/taxRate.entity";
 
 @Injectable()
 export class EmployeePayrollService {
-  constructor(private readonly prisma: PrismaHrService) {}
+  constructor(
+    private readonly prisma: PrismaHrService,
+    private readonly payrollTaxService: PayrollTaxService
+  ) {}
+
+  // async getAllEmployeePayroll(
+  //   payScheduleId: number
+  // ): Promise<EmployeePayrollProcess[]> {
+  //   const paySchedule = await this.prisma.paySchedule.findUnique({
+  //     where: { id: payScheduleId },
+  //   });
+
+  //   if (!paySchedule) {
+  //     throw new Error("PaySchedule not found");
+  //   }
+
+  //   const allProfile = await this.prisma.profile.findMany({
+  //     where: {
+  //       profileDetails: {
+  //         payScheduleID: payScheduleId,
+  //       },
+  //     },
+  //     include: {
+  //       profileDetails: true,
+  //       timeSheetProcesses: true,
+  //     },
+  //   });
+
+  //   if (!allProfile || allProfile.length === 0) {
+  //     throw new Error("No profiles found for this PaySchedule ID");
+  //   }
+
+  //   const payrollList: EmployeePayrollProcess[] = allProfile.map(
+  //     (profile, index) => {
+  //       const details = profile.profileDetails;
+  //       const timeSheet = profile.timeSheetProcesses;
+
+  //       const { rate, salary, OT, doubleOT, bonus, workingHours } =
+  //         this.calculatePayrollFields(details, timeSheet);
+
+  //       let employeeDeduction = 0;
+  //       let netPay = this.netPayCalculation(parseInt(salary));
+  //       let employeeContribution = 0;
+
+  //       const strArray = profile.profileDetails.deduction_Contribution;
+
+  //       // Convert each string item to a valid JSON object
+  //       const parsedArray = strArray.map((item) => {
+  //         const validJsonStr = item.replace(/'/g, '"');
+  //         return JSON.parse(validJsonStr);
+  //       });
+
+  //       if (parsedArray.length > 0) {
+  //         const totalCompanyAnnualMax = parsedArray.reduce((sum, item) => {
+  //           return sum + Number(item.compnay_annual_max);
+  //         }, 0);
+
+  //         const totalEmployeeAnnualMax = parsedArray.reduce((sum, item) => {
+  //           return sum + Number(item.employee_annual_max);
+  //         }, 0);
+
+  //         employeeContribution = totalCompanyAnnualMax;
+  //         employeeDeduction = totalEmployeeAnnualMax;
+  //       }
+
+  //       return {
+  //         id: index + 1,
+  //         employeeName:
+  //           `${profile.employeeName} ${profile.middleName || ""} ${profile.lastName || ""}`.trim(),
+  //         workingHrs: `${workingHours}`,
+  //         Rate: rate,
+  //         Salary: salary,
+  //         OT,
+  //         doubleOT,
+  //         PTO: "0", // Placeholder
+  //         holydayPay: "0", // Placeholder
+  //         bonus,
+  //         commission: "0", // Placeholder
+  //         total: salary,
+  //         grossPay: salary,
+  //         profile: profile as any,
+  //         paySchedule: paySchedule as any,
+  //         createdAt: new Date(),
+  //         updatedAt: new Date(),
+  //         employeeContribution: employeeContribution,
+  //         employeeDeduction: employeeDeduction,
+  //         netPaySummary: netPay,
+  //       };
+  //     }
+  //   );
+
+  //   return payrollList;
+  // }
 
   async getAllEmployeePayroll(
     payScheduleId: number
@@ -33,8 +128,8 @@ export class EmployeePayrollService {
       throw new Error("No profiles found for this PaySchedule ID");
     }
 
-    const payrollList: EmployeePayrollProcess[] = allProfile.map(
-      (profile, index) => {
+    const payrollList = await Promise.all(
+      allProfile.map(async (profile, index) => {
         const details = profile.profileDetails;
         const timeSheet = profile.timeSheetProcesses;
 
@@ -42,12 +137,12 @@ export class EmployeePayrollService {
           this.calculatePayrollFields(details, timeSheet);
 
         let employeeDeduction = 0;
-        let netPay = 0;
         let employeeContribution = 0;
+
+        const netPay = await this.netPayCalculation(parseInt(salary));
 
         const strArray = profile.profileDetails.deduction_Contribution;
 
-        // Convert each string item to a valid JSON object
         const parsedArray = strArray.map((item) => {
           const validJsonStr = item.replace(/'/g, '"');
           return JSON.parse(validJsonStr);
@@ -85,13 +180,28 @@ export class EmployeePayrollService {
           paySchedule: paySchedule as any,
           createdAt: new Date(),
           updatedAt: new Date(),
-          employeeContribution: employeeContribution,
-          employeeDeduction: employeeDeduction,
+          employeeContribution,
+          employeeDeduction,
+          netPaySummary: netPay,
         };
-      }
+      })
     );
 
     return payrollList;
+  }
+
+  private async netPayCalculation(amount: number): Promise<NetPaySummary> {
+    let employeeDta = await this.payrollTaxService.taxRate(
+      amount * 50,
+      FilingStatus.SINGLE
+    );
+
+    let employerDta = await this.payrollTaxService.taxRateEmployer(amount * 12);
+
+    return {
+      employeeDta,
+      employerDta,
+    };
   }
 
   private calculatePayrollFields(
