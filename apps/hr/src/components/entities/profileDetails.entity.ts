@@ -95,6 +95,8 @@ export class ProfileDetails {
   @Field({ nullable: true }) attendanceDeviceIDBiometricRFtagID?: string;
   @Field({ nullable: true }) holidayList?: string;
 
+  @Field({ nullable: true }) shiftId?: number;
+
   // 👇 Add this to expose shift
   @Field(() => Shift, { nullable: true })
   shift?: Shift;

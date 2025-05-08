@@ -80,7 +80,12 @@ export class ProfileService {
         skip,
         take: limit,
         include: {
-          profileDetails: true,
+          profileDetails: {
+            include: {
+              shift: true,
+              paySchedule: true,
+            },
+          },
         },
       }) || [],
       this.prisma.profile.count(),
@@ -98,7 +103,12 @@ export class ProfileService {
     const profile = await this.prisma.profile.findUnique({
       where: { id },
       include: {
-        profileDetails: true,
+        profileDetails: {
+          include: {
+            shift: true,
+            paySchedule: true,
+          },
+        },
       },
     });
     if (!profile) {

@@ -20,8 +20,10 @@ export class ProfileDetailsService {
       data: {
         ...rest,
         shiftId: shiftId ?? null, // ✅ Use shiftId directly
+        payScheduleID: createProfileDetailsInput.payScheduleID ?? null,
       },
       include: {
+        paySchedule: true,
         shift: true, // Optional: include shift info in result
         profile: true, // Optional: include profile info in result
       },
@@ -46,6 +48,8 @@ export class ProfileDetailsService {
       this.prisma.profileDetails.count(),
     ]);
 
+    console.log("itels", items.shift);
+
     return {
       profileDetails: items,
       totalPages: Math.ceil(totalCount / limit),
@@ -57,6 +61,10 @@ export class ProfileDetailsService {
   async findOne(id: number): Promise<ProfileDetails> {
     const item = await this.prisma.profileDetails.findUnique({
       where: { id },
+      include: {
+        paySchedule: true,
+        shift: true,
+      },
     });
     if (!item) {
       throw new NotFoundException(`ProfileDetails with ID ${id} not found`);
@@ -71,7 +79,17 @@ export class ProfileDetailsService {
     await this.findOne(id); // Ensure existence
     return this.prisma.profileDetails.update({
       where: { id },
-      data: updateProfileDetailsInput,
+      // data: updateProfileDetailsInput,
+      data: {
+        ...updateProfileDetailsInput,
+        shiftId: updateProfileDetailsInput.shiftId ?? undefined,
+        payScheduleID: updateProfileDetailsInput.payScheduleID ?? undefined,
+      },
+      include: {
+        shift: true,
+        paySchedule: true,
+        profile: true,
+      },
     });
   }
 
