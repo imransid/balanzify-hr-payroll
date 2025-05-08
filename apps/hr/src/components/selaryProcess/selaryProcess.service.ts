@@ -4,6 +4,7 @@ import { EmployeePayrollProcess } from "../entities/employeePayroll.entity";
 import { PayrollTaxService } from "../payrollTax/payroll-tax.service";
 import { FilingStatus } from "../../prisma/OnboardingType.enum";
 import { NetPaySummary } from "../entities/taxRate.entity";
+import { profileDetails } from "prisma/generated/hr";
 
 @Injectable()
 export class EmployeePayrollService {
@@ -11,95 +12,6 @@ export class EmployeePayrollService {
     private readonly prisma: PrismaHrService,
     private readonly payrollTaxService: PayrollTaxService
   ) {}
-
-  // async getAllEmployeePayroll(
-  //   payScheduleId: number
-  // ): Promise<EmployeePayrollProcess[]> {
-  //   const paySchedule = await this.prisma.paySchedule.findUnique({
-  //     where: { id: payScheduleId },
-  //   });
-
-  //   if (!paySchedule) {
-  //     throw new Error("PaySchedule not found");
-  //   }
-
-  //   const allProfile = await this.prisma.profile.findMany({
-  //     where: {
-  //       profileDetails: {
-  //         payScheduleID: payScheduleId,
-  //       },
-  //     },
-  //     include: {
-  //       profileDetails: true,
-  //       timeSheetProcesses: true,
-  //     },
-  //   });
-
-  //   if (!allProfile || allProfile.length === 0) {
-  //     throw new Error("No profiles found for this PaySchedule ID");
-  //   }
-
-  //   const payrollList: EmployeePayrollProcess[] = allProfile.map(
-  //     (profile, index) => {
-  //       const details = profile.profileDetails;
-  //       const timeSheet = profile.timeSheetProcesses;
-
-  //       const { rate, salary, OT, doubleOT, bonus, workingHours } =
-  //         this.calculatePayrollFields(details, timeSheet);
-
-  //       let employeeDeduction = 0;
-  //       let netPay = this.netPayCalculation(parseInt(salary));
-  //       let employeeContribution = 0;
-
-  //       const strArray = profile.profileDetails.deduction_Contribution;
-
-  //       // Convert each string item to a valid JSON object
-  //       const parsedArray = strArray.map((item) => {
-  //         const validJsonStr = item.replace(/'/g, '"');
-  //         return JSON.parse(validJsonStr);
-  //       });
-
-  //       if (parsedArray.length > 0) {
-  //         const totalCompanyAnnualMax = parsedArray.reduce((sum, item) => {
-  //           return sum + Number(item.compnay_annual_max);
-  //         }, 0);
-
-  //         const totalEmployeeAnnualMax = parsedArray.reduce((sum, item) => {
-  //           return sum + Number(item.employee_annual_max);
-  //         }, 0);
-
-  //         employeeContribution = totalCompanyAnnualMax;
-  //         employeeDeduction = totalEmployeeAnnualMax;
-  //       }
-
-  //       return {
-  //         id: index + 1,
-  //         employeeName:
-  //           `${profile.employeeName} ${profile.middleName || ""} ${profile.lastName || ""}`.trim(),
-  //         workingHrs: `${workingHours}`,
-  //         Rate: rate,
-  //         Salary: salary,
-  //         OT,
-  //         doubleOT,
-  //         PTO: "0", // Placeholder
-  //         holydayPay: "0", // Placeholder
-  //         bonus,
-  //         commission: "0", // Placeholder
-  //         total: salary,
-  //         grossPay: salary,
-  //         profile: profile as any,
-  //         paySchedule: paySchedule as any,
-  //         createdAt: new Date(),
-  //         updatedAt: new Date(),
-  //         employeeContribution: employeeContribution,
-  //         employeeDeduction: employeeDeduction,
-  //         netPaySummary: netPay,
-  //       };
-  //     }
-  //   );
-
-  //   return payrollList;
-  // }
 
   async getAllEmployeePayroll(
     payScheduleId: number
@@ -133,7 +45,7 @@ export class EmployeePayrollService {
         const details = profile.profileDetails;
         const timeSheet = profile.timeSheetProcesses;
 
-        const { rate, salary, OT, doubleOT, bonus, workingHours } =
+        const { rate, salary, OT, doubleOT, bonus, workingHours, grossPay } =
           this.calculatePayrollFields(details, timeSheet);
 
         let employeeDeduction = 0;
@@ -142,8 +54,6 @@ export class EmployeePayrollService {
         const netPaySummary = await this.netPaySummaryCalculation(
           parseInt(salary)
         );
-
-        const netPay = await this.netPayCalculation(parseInt(salary));
 
         const strArray = profile.profileDetails.deduction_Contribution;
 
@@ -165,6 +75,12 @@ export class EmployeePayrollService {
           employeeDeduction = totalEmployeeAnnualMax;
         }
 
+        const netPay = await this.netPayCalculation(
+          parseFloat(salary),
+          details.maritalStatus,
+          employeeDeduction
+        );
+
         return {
           id: index + 1,
           employeeName:
@@ -179,7 +95,7 @@ export class EmployeePayrollService {
           bonus,
           commission: "0", // Placeholder
           total: salary,
-          grossPay: salary,
+          grossPay: grossPay.toString(),
           profile: profile as any,
           paySchedule: paySchedule as any,
           createdAt: new Date(),
@@ -199,11 +115,11 @@ export class EmployeePayrollService {
     amount: number
   ): Promise<NetPaySummary> {
     let employeeDta = await this.payrollTaxService.taxRate(
-      amount * 12,
+      amount,
       FilingStatus.SINGLE
     );
 
-    let employerDta = await this.payrollTaxService.taxRateEmployer(amount * 12);
+    let employerDta = await this.payrollTaxService.taxRateEmployer(amount);
 
     return {
       employeeDta,
@@ -211,32 +127,36 @@ export class EmployeePayrollService {
     };
   }
 
-  private async netPayCalculation(amount: number) {
+  private async netPayCalculation(
+    amount: number,
+    filingStatus: string,
+    deductions: number
+  ) {
     let employeeDta = await this.payrollTaxService.taxRate(
-      amount * 12,
-      FilingStatus.SINGLE
+      amount,
+      filingStatus === "Married" ? FilingStatus.MARRIED : FilingStatus.SINGLE
     );
 
-    let employerDta = await this.payrollTaxService.taxRateEmployer(amount * 12);
+    let employerDta = await this.payrollTaxService.taxRateEmployer(amount);
 
     const employeeTotalTax =
       employeeDta.federalTaxWithHoldingYearly +
       employeeDta.medicareTax +
       employeeDta.socialSecurityTax;
 
-    const employerTotalTax =
-      employerDta.medicareTax +
-      employerDta.socialSecurityTax +
-      employerDta.additionalMedicareTax +
-      employerDta.futaTax;
+    // const employerTotalTax =
+    //   employerDta.medicareTax +
+    //   employerDta.socialSecurityTax +
+    //   employerDta.additionalMedicareTax +
+    //   employerDta.futaTax;
 
-    const totalTax = employeeTotalTax + employerTotalTax;
+    const totalNetPay = employeeTotalTax + deductions;
 
-    return amount - totalTax;
+    return totalNetPay;
   }
 
   private calculatePayrollFields(
-    details: any,
+    details: profileDetails,
     timeSheet: any
   ): {
     rate: string;
@@ -245,11 +165,10 @@ export class EmployeePayrollService {
     doubleOT: string;
     bonus: string;
     workingHours: number;
+    grossPay: number;
   } {
     const ratePerHour = parseFloat(details?.ratePerHour || "0");
     const frequency = (details?.payFrequency || "").toUpperCase();
-
-    const workingHour = timeSheet;
 
     let workingDays = 5;
 
@@ -285,7 +204,31 @@ export class EmployeePayrollService {
     }
 
     const workingHours = +(totalWorkedMinutes / 60).toFixed(2); // Round to 2 decimal places
-    const salary = ratePerHour * workingHours;
+
+    let salary, grossPay, overTime, DbOverTime, bonus;
+
+    if (details.payType.toUpperCase() === "HOURLY") {
+      salary =
+        parseFloat(details.ratePerHour) *
+        parseFloat(details.hoursPerDay) *
+        parseFloat(details.dayForWeek) *
+        52;
+
+      //     Hourly staff: Calculate Gross Earnings
+      overTime = details.offerDate ? 0 : 0;
+      bonus = details.bonus ? 0 : 0;
+      grossPay = overTime + bonus + salary;
+      //+ (Overtime Hours × Overtime Rate) + (Other additions like bonuses)
+    } else if (details.payType.toUpperCase() === "MONTHLY") {
+      salary = parseFloat(details.salary) * 12;
+
+      // Salaried staff:
+      //  Gross Pay = Salary portion for this pay period + (Any commissions, bonuses, etc.)
+
+      overTime = details.offerDate ? 0 : 0;
+      bonus = details.bonus ? 0 : 0;
+      grossPay = overTime + bonus + salary;
+    }
 
     return {
       rate: ratePerHour.toFixed(2),
@@ -294,6 +237,7 @@ export class EmployeePayrollService {
       doubleOT: details?.doubleOverTimePay ? "Yes" : "No",
       bonus: details?.bonus ? "Yes" : "No",
       workingHours,
+      grossPay,
     };
   }
 }

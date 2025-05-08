@@ -89,6 +89,8 @@ export class PayrollTaxService {
 
   // Main method to calculate all tax components
   async taxRate(amount: number, filingStatus: FilingStatus): Promise<TaxRate> {
+    console.log("daddada", typeof amount, amount);
+
     // You need to calculate the tax amount based on filing status and income
     const taxAmount = this.federalTaxWithHolding(true, filingStatus, amount);
     const medicareTax = this.medicareTax(amount);
@@ -134,6 +136,8 @@ export class PayrollTaxService {
 
   async taxRateEmployer(amount: number): Promise<TaxRateEmployer> {
     // You need to calculate the tax amount based on filing status and income
+
+    console.log(typeof amount, amount);
 
     //this.federalTaxWithHolding(true, filingStatus, amount);
     const medicareTax = this.medicareTax(amount);

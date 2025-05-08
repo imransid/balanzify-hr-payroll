@@ -29,20 +29,27 @@ export class TimeSheetProcessService {
         },
       });
 
+      console.log("profiles", profiles.length);
+
       const timeSheetProcesses = await Promise.all(
         profiles.map(async (e) => {
-          // 1. Get all timeSheet entries within the process window
+          console.log("Processing employee ID:", e.id);
+          console.log("Start:", input.startProcessTime);
+          console.log("End:", input.endProcessTIme);
+
           const timeSheets = await this.prisma.timeSheet.findMany({
             where: {
               employeeId: e.id,
               startTime: {
-                gte: input.startProcessTime,
+                gte: new Date(input.startProcessTime),
               },
               endTime: {
-                lte: input.endProcessTIme,
+                lte: new Date(input.endProcessTIme),
               },
             },
           });
+
+          console.log("timeSheets > : = L > // > ", timeSheets, e.id);
 
           if (!timeSheets.length) {
             return null; // skip if no timesheets
