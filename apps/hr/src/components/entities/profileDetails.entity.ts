@@ -102,7 +102,7 @@ export class ProfileDetails {
   @Field(() => Shift, { nullable: true })
   shift?: Shift;
 
-  @Field(() => Shift, { nullable: true })
+  @Field(() => Holiday, { nullable: true })
   holidayDetails?: Holiday;
 
   // @Field({ nullable: true }) shift?: string;
