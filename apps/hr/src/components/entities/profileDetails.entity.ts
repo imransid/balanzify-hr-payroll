@@ -2,6 +2,7 @@ import { ObjectType, Field, Int } from "@nestjs/graphql";
 import { Documentation } from "./documentation.entity";
 import { Shift } from "./shift.entity";
 import { PaySchedule } from "./paySchedule.entity";
+import { Holiday } from "./holiday.entity";
 
 @ObjectType()
 export class ProfileDetails {
@@ -93,13 +94,17 @@ export class ProfileDetails {
 
   // Attendance & Shift
   @Field({ nullable: true }) attendanceDeviceIDBiometricRFtagID?: string;
-  @Field({ nullable: true }) holidayList?: string;
+  @Field({ nullable: true }) holidayID?: number;
 
   @Field({ nullable: true }) shiftId?: number;
 
   // 👇 Add this to expose shift
   @Field(() => Shift, { nullable: true })
   shift?: Shift;
+
+  @Field(() => Shift, { nullable: true })
+  holidayDetails?: Holiday;
+
   // @Field({ nullable: true }) shift?: string;
 
   // Tax Info (State & Federal)

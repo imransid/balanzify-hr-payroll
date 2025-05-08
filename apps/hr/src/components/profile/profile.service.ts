@@ -84,6 +84,7 @@ export class ProfileService {
             include: {
               shift: true,
               paySchedule: true,
+              holidayDetails: true,
             },
           },
         },
@@ -107,6 +108,7 @@ export class ProfileService {
           include: {
             shift: true,
             paySchedule: true,
+            holidayDetails: true,
           },
         },
       },

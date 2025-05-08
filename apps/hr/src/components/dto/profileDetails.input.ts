@@ -149,7 +149,7 @@ export class CreateProfileDetailsInput {
   @IsOptional()
   @IsString()
   attendanceDeviceIDBiometricRFtagID?: string;
-  @Field({ nullable: true }) @IsOptional() @IsString() holidayList?: string;
+  @Field({ nullable: true }) @IsOptional() @IsInt() holidayID?: number;
   @Field({ nullable: true }) @IsOptional() @IsInt() shiftId?: number;
 
   @Field({ nullable: true })

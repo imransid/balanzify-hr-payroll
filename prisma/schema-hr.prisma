@@ -25,7 +25,8 @@ model holiday {
   updateAt  DateTime? @default(now())
 
   // Relation field
-  details holidayDetails[]
+  details        holidayDetails[]
+  profileDetails profileDetails[]
 }
 
 model holidayDetails {
@@ -387,7 +388,6 @@ model profileDetails {
   accountConfirmRoutingNumber    String?
 
   attendanceDeviceIDBiometricRFtagID String?
-  holidayList                        String?
 
   stateWhereTheEmployeeLives                  String?
   maritalStatus                               String?
@@ -436,14 +436,15 @@ model profileDetails {
 
   photo String?
 
+  holidayDetails holiday? @relation(fields: [holidayID], references: [id], onDelete: Cascade)
+  holidayID      Int?
+
   payScheduleID Int?
   paySchedule   PaySchedule? @relation(fields: [payScheduleID], references: [id], onDelete: Cascade)
 
-  profileId Int     @unique // Ensures one-to-one relation
-  // Relation field
+  profileId Int     @unique
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
-  // 👇 Foreign key to Shift
   shiftId Int?
   shift   Shift? @relation(fields: [shiftId], references: [id], onDelete: Cascade)
 

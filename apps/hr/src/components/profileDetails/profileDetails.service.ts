@@ -21,11 +21,13 @@ export class ProfileDetailsService {
         ...rest,
         shiftId: shiftId ?? null, // ✅ Use shiftId directly
         payScheduleID: createProfileDetailsInput.payScheduleID ?? null,
+        holidayID: createProfileDetailsInput.holidayID ?? null,
       },
       include: {
         paySchedule: true,
         shift: true, // Optional: include shift info in result
         profile: true, // Optional: include profile info in result
+        holidayDetails: true,
       },
     });
   }
@@ -43,6 +45,7 @@ export class ProfileDetailsService {
         include: {
           shift: true,
           paySchedule: true,
+          holidayDetails: true,
         },
       }),
       this.prisma.profileDetails.count(),
@@ -64,6 +67,7 @@ export class ProfileDetailsService {
       include: {
         paySchedule: true,
         shift: true,
+        holidayDetails: true,
       },
     });
     if (!item) {
@@ -84,11 +88,13 @@ export class ProfileDetailsService {
         ...updateProfileDetailsInput,
         shiftId: updateProfileDetailsInput.shiftId ?? undefined,
         payScheduleID: updateProfileDetailsInput.payScheduleID ?? undefined,
+        holidayID: updateProfileDetailsInput.holidayID ?? undefined,
       },
       include: {
         shift: true,
         paySchedule: true,
         profile: true,
+        holidayDetails: true,
       },
     });
   }
