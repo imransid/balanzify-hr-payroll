@@ -34,10 +34,10 @@ export class PaySchedule {
   paydayOfTheMonth?: Date;
 
   @Field({ nullable: true })
-  endOfEachMonthPayPeriodTimeLine?: Date;
+  endOfEachMonthPayPeriodTimeLine?: string;
 
   @Field({ nullable: true })
-  endOfEachMonthPayDay?: Date;
+  endOfEachMonthPayDay?: string;
 
   @Field({ nullable: true })
   daysBeforePayday?: string;
@@ -53,10 +53,10 @@ export class PaySchedule {
   status?: string;
 
   @Field({ nullable: true })
-  secondEndOfEachMonthPayPeriodTimeLine?: Date;
+  secondEndOfEachMonthPayPeriodTimeLine?: string;
 
   @Field({ nullable: true })
-  secondEndOfEachMonthPayDay?: Date;
+  secondEndOfEachMonthPayDay?: string;
 
   @Field({ nullable: true })
   secondDaysBeforePayday?: string;

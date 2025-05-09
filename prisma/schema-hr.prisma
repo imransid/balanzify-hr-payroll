@@ -282,16 +282,16 @@ model PaySchedule {
   // month
   firstPayPeriodOfTheMonth        DateTime?
   paydayOfTheMonth                DateTime?
-  endOfEachMonthPayPeriodTimeLine DateTime?
-  endOfEachMonthPayDay            DateTime?
+  endOfEachMonthPayPeriodTimeLine String?
+  endOfEachMonthPayDay            String?
   daysBeforePayday                String? /// Payday of the month - daysBeforePayday = End date
 
   // twice month
 
   secondPayPeriodOfTheMonth             DateTime?
   secondPaydayOfTheMonth                DateTime?
-  secondEndOfEachMonthPayPeriodTimeLine DateTime?
-  secondEndOfEachMonthPayDay            DateTime?
+  secondEndOfEachMonthPayPeriodTimeLine String?
+  secondEndOfEachMonthPayDay            String?
   secondDaysBeforePayday                String? /// Payday of the month - daysBeforePayday = End date
 
   profileDetails profileDetails[]

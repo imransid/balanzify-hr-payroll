@@ -63,13 +63,13 @@ export class CreatePayScheduleInput {
 
   @Field({ nullable: true })
   @IsOptional()
-  @IsDate()
-  endOfEachMonthPayPeriodTimeLine?: Date;
+  @IsString()
+  endOfEachMonthPayPeriodTimeLine?: string;
 
   @Field({ nullable: true })
   @IsOptional()
-  @IsDate()
-  endOfEachMonthPayDay?: Date;
+  @IsString()
+  endOfEachMonthPayDay?: string;
 
   @Field({ nullable: true })
   @IsOptional()
@@ -89,13 +89,13 @@ export class CreatePayScheduleInput {
 
   @Field({ nullable: true })
   @IsOptional()
-  @IsDate()
-  secondEndOfEachMonthPayPeriodTimeLine?: Date;
+  @IsString()
+  secondEndOfEachMonthPayPeriodTimeLine?: string;
 
   @Field({ nullable: true })
   @IsOptional()
-  @IsDate()
-  secondEndOfEachMonthPayDay?: Date;
+  @IsString()
+  secondEndOfEachMonthPayDay?: string;
 
   @Field({ nullable: true })
   @IsOptional()
