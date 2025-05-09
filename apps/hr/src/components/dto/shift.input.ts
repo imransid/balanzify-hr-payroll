@@ -50,13 +50,11 @@ export class CreateShiftInput {
 
   @Field()
   @IsNotEmpty()
-  @IsString()
-  shiftIn: string;
+  shiftIn?: Date;
 
   @Field()
   @IsNotEmpty()
-  @IsString()
-  shiftOut: string;
+  shiftOut?: Date;
 
   @Field()
   @IsNotEmpty()
@@ -130,16 +128,6 @@ export class UpdateShiftInput extends PartialType(CreateShiftInput) {
   @IsOptional()
   @IsString()
   shiftLate?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  shiftIn?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  shiftOut?: string;
 
   @Field({ nullable: true })
   @IsOptional()

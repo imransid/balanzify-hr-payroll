@@ -24,10 +24,10 @@ export class Shift {
   shiftLate: string;
 
   @Field()
-  shiftIn: string;
+  shiftIn: Date;
 
   @Field()
-  shiftOut: string;
+  shiftOut: Date;
 
   @Field()
   lunchTime: string;

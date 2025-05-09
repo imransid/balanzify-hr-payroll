@@ -210,6 +210,7 @@ model Profile {
   // 👇 One-to-many relation
   timeSheetProcesses TimeSheetProcess[]
   payrolls           EmployeePayroll[] // 👈 One-to-many relation
+  timeSheet          timeSheet[]
 
   @@index([email])
 }
@@ -224,8 +225,8 @@ model Shift {
 
   regularHour String
   shiftLate   String
-  shiftIn     String
-  shiftOut    String
+  shiftIn     DateTime
+  shiftOut    DateTime
 
   lunchTime String
   lunchIn   String
@@ -540,6 +541,10 @@ model timeSheet {
   startProcessDate DateTime?
   endProcessDate   DateTime?
   status           String?
+  overtimeMinutes  Int?
+  lateMinutes      Int?
+
+  profile Profile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
   createdBy Int?
   createdAt DateTime? @default(now())

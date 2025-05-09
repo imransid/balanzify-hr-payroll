@@ -7,20 +7,106 @@ import {
 } from "../dto/timesheet.input";
 import { TimeSheet } from "../entities/timesheet.entity";
 
+import { differenceInMinutes, parseISO } from "date-fns";
+
 @Injectable()
 export class TimeSheetService {
   constructor(private readonly prisma: PrismaHrService) {}
 
+  // async create(createTimeSheetInput: CreateTimeSheetInput): Promise<TimeSheet> {
+  //   // get user
+  //   const profile = await this.prisma.profile.findUnique({
+  //     where: {
+  //       id: createTimeSheetInput.employeeId,
+  //     },
+  //     include: {
+  //       profileDetails: {
+  //         include: {
+  //           shift: true,
+  //         },
+  //       },
+  //     },
+  //   });
+
+  //   if (!profile) {
+  //     throw new NotFoundException(
+  //       `profile with ID ${createTimeSheetInput.employeeId} not found`
+  //     );
+  //   }
+  //   // late calculation
+
+  //   const shiftStartTime = profile.profileDetails.shift.shiftIn; // 8 AM
+  //   const shiftEndTime = profile.profileDetails.shift.shiftOut; // 6 PM
+  //   const workingHour = profile.profileDetails.hoursPerDay; // example 8
+
+  //   createTimeSheetInput.startTime;
+  //   createTimeSheetInput.endTime;
+
+  //   // overtime calculation
+
+  //   //dot calculation
+
+  //   return this.prisma.timeSheet.create({
+  //     data: createTimeSheetInput,
+  //   });
+  // }
+
   async create(createTimeSheetInput: CreateTimeSheetInput): Promise<TimeSheet> {
-    return this.prisma.timeSheet.create({
-      data: createTimeSheetInput,
+    const profile = await this.prisma.profile.findUnique({
+      where: { id: createTimeSheetInput.employeeId },
+      include: {
+        profileDetails: {
+          include: {
+            shift: true,
+          },
+        },
+      },
     });
 
-    // process :
-    // 1. holiday  check
-    // 2. leave ace kina
-    // 3. shift time comple korce kina , over time .. 9 hour to -1 hour to lunch break
-    // leave table // shift table
+    if (!profile) {
+      throw new NotFoundException(
+        `Profile with ID ${createTimeSheetInput.employeeId} not found`
+      );
+    }
+
+    const shiftStartTime = profile.profileDetails.shift.shiftIn; // ISO
+    const workingHour = profile.profileDetails.hoursPerDay; // e.g. 8
+
+    const actualStartTime = createTimeSheetInput.startTime;
+    const actualEndTime = createTimeSheetInput.endTime;
+
+    // 🕒 Late time in minutes
+    const lateMinutes =
+      actualStartTime > shiftStartTime
+        ? differenceInMinutes(actualStartTime, shiftStartTime)
+        : 0;
+
+    // ⌛ Total worked time
+    const workedMinutes = differenceInMinutes(actualEndTime, actualStartTime);
+    const expectedMinutes = parseInt(workingHour) * 60;
+
+    // ⏱️ Overtime in minutes
+    const overtimeMinutes =
+      workedMinutes > expectedMinutes ? workedMinutes - expectedMinutes : 0;
+
+    // Debug or save it
+    console.log({
+      shiftStartTime,
+      actualStartTime,
+      lateMinutes,
+      workedMinutes,
+      expectedMinutes,
+      overtimeMinutes,
+    });
+
+    // Extend the model if needed to store late/overtime
+    return this.prisma.timeSheet.create({
+      data: {
+        ...createTimeSheetInput,
+        overtimeMinutes: overtimeMinutes,
+        lateMinutes: lateMinutes,
+      },
+    });
   }
 
   async findAll(page = 1, limit = 10): Promise<TimeSheetsPaginatedResult> {
