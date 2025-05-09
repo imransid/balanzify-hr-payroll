@@ -50,11 +50,13 @@ export class CreateShiftInput {
 
   @Field()
   @IsNotEmpty()
-  shiftIn?: Date;
+  @IsDate()
+  shiftIn: Date;
 
   @Field()
   @IsNotEmpty()
-  shiftOut?: Date;
+  @IsDate()
+  shiftOut: Date;
 
   @Field()
   @IsNotEmpty()
