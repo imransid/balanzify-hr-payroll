@@ -109,6 +109,11 @@ export class CreatePayScheduleInput {
 
   @Field({ nullable: true })
   @IsOptional()
+  @IsString()
+  monthType?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
   @IsInt()
   createdBy?: number;
 }

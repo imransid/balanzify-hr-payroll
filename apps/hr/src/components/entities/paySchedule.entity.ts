@@ -62,6 +62,9 @@ export class PaySchedule {
   secondDaysBeforePayday?: string;
 
   @Field({ nullable: true })
+  monthType?: string;
+
+  @Field({ nullable: true })
   createdBy?: number;
 
   @Field()

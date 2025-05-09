@@ -279,6 +279,8 @@ model PaySchedule {
 
   status String?
 
+  monthType String?
+
   // month
   firstPayPeriodOfTheMonth        DateTime?
   paydayOfTheMonth                DateTime?
