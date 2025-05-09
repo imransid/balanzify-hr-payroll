@@ -13,44 +13,6 @@ import { differenceInMinutes, parseISO } from "date-fns";
 export class TimeSheetService {
   constructor(private readonly prisma: PrismaHrService) {}
 
-  // async create(createTimeSheetInput: CreateTimeSheetInput): Promise<TimeSheet> {
-  //   // get user
-  //   const profile = await this.prisma.profile.findUnique({
-  //     where: {
-  //       id: createTimeSheetInput.employeeId,
-  //     },
-  //     include: {
-  //       profileDetails: {
-  //         include: {
-  //           shift: true,
-  //         },
-  //       },
-  //     },
-  //   });
-
-  //   if (!profile) {
-  //     throw new NotFoundException(
-  //       `profile with ID ${createTimeSheetInput.employeeId} not found`
-  //     );
-  //   }
-  //   // late calculation
-
-  //   const shiftStartTime = profile.profileDetails.shift.shiftIn; // 8 AM
-  //   const shiftEndTime = profile.profileDetails.shift.shiftOut; // 6 PM
-  //   const workingHour = profile.profileDetails.hoursPerDay; // example 8
-
-  //   createTimeSheetInput.startTime;
-  //   createTimeSheetInput.endTime;
-
-  //   // overtime calculation
-
-  //   //dot calculation
-
-  //   return this.prisma.timeSheet.create({
-  //     data: createTimeSheetInput,
-  //   });
-  // }
-
   async create(createTimeSheetInput: CreateTimeSheetInput): Promise<TimeSheet> {
     const profile = await this.prisma.profile.findUnique({
       where: { id: createTimeSheetInput.employeeId },
@@ -69,42 +31,42 @@ export class TimeSheetService {
       );
     }
 
-    const shiftStartTime = profile.profileDetails.shift.shiftIn; // ISO
-    const workingHour = profile.profileDetails.hoursPerDay; // e.g. 8
+    // const shiftStartTime = profile.profileDetails.shift.shiftIn; // ISO
+    // const workingHour = profile.profileDetails.hoursPerDay; // e.g. 8
 
-    const actualStartTime = createTimeSheetInput.startTime;
-    const actualEndTime = createTimeSheetInput.endTime;
+    // const actualStartTime = createTimeSheetInput.startTime;
+    // const actualEndTime = createTimeSheetInput.endTime;
 
-    // 🕒 Late time in minutes
-    const lateMinutes =
-      actualStartTime > shiftStartTime
-        ? differenceInMinutes(actualStartTime, shiftStartTime)
-        : 0;
+    // // 🕒 Late time in minutes
+    // const lateMinutes =
+    //   actualStartTime > shiftStartTime
+    //     ? differenceInMinutes(actualStartTime, shiftStartTime)
+    //     : 0;
 
-    // ⌛ Total worked time
-    const workedMinutes = differenceInMinutes(actualEndTime, actualStartTime);
-    const expectedMinutes = parseInt(workingHour) * 60;
+    // // ⌛ Total worked time
+    // const workedMinutes = differenceInMinutes(actualEndTime, actualStartTime);
+    // const expectedMinutes = parseInt(workingHour) * 60;
 
-    // ⏱️ Overtime in minutes
-    const overtimeMinutes =
-      workedMinutes > expectedMinutes ? workedMinutes - expectedMinutes : 0;
+    // // ⏱️ Overtime in minutes
+    // const overtimeMinutes =
+    //   workedMinutes > expectedMinutes ? workedMinutes - expectedMinutes : 0;
 
-    // Debug or save it
-    console.log({
-      shiftStartTime,
-      actualStartTime,
-      lateMinutes,
-      workedMinutes,
-      expectedMinutes,
-      overtimeMinutes,
-    });
+    // // Debug or save it
+    // console.log({
+    //   shiftStartTime,
+    //   actualStartTime,
+    //   lateMinutes,
+    //   workedMinutes,
+    //   expectedMinutes,
+    //   overtimeMinutes,
+    // });
 
     // Extend the model if needed to store late/overtime
     return this.prisma.timeSheet.create({
       data: {
         ...createTimeSheetInput,
-        overtimeMinutes: overtimeMinutes,
-        lateMinutes: lateMinutes,
+        // overtimeMinutes: overtimeMinutes,
+        // lateMinutes: lateMinutes,
       },
     });
   }
