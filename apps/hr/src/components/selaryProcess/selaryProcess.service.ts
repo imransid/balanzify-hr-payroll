@@ -6,7 +6,6 @@ import { FilingStatus } from "../../prisma/OnboardingType.enum";
 import { NetPaySummary } from "../entities/taxRate.entity";
 import { PaySchedule, profileDetails, timeSheet } from "prisma/generated/hr";
 
-import { calculateOvertimeHours } from "./helpers/calculateSalary";
 import { calculatePayrollFieldsHelper } from "./helpers/calculate-payroll-fields.helper";
 
 @Injectable()
@@ -192,10 +191,6 @@ export class EmployeePayrollService {
     currentProfileHourlySalary: number;
   } {
     return calculatePayrollFieldsHelper(details, timeSheet);
-  }
-
-  private overTimeCalculation() {
-    return calculateOvertimeHours();
   }
 
   private calculateEmployeeSalary(
