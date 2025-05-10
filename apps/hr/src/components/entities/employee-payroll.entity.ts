@@ -1,49 +1,4 @@
-import { ObjectType, Field, Int, Float } from "@nestjs/graphql";
-
-@ObjectType()
-class EmployeeDta {
-  @Field(() => Int)
-  federalTaxWithHoldingYearly: number;
-
-  @Field(() => Int)
-  medicareTax: number;
-
-  @Field(() => Int)
-  socialSecurityTax: number;
-
-  @Field(() => Int)
-  taxableIncome: number;
-
-  @Field(() => Int)
-  federalTaxWithHoldingMonthlyRate: number;
-
-  @Field(() => Int)
-  federalTaxWithHoldingWeeklyRate: number;
-}
-
-@ObjectType()
-class EmployerDta {
-  @Field(() => Int)
-  medicareTax: number;
-
-  @Field(() => Int)
-  socialSecurityTax: number;
-
-  @Field(() => Int)
-  additionalMedicareTax: number;
-
-  @Field(() => Int)
-  futaTax: number;
-}
-
-@ObjectType()
-class NetPaySummary {
-  @Field(() => EmployeeDta)
-  employeeDta: EmployeeDta;
-
-  @Field(() => EmployerDta)
-  employerDta: EmployerDta;
-}
+import { ObjectType, Field, Int } from "@nestjs/graphql";
 
 @ObjectType()
 export class EmployeePayroll {
@@ -95,8 +50,8 @@ export class EmployeePayroll {
   @Field(() => Int)
   employeeDeduction: number;
 
-  @Field(() => NetPaySummary, { nullable: true })
-  netPaySummary?: NetPaySummary;
+  @Field({ nullable: true })
+  netPaySummary?: string; // Updated reference
 
   @Field({ nullable: true })
   createdAt?: Date;

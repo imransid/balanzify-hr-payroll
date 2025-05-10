@@ -620,44 +620,10 @@ model EmployeePayroll {
   updatedAt DateTime? @updatedAt
 
   // Relations
-  netPaySummary   NetPaySummary? @relation(fields: [netPaySummaryId], references: [id])
-  netPaySummaryId Int?           @unique // Required for one-to-one
+  netPaySummary String?
+
+  companyID String?
 
   profileId Int?
   profile   Profile? @relation(fields: [profileId], references: [id])
-}
-
-model NetPaySummary {
-  id Int @id @default(autoincrement())
-
-  // Foreign keys
-  employeeDtaId Int?
-  employerDtaId Int?
-
-  // Relations
-  employeeDta EmployeeDta?     @relation(fields: [employeeDtaId], references: [id])
-  employerDta EmployerDta?     @relation(fields: [employerDtaId], references: [id])
-  payroll     EmployeePayroll?
-}
-
-model EmployeeDta {
-  id                               Int @id @default(autoincrement())
-  federalTaxWithHoldingYearly      Int
-  medicareTax                      Int
-  socialSecurityTax                Int
-  taxableIncome                    Int
-  federalTaxWithHoldingMonthlyRate Int
-  federalTaxWithHoldingWeeklyRate  Int
-
-  netPaySummaries NetPaySummary[] // back-relation
-}
-
-model EmployerDta {
-  id                    Int @id @default(autoincrement())
-  medicareTax           Int
-  socialSecurityTax     Int
-  additionalMedicareTax Int
-  futaTax               Int
-
-  netPaySummaries NetPaySummary[] // back-relation
 }

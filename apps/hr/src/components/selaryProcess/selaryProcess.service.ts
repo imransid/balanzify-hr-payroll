@@ -72,6 +72,7 @@ export class EmployeePayrollService {
         let employeeContribution = 0;
 
         const strArray = profile.profileDetails.deduction_Contribution;
+        [];
 
         const parsedArray = strArray.map((item) => {
           const validJsonStr = item.replace(/'/g, '"');
@@ -256,18 +257,7 @@ export class EmployeePayrollService {
       data: {
         ...rest,
         profile: profileId ? { connect: { id: profileId } } : undefined,
-        netPaySummary: netPaySummary
-          ? {
-              create: {
-                employeeDta: {
-                  create: netPaySummary.employeeDta,
-                },
-                employerDta: {
-                  create: netPaySummary.employerDta,
-                },
-              },
-            }
-          : undefined,
+        netPaySummary: input.netPaySummary,
       },
     });
   }
@@ -281,14 +271,6 @@ export class EmployeePayrollService {
         take: limit,
         orderBy: {
           id: "desc",
-        },
-        include: {
-          netPaySummary: {
-            include: {
-              employeeDta: true,
-              employerDta: true,
-            },
-          },
         },
       }),
       this.prisma.employeePayroll.count(),
@@ -313,12 +295,7 @@ export class EmployeePayrollService {
         netPay: payroll.netPay,
         employeeContribution: payroll.employeeContribution,
         employeeDeduction: payroll.employeeDeduction,
-        netPaySummary: payroll.netPaySummary
-          ? {
-              employeeDta: payroll.netPaySummary.employeeDta,
-              employerDta: payroll.netPaySummary.employerDta,
-            }
-          : null,
+        netPaySummary: payroll.netPaySummary ? payroll.netPaySummary : null,
         createdAt: payroll.createdAt,
         updatedAt: payroll.updatedAt,
       };
@@ -401,26 +378,8 @@ export class EmployeePayrollService {
 
         // Handle the nested netPaySummary with Prisma's nested update
         netPaySummary: updateEmployeePayrollInput.netPaySummary
-          ? {
-              update: {
-                employeeDta: updateEmployeePayrollInput.netPaySummary
-                  .employeeDta
-                  ? {
-                      update:
-                        updateEmployeePayrollInput.netPaySummary.employeeDta,
-                    }
-                  : undefined,
-
-                employerDta: updateEmployeePayrollInput.netPaySummary
-                  .employerDta
-                  ? {
-                      update:
-                        updateEmployeePayrollInput.netPaySummary.employerDta,
-                    }
-                  : undefined,
-              },
-            }
-          : undefined,
+          ? updateEmployeePayrollInput.netPaySummary
+          : null,
       },
     });
   }

@@ -16,73 +16,6 @@ import {
 import { EmployeePayroll } from "../entities/employee-payroll.entity";
 
 @InputType()
-class EmployeeDtaInput {
-  @Field(() => Int)
-  @IsNotEmpty()
-  @IsInt()
-  federalTaxWithHoldingYearly: number;
-
-  @Field(() => Int)
-  @IsNotEmpty()
-  @IsInt()
-  medicareTax: number;
-
-  @Field(() => Int)
-  @IsNotEmpty()
-  @IsInt()
-  socialSecurityTax: number;
-
-  @Field(() => Int)
-  @IsNotEmpty()
-  @IsInt()
-  taxableIncome: number;
-
-  @Field(() => Int)
-  @IsNotEmpty()
-  @IsInt()
-  federalTaxWithHoldingMonthlyRate: number;
-
-  @Field(() => Int)
-  @IsNotEmpty()
-  @IsInt()
-  federalTaxWithHoldingWeeklyRate: number;
-}
-
-@InputType()
-class EmployerDtaInput {
-  @Field(() => Int)
-  @IsNotEmpty()
-  @IsInt()
-  medicareTax: number;
-
-  @Field(() => Int)
-  @IsNotEmpty()
-  @IsInt()
-  socialSecurityTax: number;
-
-  @Field(() => Int)
-  @IsNotEmpty()
-  @IsInt()
-  additionalMedicareTax: number;
-
-  @Field(() => Int)
-  @IsNotEmpty()
-  @IsInt()
-  futaTax: number;
-}
-
-@InputType()
-class NetPaySummaryInput {
-  @Field(() => EmployeeDtaInput)
-  @IsNotEmpty()
-  employeeDta: EmployeeDtaInput;
-
-  @Field(() => EmployerDtaInput)
-  @IsNotEmpty()
-  employerDta: EmployerDtaInput;
-}
-
-@InputType()
 export class CreateEmployeePayrollInput {
   @Field()
   @IsNotEmpty()
@@ -152,11 +85,6 @@ export class CreateEmployeePayrollInput {
   @Field(() => Int)
   @IsOptional()
   @IsInt()
-  profileId?: number;
-
-  @Field(() => Int)
-  @IsOptional()
-  @IsInt()
   employeeContribution?: number;
 
   @Field(() => Int)
@@ -164,9 +92,19 @@ export class CreateEmployeePayrollInput {
   @IsInt()
   employeeDeduction?: number;
 
-  @Field(() => NetPaySummaryInput, { nullable: true })
+  @Field(() => Int)
   @IsOptional()
-  netPaySummary?: NetPaySummaryInput;
+  @IsInt()
+  profileId?: number;
+
+  @Field(() => Int)
+  @IsOptional()
+  @IsInt()
+  companyID?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  netPaySummary?: string;
 }
 
 @InputType()
@@ -177,11 +115,6 @@ export class UpdateEmployeePayrollInput extends PartialType(
   @IsNotEmpty()
   @IsInt()
   id: number;
-
-  @Field(() => Int)
-  @IsOptional()
-  @IsInt()
-  profileId?: number | null;
 }
 
 @ObjectType()
