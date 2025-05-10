@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaHrService } from "../../../../../prisma/prisma-hr.service";
 import { EmployeePayrollProcess } from "../entities/employeePayroll.entity";
 import { PayrollTaxService } from "../payrollTax/payroll-tax.service";
@@ -7,6 +7,12 @@ import { NetPaySummary } from "../entities/taxRate.entity";
 import { PaySchedule, profileDetails, timeSheet } from "prisma/generated/hr";
 
 import { calculatePayrollFieldsHelper } from "./helpers/calculate-payroll-fields.helper";
+import {
+  CreateEmployeePayrollInput,
+  EmployeePayrollPaginatedResult,
+  UpdateEmployeePayrollInput,
+} from "../dto/create-employee-payroll.input";
+import { EmployeePayroll } from "../entities/employee-payroll.entity";
 
 @Injectable()
 export class EmployeePayrollService {
@@ -238,6 +244,224 @@ export class EmployeePayrollService {
       regularSalary,
       overtimePay,
       totalPay,
+    };
+  }
+
+  // service
+
+  async create(input: CreateEmployeePayrollInput): Promise<EmployeePayroll> {
+    const { netPaySummary, profileId, ...rest } = input;
+
+    return this.prisma.employeePayroll.create({
+      data: {
+        ...rest,
+        profile: profileId ? { connect: { id: profileId } } : undefined,
+        netPaySummary: netPaySummary
+          ? {
+              create: {
+                employeeDta: {
+                  create: netPaySummary.employeeDta,
+                },
+                employerDta: {
+                  create: netPaySummary.employerDta,
+                },
+              },
+            }
+          : undefined,
+      },
+    });
+  }
+
+  async findAll(page = 1, limit = 10): Promise<EmployeePayrollPaginatedResult> {
+    const skip = (page - 1) * limit;
+
+    const [employeePayrolls, totalCount] = await Promise.all([
+      this.prisma.employeePayroll.findMany({
+        skip,
+        take: limit,
+        orderBy: {
+          id: "desc",
+        },
+        include: {
+          netPaySummary: {
+            include: {
+              employeeDta: true,
+              employerDta: true,
+            },
+          },
+        },
+      }),
+      this.prisma.employeePayroll.count(),
+    ]);
+
+    // Map the result to match the GraphQL object shape
+    const payrolls = employeePayrolls.map((payroll) => {
+      return {
+        id: payroll.id,
+        employeeName: payroll.employeeName,
+        workingHrs: payroll.workingHrs,
+        rate: payroll.rate,
+        salary: payroll.salary,
+        OT: payroll.OT,
+        doubleOT: payroll.doubleOT,
+        PTO: payroll.PTO,
+        holidayPay: payroll.holidayPay,
+        bonus: payroll.bonus,
+        commission: payroll.commission,
+        total: payroll.total,
+        grossPay: payroll.grossPay,
+        netPay: payroll.netPay,
+        employeeContribution: payroll.employeeContribution,
+        employeeDeduction: payroll.employeeDeduction,
+        netPaySummary: payroll.netPaySummary
+          ? {
+              employeeDta: payroll.netPaySummary.employeeDta,
+              employerDta: payroll.netPaySummary.employerDta,
+            }
+          : null,
+        createdAt: payroll.createdAt,
+        updatedAt: payroll.updatedAt,
+      };
+    });
+
+    return {
+      payrolls,
+      totalCount,
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+    };
+  }
+
+  async findOne(id: number): Promise<EmployeePayroll> {
+    const payroll = await this.prisma.employeePayroll.findUnique({
+      where: { id },
+    });
+
+    if (!payroll) {
+      throw new NotFoundException(`EmployeePayroll with ID ${id} not found`);
+    }
+
+    return payroll;
+  }
+
+  async update(
+    id: number,
+    updateEmployeePayrollInput: UpdateEmployeePayrollInput
+  ): Promise<EmployeePayroll> {
+    const employeePayroll = await this.findOne(id); // Ensure the record exists
+
+    return this.prisma.employeePayroll.update({
+      where: { id },
+      data: {
+        employeeName:
+          updateEmployeePayrollInput.employeeName ??
+          employeePayroll.employeeName,
+
+        workingHrs:
+          updateEmployeePayrollInput.workingHrs ?? employeePayroll.workingHrs,
+
+        rate: updateEmployeePayrollInput.rate ?? employeePayroll.rate,
+
+        salary: updateEmployeePayrollInput.salary ?? employeePayroll.salary,
+
+        OT: updateEmployeePayrollInput.OT ?? employeePayroll.OT,
+
+        doubleOT:
+          updateEmployeePayrollInput.doubleOT ?? employeePayroll.doubleOT,
+
+        PTO: updateEmployeePayrollInput.PTO ?? employeePayroll.PTO,
+
+        holidayPay:
+          updateEmployeePayrollInput.holidayPay ?? employeePayroll.holidayPay,
+
+        bonus: updateEmployeePayrollInput.bonus ?? employeePayroll.bonus,
+
+        commission:
+          updateEmployeePayrollInput.commission ?? employeePayroll.commission,
+
+        total: updateEmployeePayrollInput.total ?? employeePayroll.total,
+
+        grossPay:
+          updateEmployeePayrollInput.grossPay ?? employeePayroll.grossPay,
+
+        netPay: updateEmployeePayrollInput.netPay ?? employeePayroll.netPay,
+
+        // Handling profileId as a foreign key relation
+        profile: updateEmployeePayrollInput.profileId
+          ? { connect: { id: updateEmployeePayrollInput.profileId } }
+          : undefined,
+
+        employeeContribution:
+          updateEmployeePayrollInput.employeeContribution ??
+          employeePayroll.employeeContribution,
+
+        employeeDeduction:
+          updateEmployeePayrollInput.employeeDeduction ??
+          employeePayroll.employeeDeduction,
+
+        // Handle the nested netPaySummary with Prisma's nested update
+        netPaySummary: updateEmployeePayrollInput.netPaySummary
+          ? {
+              update: {
+                employeeDta: updateEmployeePayrollInput.netPaySummary
+                  .employeeDta
+                  ? {
+                      update:
+                        updateEmployeePayrollInput.netPaySummary.employeeDta,
+                    }
+                  : undefined,
+
+                employerDta: updateEmployeePayrollInput.netPaySummary
+                  .employerDta
+                  ? {
+                      update:
+                        updateEmployeePayrollInput.netPaySummary.employerDta,
+                    }
+                  : undefined,
+              },
+            }
+          : undefined,
+      },
+    });
+  }
+
+  async remove(id: number): Promise<EmployeePayroll> {
+    await this.findOne(id); // Ensure existence
+    return this.prisma.employeePayroll.delete({
+      where: { id },
+    });
+  }
+
+  async search(
+    query: string,
+    page = 1,
+    limit = 10
+  ): Promise<EmployeePayrollPaginatedResult> {
+    const skip = (page - 1) * limit;
+
+    const [employeePayrolls, totalCount] = await Promise.all([
+      this.prisma.employeePayroll.findMany({
+        where: {
+          OR: [{ employeeName: { contains: query, mode: "insensitive" } }],
+        },
+        skip,
+        take: limit,
+        orderBy: {
+          id: "desc",
+        },
+      }),
+      this.prisma.employeePayroll.count({
+        where: {
+          OR: [{ employeeName: { contains: query, mode: "insensitive" } }],
+        },
+      }),
+    ]);
+
+    return {
+      payrolls: employeePayrolls,
+      totalCount,
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
     };
   }
 }
