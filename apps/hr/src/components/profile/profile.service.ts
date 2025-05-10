@@ -53,14 +53,17 @@ export class ProfileService {
         const { employeeName, designation, hireDate } = createProfileInput;
         const firstName = employeeName.split(" ")[0]; // Extract first name
         const subject = `Welcome to the ${createProfileInput.companyName} - Onboarding Instructions`;
-        const body = `
-          <h1>Welcome ${firstName}!</h1>
-          <p>We are excited to have you join the team as a ${designation}.</p>
-          <p>Your official start date is ${hireDate.toISOString().split("T")[0]}.</p>
-          <p>Please complete your onboarding by visiting the following link:</p>
-          <a href="https://example.com/onboarding/${profile.id}">Complete Onboarding</a>
-        `;
 
+        const body = `
+  <h1 style="font-size: 24px; color: #333;">Welcome ${firstName}!</h1>
+  <p>We are excited to have you join the team as a <strong>${designation}</strong>.</p>
+  <p>Your official start date is <strong>${hireDate.toISOString().split("T")[0]}</strong>.</p>
+  <p>Please complete your onboarding by visiting the following link:</p>
+  <a href="https://blanzify.vercel.app/dashboard/hris/employee/employee_list/add_employee_info?eid=${profile.id}&obt=i9" 
+     style="color: blue; text-decoration: underline;">
+    Complete Onboarding
+  </a>
+`;
         sendMail(createProfileInput.email, subject, body, this.mailService);
       }
 
