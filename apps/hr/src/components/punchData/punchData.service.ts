@@ -2,10 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaHrService } from "../../../../../prisma/prisma-hr.service";
 import * as excelToJson from "convert-excel-to-json";
 
-import {
-  CreatePunchDataInput,
-  //   UpdatePunchDataInput,
-} from "../dto/punchData.input";
+import { CreatePunchDataInput } from "../dto/punchData.input";
 
 import {
   deleteFileAndDirectory,
@@ -25,7 +22,9 @@ export class PunchDataService {
 
   private uploadDir = join(process.env.UPLOAD_DIR, "punch-data", "files");
 
-  async create(createPunchDataInput: CreatePunchDataInput): Promise<TimeSheet> {
+  async create(
+    createPunchDataInput: CreatePunchDataInput
+  ): Promise<TimeSheet[]> {
     const uploadedPaths = await Promise.all(
       createPunchDataInput?.punchFile?.map(async (file, index) => {
         const punchFile: any = await file;
@@ -50,21 +49,47 @@ export class PunchDataService {
       sourceFile: path,
       header: { rows: 1 },
       columnToKey: {
-        A: "id",
-        B: "employeeId",
-        C: "remarks",
-        D: "startTime",
-        E: "endTime",
-        F: "startProcessDate",
-        G: "endProcessDate",
-        H: "totalTime",
-        I: "createdBy",
-        J: "createdAt",
-        K: "status",
-        L: "updatedAt",
+        A: "employeeId", // Now column A maps to employeeId
+        B: "remarks",
+        C: "startTime",
+        D: "endTime",
+        E: "startProcessDate",
+        F: "endProcessDate",
+        G: "totalTime",
+        H: "createdBy",
+        I: "createdAt",
+        J: "status",
+        K: "updatedAt",
       },
     });
 
-    return await this.timeSheetService.create(excelData);
+    const rows = excelData.Sheet1;
+
+    const timeSheets: TimeSheet[] = rows.map((row) => ({
+      employeeId: Number(row.employeeId),
+      remarks: row.remarks,
+      startTime: new Date(row.startTime),
+      endTime: new Date(row.endTime),
+      startProcessDate: new Date(row.startProcessDate),
+      endProcessDate: new Date(row.endProcessDate),
+      totalTime: row.totalTime,
+      createdBy: Number(row.createdBy),
+      createdAt: new Date(row.createdAt),
+      status: row.status,
+      updatedAt: new Date(row.updatedAt),
+    }));
+
+    const res = await Promise.all(
+      timeSheets.map(async (e) => {
+        try {
+          return await this.timeSheetService.create(e);
+        } catch (err) {
+          console.error("Failed to create TimeSheet:", e, err.message);
+          return null;
+        }
+      })
+    );
+
+    return res.filter(Boolean); // Filter out failed entries
   }
 }

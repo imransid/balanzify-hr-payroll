@@ -17,7 +17,7 @@ export class PunchDataResolver {
   @Mutation(() => TimeSheet)
   async createPunchData(
     @Args("createPunchDataInput") createPunchDataInput: CreatePunchDataInput
-  ): Promise<TimeSheet> {
+  ): Promise<TimeSheet[]> {
     try {
       return await this.punchDataService.create(createPunchDataInput);
     } catch (error) {
