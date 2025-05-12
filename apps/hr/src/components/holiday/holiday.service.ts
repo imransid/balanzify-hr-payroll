@@ -74,7 +74,12 @@ export class HolidayService {
   }
 
   async findOne(id: number): Promise<Holiday> {
-    const holiday = await this.prisma.holiday.findUnique({ where: { id } });
+    const holiday = await this.prisma.holiday.findUnique({
+      where: { id },
+      include: {
+        details: true,
+      },
+    });
     if (!holiday) {
       throw new NotFoundException(`Holiday with ID ${id} not found`);
     }
