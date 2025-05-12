@@ -71,6 +71,11 @@ export class CreateProfileInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
+  employeeID?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
   mobilePhone?: string;
 
   @Field()

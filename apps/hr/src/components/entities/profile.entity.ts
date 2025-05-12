@@ -38,6 +38,9 @@ export class Profile {
   @Field({ nullable: true })
   mobilePhone?: string;
 
+  @Field({ nullable: true })
+  employeeID?: string;
+
   @Field()
   status: boolean;
 

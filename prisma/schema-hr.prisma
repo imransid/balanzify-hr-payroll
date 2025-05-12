@@ -201,7 +201,8 @@ model Profile {
   status         Boolean
   onboardingType OnboardingType
 
-  companyID String?
+  companyID  String?
+  employeeID String?
 
   createdBy          Int?
   createdAt          DateTime           @default(now())
