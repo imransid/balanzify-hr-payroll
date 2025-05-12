@@ -29,8 +29,6 @@ export class TimeSheetProcessService {
         },
       });
 
-      console.log("profiles", profiles.length);
-
       const timeSheetProcesses = await Promise.all(
         profiles.map(async (e) => {
           console.log("Processing employee ID:", e.id);
@@ -48,8 +46,6 @@ export class TimeSheetProcessService {
               },
             },
           });
-
-          console.log("timeSheets > : = L > // > ", timeSheets, e.id);
 
           if (!timeSheets.length) {
             return null; // skip if no timesheets

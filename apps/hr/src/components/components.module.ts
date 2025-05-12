@@ -41,6 +41,8 @@ import { TimeSheetProcessResolver } from "./timeSheetProcess/timeSheetProcess.re
 import { TimeSheetProcessService } from "./timeSheetProcess/timeSheetProcess.service";
 import { EmployeePayrollProcessResolver } from "./selaryProcess/selaryProcess.resolver";
 import { EmployeePayrollService } from "./selaryProcess/selaryProcess.service";
+import { PunchDataService } from "./punchData/punchData.service";
+import { PunchDataResolver } from "./punchData/punchData.resolver";
 
 @Module({
   imports: [
@@ -96,6 +98,8 @@ import { EmployeePayrollService } from "./selaryProcess/selaryProcess.service";
     TimeSheetProcessService,
     EmployeePayrollProcessResolver,
     EmployeePayrollService,
+    PunchDataResolver,
+    PunchDataService,
   ],
 })
 export class ComponentsModule {}
