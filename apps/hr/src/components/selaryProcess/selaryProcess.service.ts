@@ -72,7 +72,6 @@ export class EmployeePayrollService {
         let employeeContribution = 0;
 
         const strArray = profile.profileDetails.deduction_Contribution;
-        [];
 
         let parsedArray = [];
 
@@ -99,21 +98,13 @@ export class EmployeePayrollService {
           employeeDeduction = totalEmployeeAnnualMax;
         }
 
-        // hour from profile
-
-        const {
-          regularHours,
-          regularWorkedHours,
-          overtimeHours,
-          regularSalary,
-          overtimePay,
-          totalPay,
-        } = this.calculateEmployeeSalary(
-          currentProfileHourlySalary,
-          workingHours,
-          details.paySchedule,
-          details
-        );
+        const { regularSalary, overtimePay, totalPay } =
+          this.calculateEmployeeSalary(
+            currentProfileHourlySalary,
+            workingHours,
+            details.paySchedule,
+            details
+          );
 
         const netPaySummary = await this.netPaySummaryCalculation(totalPay);
 
@@ -123,8 +114,6 @@ export class EmployeePayrollService {
           employeeDeduction
         );
 
-        // res from payshedul
-
         return {
           id: index + 1,
           employeeName:
@@ -132,11 +121,11 @@ export class EmployeePayrollService {
           workingHrs: `${workingHours}`,
           Rate: rate,
           Salary: regularSalary.toFixed(2).toString(), //salary.toFixed(2),
-          OT,
+          OT: "",
           doubleOT,
           PTO: "0", // Placeholder
           holydayPay: "0", // Placeholder
-          bonus,
+          bonus: "",
           commission: "0", // Placeholder
           total: totalPay.toFixed(2).toString(),
           grossPay: totalPay.toFixed(2).toString(),
@@ -148,6 +137,7 @@ export class EmployeePayrollService {
           employeeDeduction,
           netPaySummary: netPaySummary,
           netPay: netPay,
+          profileID: profile.id,
         };
       })
     );
@@ -429,5 +419,80 @@ export class EmployeePayrollService {
       totalPages: Math.ceil(totalCount / limit),
       currentPage: page,
     };
+  }
+
+  async calculationEmployeePayrollInput(
+    input: string
+  ): Promise<EmployeePayrollProcess[]> {
+    let strArray = [];
+
+    if (typeof input === "string") {
+      const onceParsed = JSON.parse(input);
+      strArray =
+        typeof onceParsed === "string" ? JSON.parse(onceParsed) : onceParsed;
+    } else {
+      strArray = input;
+    }
+
+    if (!Array.isArray(strArray)) {
+      throw new Error("Parsed input is not an array");
+    }
+
+    if (strArray.length === 0) {
+      return [];
+    }
+
+    const returnResData: EmployeePayrollProcess[] = await Promise.all(
+      strArray.map(async (e) => {
+        const profile = await this.prisma.profile.findUnique({
+          where: {
+            id: e.profileID,
+          },
+          include: {
+            profileDetails: true,
+          },
+        });
+
+        const marriedStatus =
+          profile?.profileDetails?.maritalStatus || "Single";
+
+        const netPaySummary = await this.netPaySummaryCalculation(
+          parseFloat(e.grossPay)
+        );
+
+        const netPay = await this.netPayCalculation(
+          parseFloat(e.grossPay),
+          marriedStatus,
+          e.employeeDeduction
+        );
+
+        const data: EmployeePayrollProcess = {
+          id: parseInt(e.id) || 0,
+          employeeName: e.employeeName,
+          workingHrs: e.workingHrs,
+          Rate: e.Rate,
+          Salary: e.Salary,
+          OT: e.OT,
+          doubleOT: e.doubleOT,
+          PTO: e.PTO,
+          holydayPay: e.holydayPay,
+          bonus: e.bonus,
+          commission: e.commission,
+          total: e.total,
+          employeeContribution: e.employeeContribution,
+          employeeDeduction: e.employeeDeduction,
+          grossPay: e.grossPay,
+          netPay: netPay,
+          createdAt: new Date(e.createdAt),
+          updatedAt: new Date(e.updatedAt),
+          netPaySummary: netPaySummary,
+          profileID: e.profileID,
+        };
+
+        return data;
+      })
+    );
+
+    return returnResData;
   }
 }

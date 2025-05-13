@@ -49,8 +49,8 @@ export class NetPaySummary {
 
 @ObjectType()
 export class EmployeePayrollProcess {
-  @Field(() => Int)
-  id: number;
+  @Field(() => Int, { nullable: true })
+  id?: number;
 
   @Field({ nullable: true })
   employeeName?: string;
@@ -111,4 +111,7 @@ export class EmployeePayrollProcess {
 
   @Field(() => NetPaySummary, { nullable: true })
   netPaySummary?: NetPaySummary;
+
+  @Field({ nullable: true })
+  profileID?: number;
 }

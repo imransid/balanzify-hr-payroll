@@ -33,6 +33,23 @@ export class EmployeePayrollProcessResolver {
     }
   }
 
+  @Mutation(() => [EmployeePayrollProcess])
+  async calculationEmployeePayroll(
+    @Args("calculationEmployeePayrollInput")
+    calculationEmployeePayrollInput: string
+  ): Promise<EmployeePayrollProcess[]> {
+    try {
+      return await this.employeePayrollService.calculationEmployeePayrollInput(
+        calculationEmployeePayrollInput
+      );
+    } catch (error) {
+      throw new GraphQLException(
+        "Failed to create employee payroll: " + error.toString(),
+        "INTERNAL_SERVER_ERROR"
+      );
+    }
+  }
+
   @Mutation(() => EmployeePayroll)
   async createEmployeePayroll(
     @Args("createEmployeePayrollInput")
