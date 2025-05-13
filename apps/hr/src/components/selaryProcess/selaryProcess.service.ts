@@ -74,9 +74,16 @@ export class EmployeePayrollService {
         const strArray = profile.profileDetails.deduction_Contribution;
         [];
 
-        const parsedArray = strArray.map((item) => {
-          const validJsonStr = item.replace(/'/g, '"');
-          return JSON.parse(validJsonStr);
+        let parsedArray = [];
+
+        strArray.forEach((item) => {
+          try {
+            const validJsonStr = item.replace(/'/g, '"');
+            const parsed = JSON.parse(validJsonStr);
+            parsedArray.push(...parsed);
+          } catch (e) {
+            console.error("Failed to parse item:", item);
+          }
         });
 
         if (parsedArray.length > 0) {
