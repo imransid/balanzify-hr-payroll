@@ -466,6 +466,69 @@ export class EmployeePayrollService {
           e.employeeDeduction
         );
 
+        const previousCalculatedFederalData =
+          await this.prisma.employeePayroll.findMany({
+            where: {
+              profileId: e.profileID,
+            },
+            select: {
+              netPaySummary: true,
+            },
+          });
+
+        let totalSummary = {
+          employeeDta: {
+            federalTaxWithHoldingYearly: 0,
+            medicareTax: 0,
+            socialSecurityTax: 0,
+            taxableIncome: 0,
+            federalTaxWithHoldingMonthlyRate: 0,
+            federalTaxWithHoldingWeeklyRate: 0,
+          },
+          employerDta: {
+            medicareTax: 0,
+            socialSecurityTax: 0,
+            additionalMedicareTax: 0,
+            futaTax: 0,
+          },
+        };
+
+        for (const record of previousCalculatedFederalData) {
+          try {
+            const summary = JSON.parse(record.netPaySummary);
+
+            // Employee data
+            totalSummary.employeeDta.federalTaxWithHoldingYearly +=
+              summary?.employeeDta?.federalTaxWithHoldingYearly || 0;
+            totalSummary.employeeDta.medicareTax +=
+              summary?.employeeDta?.medicareTax || 0;
+            totalSummary.employeeDta.socialSecurityTax +=
+              summary?.employeeDta?.socialSecurityTax || 0;
+            totalSummary.employeeDta.taxableIncome +=
+              summary?.employeeDta?.taxableIncome || 0;
+            totalSummary.employeeDta.federalTaxWithHoldingMonthlyRate +=
+              summary?.employeeDta?.federalTaxWithHoldingMonthlyRate || 0;
+            totalSummary.employeeDta.federalTaxWithHoldingWeeklyRate +=
+              summary?.employeeDta?.federalTaxWithHoldingWeeklyRate || 0;
+
+            // Employer data
+            totalSummary.employerDta.medicareTax +=
+              summary?.employerDta?.medicareTax || 0;
+            totalSummary.employerDta.socialSecurityTax +=
+              summary?.employerDta?.socialSecurityTax || 0;
+            totalSummary.employerDta.additionalMedicareTax +=
+              summary?.employerDta?.additionalMedicareTax || 0;
+            totalSummary.employerDta.futaTax +=
+              summary?.employerDta?.futaTax || 0;
+          } catch (error) {
+            console.error(
+              "Failed to parse netPaySummary:",
+              record.netPaySummary,
+              error
+            );
+          }
+        }
+
         const data: EmployeePayrollProcess = {
           id: parseInt(e.id) || 0,
           employeeName: e.employeeName,
@@ -487,6 +550,7 @@ export class EmployeePayrollService {
           updatedAt: new Date(e.updatedAt),
           netPaySummary: netPaySummary,
           profileID: e.profileID,
+          storeNetPaySummary: totalSummary,
         };
 
         return data;

@@ -97,9 +97,9 @@ export class CreateEmployeePayrollInput {
   @IsInt()
   profileId?: number;
 
-  @Field(() => Int)
+  @Field()
   @IsOptional()
-  @IsInt()
+  @IsString()
   companyID?: string;
 
   @Field({ nullable: true })

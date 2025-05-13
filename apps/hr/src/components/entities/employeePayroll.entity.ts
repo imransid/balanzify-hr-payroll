@@ -112,6 +112,9 @@ export class EmployeePayrollProcess {
   @Field(() => NetPaySummary, { nullable: true })
   netPaySummary?: NetPaySummary;
 
+  @Field(() => NetPaySummary, { nullable: true })
+  storeNetPaySummary?: NetPaySummary;
+
   @Field({ nullable: true })
   profileID?: number;
 }
