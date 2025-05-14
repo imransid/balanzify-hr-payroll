@@ -79,15 +79,35 @@ export function calculatePayrollFieldsHelper(
     bonus = details.bonus ? 0 : 0;
     grossPay = overTime + bonus + salary;
   } else if (details.payType.toUpperCase() === "MONTHLY") {
-    if (details.payFrequency === "PER_WEEK") {
-      salary = parseFloat(details.salary || "0") * 4 * 12;
-    } else if (details.payFrequency === "PER_MONTH") {
-      salary = parseFloat(details.salary || "0") * 12;
-    } else {
-      salary = parseFloat(details.salary || "0");
+    const salaryInput = parseFloat(details.salary || "0");
+    const hoursPerDay = parseFloat(details.hoursPerDay || "0");
+    const daysPerWeek = parseFloat(details.dayForWeek || "0");
+
+    const weeksPerMonth = 4;
+    const monthsPerYear = 12;
+
+    let salary = 0;
+    let ratePerHour = 0;
+
+    switch (details.payFrequency) {
+      case "PER_WEEK":
+        salary = salaryInput * weeksPerMonth * monthsPerYear;
+        ratePerHour = salaryInput / (hoursPerDay * daysPerWeek);
+        break;
+
+      case "PER_MONTH":
+        salary = salaryInput * monthsPerYear;
+        ratePerHour = salaryInput / (hoursPerDay * daysPerWeek * weeksPerMonth);
+        break;
+
+      default: // Assume annual
+        salary = salaryInput;
+        ratePerHour =
+          salaryInput /
+          (hoursPerDay * daysPerWeek * weeksPerMonth * monthsPerYear);
+        break;
     }
 
-    
     overTime = details.offerDate ? 0 : 0;
     bonus = details.bonus ? 0 : 0;
     grossPay = overTime + bonus + salary;
