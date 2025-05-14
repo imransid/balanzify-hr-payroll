@@ -2,6 +2,7 @@ import { ObjectType, Field, Int } from "@nestjs/graphql";
 import { OnboardingType } from "../../prisma/OnboardingType.enum";
 import { ProfileDetails } from "./profileDetails.entity";
 import { TimeSheetProcess } from "./timeSheetProcess.entity";
+import { TimeSheet } from "./timesheet.entity";
 
 @ObjectType()
 export class Profile {
@@ -54,4 +55,7 @@ export class Profile {
 
   @Field({ nullable: true })
   timeSheetProcesses?: TimeSheetProcess;
+
+  @Field(() => [TimeSheet], { nullable: true })
+  timeSheet?: TimeSheet[];
 }

@@ -108,7 +108,7 @@ export class ProfileService {
 
     const where = id ? { id } : { employeeID };
 
-    const profile = await this.prisma.profile.findUnique({
+    const profile: Profile = await this.prisma.profile.findUnique({
       where,
       include: {
         timeSheet: true,
