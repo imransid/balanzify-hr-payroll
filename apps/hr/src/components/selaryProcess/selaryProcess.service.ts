@@ -551,6 +551,7 @@ export class EmployeePayrollService {
           netPaySummary: netPaySummary,
           profileID: e.profileID,
           storeNetPaySummary: totalSummary,
+          profile: profile,
         };
 
         return data;

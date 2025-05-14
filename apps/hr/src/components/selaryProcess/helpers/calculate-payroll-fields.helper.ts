@@ -26,7 +26,7 @@ export function calculatePayrollFieldsHelper(
   details: ProfileDetails,
   timeSheet: any[]
 ): PayrollCalculationResult {
-  const ratePerHour = parseFloat(details?.ratePerHour || "0");
+  let ratePerHour = parseFloat(details?.ratePerHour || "0");
   const frequency = (details?.payFrequency || "").toUpperCase();
 
   let workingDays = 5;
@@ -79,8 +79,15 @@ export function calculatePayrollFieldsHelper(
     bonus = details.bonus ? 0 : 0;
     grossPay = overTime + bonus + salary;
   } else if (details.payType.toUpperCase() === "MONTHLY") {
-    salary = parseFloat(details.salary || "0") * 12;
+    if (details.payFrequency === "PER_WEEK") {
+      salary = parseFloat(details.salary || "0") * 4 * 12;
+    } else if (details.payFrequency === "PER_MONTH") {
+      salary = parseFloat(details.salary || "0") * 12;
+    } else {
+      salary = parseFloat(details.salary || "0");
+    }
 
+    
     overTime = details.offerDate ? 0 : 0;
     bonus = details.bonus ? 0 : 0;
     grossPay = overTime + bonus + salary;
