@@ -93,6 +93,22 @@ export class TimeSheetService {
     };
   }
 
+  async findMany(id: number, employeeId: number): Promise<TimeSheet[]> {
+    if (!id && !employeeId) throw new Error("Supply either id or employeeID");
+
+    const where = id ? { id } : { employeeId };
+
+    const timeSheet = await this.prisma.timeSheet.findMany({
+      where,
+    });
+
+    if (!timeSheet) {
+      throw new NotFoundException(`Time sheet with ID ${id} not found`);
+    }
+
+    return timeSheet;
+  }
+
   async findOne(id: number): Promise<TimeSheet> {
     const timeSheet = await this.prisma.timeSheet.findUnique({
       where: { id },

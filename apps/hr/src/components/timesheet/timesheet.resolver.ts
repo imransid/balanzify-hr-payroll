@@ -45,12 +45,13 @@ export class TimeSheetResolver {
     }
   }
 
-  @Query(() => TimeSheet)
+  @Query(() => [TimeSheet])
   async timeSheet(
-    @Args("id", { type: () => Int }) id: number
-  ): Promise<TimeSheet> {
+    @Args("id", { type: () => Int }) id: number,
+    @Args("employeeId", { type: () => Int }) employeeId: number
+  ): Promise<TimeSheet[]> {
     try {
-      return await this.timeSheetService.findOne(id);
+      return await this.timeSheetService.findMany(id, employeeId);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new GraphQLException(
