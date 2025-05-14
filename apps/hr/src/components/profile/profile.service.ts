@@ -41,6 +41,7 @@ export class ProfileService {
           companyID: createProfileInput.companyID || null,
           employeeType: createProfileInput.employeeType || null,
           mobilePhone: createProfileInput.mobilePhone || null,
+          employeeID: createProfileInput.employeeID || null,
         },
       });
 
