@@ -44,10 +44,23 @@ export class ProfileResolver {
     }
   }
 
-  @Query(() => Profile)
-  async profile(@Args("id", { type: () => Int }) id: number): Promise<Profile> {
+  @Query(() => Profile, { nullable: true })
+  async profile(
+    @Args("id", { type: () => Int, nullable: true }) id?: number,
+    @Args("employeeID", { type: () => String, nullable: true })
+    employeeID?: string
+  ): Promise<Profile> {
     try {
-      return await this.profileService.findOne(id);
+      const profile = await this.profileService.findOne(id, employeeID);
+
+      if (!profile) {
+        throw new GraphQLException(
+          `Profile not found with ID ${id} or Employee ID ${employeeID}`,
+          "NOT_FOUND"
+        );
+      }
+
+      return profile;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new GraphQLException(
@@ -55,6 +68,7 @@ export class ProfileResolver {
           "NOT_FOUND"
         );
       }
+
       throw new GraphQLException(
         "Failed to fetch profile",
         "INTERNAL_SERVER_ERROR"

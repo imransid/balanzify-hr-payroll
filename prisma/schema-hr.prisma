@@ -202,7 +202,7 @@ model Profile {
   onboardingType OnboardingType
 
   companyID  String?
-  employeeID String?
+  employeeID String? @unique
 
   createdBy          Int?
   createdAt          DateTime           @default(now())

@@ -103,10 +103,15 @@ export class ProfileService {
     };
   }
 
-  async findOne(id: number): Promise<Profile> {
+  async findOne(id: number, employeeID: string): Promise<Profile> {
+    if (!id && !employeeID) throw new Error("Supply either id or employeeID");
+
+    const where = id ? { id } : { employeeID };
+
     const profile = await this.prisma.profile.findUnique({
-      where: { id },
+      where,
       include: {
+        timeSheet: true,
         profileDetails: {
           include: {
             shift: true,
@@ -126,7 +131,7 @@ export class ProfileService {
     id: number,
     updateProfileInput: UpdateProfileInput
   ): Promise<Profile> {
-    await this.findOne(id); // Ensure it exists
+    await this.findOne(id, ""); // Ensure it exists
     return this.prisma.profile.update({
       where: { id },
       data: updateProfileInput,
@@ -134,7 +139,7 @@ export class ProfileService {
   }
 
   async remove(id: number): Promise<Profile> {
-    await this.findOne(id); // Ensure it exists
+    await this.findOne(id, ""); // Ensure it exists
     return this.prisma.profile.delete({
       where: { id },
     });
@@ -158,6 +163,9 @@ export class ProfileService {
               email: { contains: query, mode: "insensitive" },
             },
           ],
+        },
+        include: {
+          profileDetails: true,
         },
         skip,
         take: limit,
