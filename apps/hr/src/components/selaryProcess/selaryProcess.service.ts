@@ -66,7 +66,11 @@ export class EmployeePayrollService {
           workingHours,
           grossPay,
           currentProfileHourlySalary,
-        } = this.calculatePayrollFields(details, timeSheet);
+        } = this.calculatePayrollFields(
+          details,
+          timeSheet,
+          details.paySchedule
+        );
 
         let employeeDeduction = 0;
         let employeeContribution = 0;
@@ -127,8 +131,8 @@ export class EmployeePayrollService {
           holydayPay: "0", // Placeholder
           bonus: "0",
           commission: "0", // Placeholder
-          total: totalPay.toFixed(2).toString(),
-          grossPay: totalPay.toFixed(2).toString(),
+          total: workingHours.toString(),
+          grossPay: grossPay.toFixed(2).toString(),
           profile: profile as any,
           paySchedule: paySchedule as any,
           createdAt: new Date(),
@@ -183,7 +187,8 @@ export class EmployeePayrollService {
 
   private calculatePayrollFields(
     details: profileDetails,
-    timeSheet: any
+    timeSheet: any,
+    paySchedule: any
   ): {
     rate: string;
     salary: string;
@@ -194,7 +199,7 @@ export class EmployeePayrollService {
     grossPay: number;
     currentProfileHourlySalary: number;
   } {
-    return calculatePayrollFieldsHelper(details, timeSheet);
+    return calculatePayrollFieldsHelper(details, timeSheet, paySchedule);
   }
 
   private calculateEmployeeSalary(
