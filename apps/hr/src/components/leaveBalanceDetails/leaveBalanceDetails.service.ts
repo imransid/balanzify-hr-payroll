@@ -19,60 +19,69 @@ export class LeaveBalanceDetailsService {
   async findAll(page = 1, limit = 10) {
     const skip = (page - 1) * limit;
 
-    const [profileList, , leaveTypes] = await Promise.all([
+    const [profileList, leaveBalanceDetails, leaveTypes] = await Promise.all([
       this.prisma.profile.findMany(),
-      this.prisma.leaveBalanceDetails.findMany(),
+      this.prisma.leaveBalanceDetails.findMany({
+        select: {
+          leaveBalances: true,
+        },
+      }),
       this.prisma.leaveType.findMany(),
     ]);
 
-    const leaveTypeMap = leaveTypes.reduce((acc, leaveType) => {
-      acc[leaveType.displayName] = "0";
-      return acc;
-    }, {});
-    // Loop through each profile
-    for (const profile of profileList) {
-      const leaveData = {
-        EMPCode: profile.id.toString(),
-        EMPName: profile.employeeName,
-        createdBy: profile.createdBy ?? null,
-        ...leaveTypeMap,
-      };
-
-      const exists = await this.prisma.leaveBalanceDetails.findFirst({
-        where: {
-          leaveBalances: {
-            contains: `"EMPCode":"${leaveData.EMPCode}"`,
-          },
-        },
-      });
-
-      if (!exists) {
-        // Create if not exists
-        await this.prisma.leaveBalanceDetails.create({
-          data: {
-            createdBy: profile.createdBy ?? null,
-            leaveBalances: JSON.stringify(leaveData),
-          },
-        });
-      } else {
-        // Parse existing JSON
-        const existingBalances = JSON.parse(exists.leaveBalances);
-
-        // Merge or update existing fields with new data
-        const updatedBalances = {
-          ...existingBalances,
-          ...leaveData,
+    if (
+      leaveBalanceDetails.length === 0 ||
+      leaveBalanceDetails.length !== profileList.length
+    ) {
+      const leaveTypeMap = leaveTypes.reduce((acc, leaveType) => {
+        acc[leaveType.displayName] = "0";
+        return acc;
+      }, {});
+      // Loop through each profile
+      for (const profile of profileList) {
+        const leaveData = {
+          EMPCode: profile.id.toString(),
+          EMPName: profile.employeeName,
+          createdBy: profile.createdBy ?? null,
+          ...leaveTypeMap,
         };
 
-        // Update the record
-        await this.prisma.leaveBalanceDetails.update({
+        const exists = await this.prisma.leaveBalanceDetails.findFirst({
           where: {
-            id: exists.id,
-          },
-          data: {
-            leaveBalances: JSON.stringify(updatedBalances),
+            leaveBalances: {
+              contains: `"EMPCode":"${leaveData.EMPCode}"`,
+            },
           },
         });
+
+        if (!exists) {
+          // Create if not exists
+          await this.prisma.leaveBalanceDetails.create({
+            data: {
+              createdBy: profile.createdBy ?? null,
+              leaveBalances: JSON.stringify(leaveData),
+            },
+          });
+        } else {
+          // Parse existing JSON
+          const existingBalances = JSON.parse(exists.leaveBalances);
+
+          // Merge or update existing fields with new data
+          const updatedBalances = {
+            ...existingBalances,
+            ...leaveData,
+          };
+
+          // Update the record
+          await this.prisma.leaveBalanceDetails.update({
+            where: {
+              id: exists.id,
+            },
+            data: {
+              leaveBalances: JSON.stringify(updatedBalances),
+            },
+          });
+        }
       }
     }
 
