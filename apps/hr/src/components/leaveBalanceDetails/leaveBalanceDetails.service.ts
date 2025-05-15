@@ -43,14 +43,14 @@ export class LeaveBalanceDetailsService {
         ...leaveTypeMap,
       };
 
-      await this.prisma.leaveBalanceDetails.create({
+      let saveData = await this.prisma.leaveBalanceDetails.create({
         data: {
           createdBy: profile.createdBy ?? null,
           leaveBalances: JSON.stringify(leaveData),
         },
       });
 
-      createdLeaveData.push(leaveData); // collect inserted data
+      createdLeaveData.push(saveData); // collect inserted data
     }
 
     return {
@@ -182,13 +182,41 @@ export class LeaveBalanceDetailsService {
     };
   }
 
+  // async updateAllBalanceDetails(balanceID: number, data: string) {
+  //   try {
+  //     // Parse incoming JSON string
+  //     const parsedData = JSON.parse(data);
+  //     const updatePromises = parsedData.map(async (item: any) => {
+  //       let updatedVal = JSON.stringify(item.leaveBalances);
+
+  //       await this.prisma.leaveBalanceDetails.update({
+  //         where: {
+  //           id: item.id,
+  //         },
+  //         data: {
+  //           leaveBalanceId: balanceID,
+  //           leaveBalances: updatedVal,
+  //         },
+  //       });
+  //     });
+
+  //     return {
+  //       success: true,
+  //       message: "", //`${results.length} leave balance details updated.`,
+  //       data: [], //results,
+  //     };
+  //   } catch (error) {
+  //     console.error("Error updating leaveBalanceDetails:", error);
+  //     throw new Error("Failed to update leaveBalanceDetails.");
+  //   }
+  // }
+
   async updateAllBalanceDetails(balanceID: number, data: string) {
     try {
-      // Parse incoming JSON string
       const parsedData = JSON.parse(data);
 
-      // Loop and update each item by its ID
       const updatePromises = parsedData.map((item: any) => {
+        // Ensure leaveBalances is stored as a JSON string
         const formattedLeaveBalances =
           typeof item.leaveBalances === "string"
             ? item.leaveBalances
@@ -196,23 +224,23 @@ export class LeaveBalanceDetailsService {
 
         return this.prisma.leaveBalanceDetails.update({
           where: {
-            id: item.id, // <-- Update by individual row ID
+            id: item.id,
           },
           data: {
+            leaveBalanceId: balanceID,
+            leaveBalances: formattedLeaveBalances,
             createdBy: item.createdBy ?? null,
             companyId: item.companyId ?? null,
-            leaveBalances: formattedLeaveBalances,
-            leaveBalanceId: balanceID, // <-- Set common balanceID
           },
         });
       });
 
-      // Wait for all updates to complete
+      // Wait for all updates to finish
       const results = await Promise.all(updatePromises);
 
       return {
         success: true,
-        message: `${results.length} leave balance details updated.`,
+        message: `${results.length} leave balance detail(s) updated successfully.`,
         data: results,
       };
     } catch (error) {
