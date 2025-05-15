@@ -16,6 +16,50 @@ import { GraphQLException } from "exceptions/graphql-exception";
 export class LeaveBalanceDetailsService {
   constructor(private readonly prisma: PrismaHrService) {}
 
+  async newFindAll() {
+    const [profileList, leaveBalanceDetails, leaveTypes] = await Promise.all([
+      this.prisma.profile.findMany(),
+      this.prisma.leaveBalanceDetails.findMany({
+        select: {
+          leaveBalances: true,
+        },
+      }),
+      this.prisma.leaveType.findMany(),
+    ]);
+
+    const leaveTypeMap = leaveTypes.reduce((acc, leaveType) => {
+      acc[leaveType.displayName] = "0";
+      return acc;
+    }, {});
+
+    const createdLeaveData = [];
+
+    // Loop through each profile and insert + collect data
+    for (const profile of profileList) {
+      const leaveData = {
+        EMPCode: profile.id.toString(),
+        EMPName: profile.employeeName,
+        createdBy: profile.createdBy ?? null,
+        ...leaveTypeMap,
+      };
+
+      await this.prisma.leaveBalanceDetails.create({
+        data: {
+          createdBy: profile.createdBy ?? null,
+          leaveBalances: JSON.stringify(leaveData),
+        },
+      });
+
+      createdLeaveData.push(leaveData); // collect inserted data
+    }
+
+    return {
+      success: true,
+      message: `${createdLeaveData.length} leave balance details created.`,
+      data: createdLeaveData,
+    };
+  }
+
   async findAll(page = 1, limit = 10) {
     const skip = (page - 1) * limit;
 
@@ -29,60 +73,25 @@ export class LeaveBalanceDetailsService {
       this.prisma.leaveType.findMany(),
     ]);
 
-    if (
-      leaveBalanceDetails.length === 0 ||
-      leaveBalanceDetails.length !== profileList.length
-    ) {
-      const leaveTypeMap = leaveTypes.reduce((acc, leaveType) => {
-        acc[leaveType.displayName] = "0";
-        return acc;
-      }, {});
-      // Loop through each profile
-      for (const profile of profileList) {
-        const leaveData = {
-          EMPCode: profile.id.toString(),
-          EMPName: profile.employeeName,
+    const leaveTypeMap = leaveTypes.reduce((acc, leaveType) => {
+      acc[leaveType.displayName] = "0";
+      return acc;
+    }, {});
+    // Loop through each profile
+    for (const profile of profileList) {
+      const leaveData = {
+        EMPCode: profile.id.toString(),
+        EMPName: profile.employeeName,
+        createdBy: profile.createdBy ?? null,
+        ...leaveTypeMap,
+      };
+
+      await this.prisma.leaveBalanceDetails.create({
+        data: {
           createdBy: profile.createdBy ?? null,
-          ...leaveTypeMap,
-        };
-
-        const exists = await this.prisma.leaveBalanceDetails.findFirst({
-          where: {
-            leaveBalances: {
-              contains: `"EMPCode":"${leaveData.EMPCode}"`,
-            },
-          },
-        });
-
-        if (!exists) {
-          // Create if not exists
-          await this.prisma.leaveBalanceDetails.create({
-            data: {
-              createdBy: profile.createdBy ?? null,
-              leaveBalances: JSON.stringify(leaveData),
-            },
-          });
-        } else {
-          // Parse existing JSON
-          const existingBalances = JSON.parse(exists.leaveBalances);
-
-          // Merge or update existing fields with new data
-          const updatedBalances = {
-            ...existingBalances,
-            ...leaveData,
-          };
-
-          // Update the record
-          await this.prisma.leaveBalanceDetails.update({
-            where: {
-              id: exists.id,
-            },
-            data: {
-              leaveBalances: JSON.stringify(updatedBalances),
-            },
-          });
-        }
-      }
+          leaveBalances: JSON.stringify(leaveData),
+        },
+      });
     }
 
     return await this.fetchAllData(skip, limit, page);
@@ -195,5 +204,44 @@ export class LeaveBalanceDetailsService {
       message: "Total Leave Type Summary",
       data,
     };
+  }
+
+  async updateAllBalanceDetails(balanceID: number, data: string) {
+    try {
+      // Parse incoming JSON string
+      const parsedData = JSON.parse(data);
+
+      // Loop and update each item by its ID
+      const updatePromises = parsedData.map((item: any) => {
+        const formattedLeaveBalances =
+          typeof item.leaveBalances === "string"
+            ? item.leaveBalances
+            : JSON.stringify(item.leaveBalances);
+
+        return this.prisma.leaveBalanceDetails.update({
+          where: {
+            id: item.id, // <-- Update by individual row ID
+          },
+          data: {
+            createdBy: item.createdBy ?? null,
+            companyId: item.companyId ?? null,
+            leaveBalances: formattedLeaveBalances,
+            leaveBalanceId: balanceID, // <-- Set common balanceID
+          },
+        });
+      });
+
+      // Wait for all updates to complete
+      const results = await Promise.all(updatePromises);
+
+      return {
+        success: true,
+        message: `${results.length} leave balance details updated.`,
+        data: results,
+      };
+    } catch (error) {
+      console.error("Error updating leaveBalanceDetails:", error);
+      throw new Error("Failed to update leaveBalanceDetails.");
+    }
   }
 }

@@ -1,6 +1,8 @@
 import { Resolver, Query, Mutation, Args, Int } from "@nestjs/graphql";
+import { GraphQLJSONObject } from "graphql-type-json";
 
 import {
+  AllUPDATEDLeaveBalanceDetailsResponse,
   LeaveBalanceDetails,
   LeaveBalanceSummary,
 } from "../entities/leave-balance-details.entity";
@@ -17,6 +19,18 @@ export class LeaveBalanceDetailsResolver {
   constructor(
     private readonly leaveBalanceDetailsService: LeaveBalanceDetailsService
   ) {}
+
+  @Query(() => GraphQLJSONObject)
+  async newLeaveBalanceDetailsList(): Promise<any> {
+    try {
+      return await this.leaveBalanceDetailsService.newFindAll();
+    } catch (error) {
+      throw new GraphQLException(
+        "Failed to fetch leave balance details: " + error.toString(),
+        "INTERNAL_SERVER_ERROR"
+      );
+    }
+  }
 
   @Query(() => LeaveBalanceDetailsPaginatedResult)
   async leaveBalanceDetailsList(
@@ -94,21 +108,27 @@ export class LeaveBalanceDetailsResolver {
     }
   }
 
-  // @Query(() => LeaveBalanceDetailsPaginatedResult)
-  // async searchLeaveBalanceDetails(
-  //   @Args("query", { type: () => String }) query: string,
-  //   @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
-  //   page: number,
-  //   @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-  //   limit: number
-  // ): Promise<LeaveBalanceDetailsPaginatedResult> {
-  //   try {
-  //     return await this.leaveBalanceDetailsService.search(query, page, limit);
-  //   } catch (error) {
-  //     throw new GraphQLException(
-  //       "Failed to search leave balance details",
-  //       "INTERNAL_SERVER_ERROR"
-  //     );
-  //   }
-  // }
+  @Mutation(() => AllUPDATEDLeaveBalanceDetailsResponse)
+  async updateAllBalanceDetails(
+    @Args("balanceID", { type: () => Int }) balanceID: number,
+    @Args("undatedData", { type: () => String }) undatedData: string
+  ): Promise<AllUPDATEDLeaveBalanceDetailsResponse> {
+    try {
+      return await this.leaveBalanceDetailsService.updateAllBalanceDetails(
+        balanceID,
+        undatedData
+      );
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new GraphQLException(
+          `Leave balance detail with ID ${balanceID} not found`,
+          "NOT_FOUND"
+        );
+      }
+      throw new GraphQLException(
+        "Failed to update leave balance detail",
+        "INTERNAL_SERVER_ERROR"
+      );
+    }
+  }
 }

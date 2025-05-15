@@ -23,6 +23,17 @@ export class LeaveBalanceDetails {
 }
 
 @ObjectType()
+export class AllUPDATEDLeaveBalanceDetailsResponse {
+  @Field(() => Boolean)
+  success: boolean;
+
+  @Field(() => String)
+  message: string;
+
+  @Field(() => [LeaveBalanceDetails])
+  data: LeaveBalanceDetails[];
+}
+@ObjectType()
 export class LeaveBalanceSummary {
   @Field()
   message: string;
