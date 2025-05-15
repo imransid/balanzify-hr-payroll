@@ -30,6 +30,11 @@ export class CreateLeaveBalanceDetailsInput {
   @IsOptional()
   @IsInt()
   data?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  companyId?: string;
 }
 
 @InputType()
