@@ -118,7 +118,7 @@ export class LeaveBalanceDetailsService {
         await this.prisma.leaveBalanceDetails.update({
           where: { id },
           data: {
-            leaveBalances: JSON.stringify(updateData.data),
+            leaveBalances: updateData.data,
           },
         });
 
