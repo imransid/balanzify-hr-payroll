@@ -60,47 +60,23 @@ export class LeaveBalanceDetailsService {
     };
   }
 
-  async findAll(page = 1, limit = 10) {
+  async findAll(page = 1, limit = 10, balanceID: number) {
     const skip = (page - 1) * limit;
-
-    const [profileList, leaveBalanceDetails, leaveTypes] = await Promise.all([
-      this.prisma.profile.findMany(),
-      this.prisma.leaveBalanceDetails.findMany({
-        select: {
-          leaveBalances: true,
-        },
-      }),
-      this.prisma.leaveType.findMany(),
-    ]);
-
-    const leaveTypeMap = leaveTypes.reduce((acc, leaveType) => {
-      acc[leaveType.displayName] = "0";
-      return acc;
-    }, {});
-    // Loop through each profile
-    for (const profile of profileList) {
-      const leaveData = {
-        EMPCode: profile.id.toString(),
-        EMPName: profile.employeeName,
-        createdBy: profile.createdBy ?? null,
-        ...leaveTypeMap,
-      };
-
-      await this.prisma.leaveBalanceDetails.create({
-        data: {
-          createdBy: profile.createdBy ?? null,
-          leaveBalances: JSON.stringify(leaveData),
-        },
-      });
-    }
-
-    return await this.fetchAllData(skip, limit, page);
+    return await this.fetchAllData(skip, limit, page, balanceID);
   }
 
-  async fetchAllData(skip: number, limit: number, page: number) {
+  async fetchAllData(
+    skip: number,
+    limit: number,
+    page: number,
+    balanceID: number
+  ) {
     // Fetch paginated data
     const [leaveBalanceDetails, totalCount] = await Promise.all([
       this.prisma.leaveBalanceDetails.findMany({
+        where: {
+          leaveBalanceId: balanceID,
+        },
         skip,
         take: limit,
       }),

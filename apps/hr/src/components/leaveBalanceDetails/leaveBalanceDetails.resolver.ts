@@ -34,13 +34,18 @@ export class LeaveBalanceDetailsResolver {
 
   @Query(() => LeaveBalanceDetailsPaginatedResult)
   async leaveBalanceDetailsList(
+    @Args("balanceID", { type: () => Int }) balanceID: number,
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
     limit: number
   ): Promise<any> {
     try {
-      return await this.leaveBalanceDetailsService.findAll(page, limit);
+      return await this.leaveBalanceDetailsService.findAll(
+        page,
+        limit,
+        balanceID
+      );
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch leave balance details" + error.toString(),
