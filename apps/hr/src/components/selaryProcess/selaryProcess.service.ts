@@ -120,12 +120,12 @@ export class EmployeePayrollService {
             `${profile.employeeName} ${profile.middleName || ""} ${profile.lastName || ""}`.trim(),
           workingHrs: `${workingHours}`,
           Rate: rate,
-          Salary: regularSalary.toFixed(2).toString(), //salary.toFixed(2),
-          OT: "",
-          doubleOT,
+          Salary: salary.toString(), //salary.toFixed(2),
+          OT: "0",
+          doubleOT: "0",
           PTO: "0", // Placeholder
           holydayPay: "0", // Placeholder
-          bonus: "",
+          bonus: "0",
           commission: "0", // Placeholder
           total: totalPay.toFixed(2).toString(),
           grossPay: totalPay.toFixed(2).toString(),

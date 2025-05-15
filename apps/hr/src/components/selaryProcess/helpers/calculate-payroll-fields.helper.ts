@@ -69,11 +69,7 @@ export function calculatePayrollFieldsHelper(
   let bonus = 0;
 
   if (details.payType.toUpperCase() === "HOURLY") {
-    salary =
-      parseFloat(details.ratePerHour || "0") *
-      parseFloat(details.hoursPerDay || "0") *
-      parseFloat(details.dayForWeek || "0") *
-      52;
+    salary = parseFloat(details.ratePerHour) * totalWorkedMinutes;
 
     overTime = details.offerDate ? 0 : 0;
     bonus = details.bonus ? 0 : 0;
@@ -86,9 +82,7 @@ export function calculatePayrollFieldsHelper(
     const weeksPerMonth = 4;
     const monthsPerYear = 12;
 
-    let salary = 0;
-    let ratePerHour = 0;
-
+    // No re-declaration of 'salary' or 'ratePerHour'
     switch (details.payFrequency) {
       case "PER_WEEK":
         salary = salaryInput * weeksPerMonth * monthsPerYear;
@@ -122,12 +116,14 @@ export function calculatePayrollFieldsHelper(
   const hourlySalary =
     monthlySalary / (workingDaysPerMonth * workingHoursPerDay * 12);
 
+  console.log(details.salary, "details.salary", salary);
+
   return {
     rate: ratePerHour.toFixed(2),
     salary: salary.toFixed(2),
-    OT: details?.overTime ? "Yes" : "No",
-    doubleOT: details?.doubleOverTimePay ? "Yes" : "No",
-    bonus: details?.bonus ? "Yes" : "No",
+    OT: details?.overTime ? "0" : "0",
+    doubleOT: details?.doubleOverTimePay ? "0" : "0",
+    bonus: details?.bonus ? "0" : "0",
     workingHours,
     grossPay,
     currentProfileHourlySalary: hourlySalary,
