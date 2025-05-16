@@ -182,42 +182,11 @@ export class LeaveBalanceDetailsService {
     };
   }
 
-  // async updateAllBalanceDetails(balanceID: number, data: string) {
-  //   try {
-  //     // Parse incoming JSON string
-  //     const parsedData = JSON.parse(data);
-  //     const updatePromises = parsedData.map(async (item: any) => {
-  //       let updatedVal = JSON.stringify(item.leaveBalances);
-
-  //       await this.prisma.leaveBalanceDetails.update({
-  //         where: {
-  //           id: item.id,
-  //         },
-  //         data: {
-  //           leaveBalanceId: balanceID,
-  //           leaveBalances: updatedVal,
-  //         },
-  //       });
-  //     });
-
-  //     return {
-  //       success: true,
-  //       message: "", //`${results.length} leave balance details updated.`,
-  //       data: [], //results,
-  //     };
-  //   } catch (error) {
-  //     console.error("Error updating leaveBalanceDetails:", error);
-  //     throw new Error("Failed to update leaveBalanceDetails.");
-  //   }
-  // }
-
   async updateAllBalanceDetails(balanceID: number, data: string) {
     try {
       const parsedData = JSON.parse(data);
 
-      console.log(parsedData, "parsedData");
-
-      const updatePromises = parsedData.map(async (item: any) => {
+      const updatePromises = await parsedData.map(async (item: any) => {
         // Ensure leaveBalances is stored as a JSON string
 
         const formattedLeaveBalances =
@@ -225,7 +194,7 @@ export class LeaveBalanceDetailsService {
             ? item.leaveBalances
             : JSON.stringify(item.leaveBalances);
 
-        await this.prisma.leaveBalanceDetails.update({
+        return await this.prisma.leaveBalanceDetails.update({
           where: {
             id: item.id,
           },
