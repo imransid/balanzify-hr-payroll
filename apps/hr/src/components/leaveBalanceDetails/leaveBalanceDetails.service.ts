@@ -112,6 +112,9 @@ export class LeaveBalanceDetailsService {
         await this.prisma.leaveBalanceDetails.update({
           where: { id },
           data: {
+            leaveBalanceId: updateData.leaveBalanceId
+              ? updateData.leaveBalanceId
+              : null,
             leaveBalances: updateData.data,
           },
         });
@@ -189,22 +192,24 @@ export class LeaveBalanceDetailsService {
       const updatePromises = await parsedData.map(async (item: any) => {
         // Ensure leaveBalances is stored as a JSON string
 
-        const formattedLeaveBalances =
-          typeof item.leaveBalances === "string"
-            ? item.leaveBalances
-            : JSON.stringify(item.leaveBalances);
+        // const formattedLeaveBalances =
+        //   typeof item.leaveBalances === "string"
+        //     ? item.leaveBalances
+        //     : JSON.stringify(item.leaveBalances);
 
-        return await this.prisma.leaveBalanceDetails.update({
-          where: {
-            id: item.id,
-          },
-          data: {
-            leaveBalanceId: balanceID,
-            leaveBalances: formattedLeaveBalances,
-            createdBy: item.createdBy ?? null,
-            companyId: item.companyId ?? null,
-          },
-        });
+        return await this.update(item.id, item);
+
+        // return await this.prisma.leaveBalanceDetails.update({
+        //   where: {
+        //     id: item.id,
+        //   },
+        //   data: {
+        //     leaveBalanceId: balanceID,
+        //     leaveBalances: formattedLeaveBalances,
+        //     createdBy: item.createdBy ?? null,
+        //     companyId: item.companyId ?? null,
+        //   },
+        // });
       });
 
       console.log("updatePromises", updatePromises);
@@ -214,7 +219,7 @@ export class LeaveBalanceDetailsService {
 
       return {
         success: true,
-        message: `${results.length} leave balance detail(s) updated successfully.`,
+        message: ` leave balance detail(s) updated successfully.`,
         data: results,
       };
     } catch (error) {
