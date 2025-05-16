@@ -633,7 +633,11 @@ model EmployeePayroll {
 model EmployeeLeave {
   id Int @id @default(autoincrement())
 
-  selectLeave String?
+  selectLeave            String?
+  deskLookByEmployeeID   Int?
+  deskLookByEmployeeName String?
+  note String?
+  
 
   profileId Int?
   profile   Profile? @relation(fields: [profileId], references: [id])

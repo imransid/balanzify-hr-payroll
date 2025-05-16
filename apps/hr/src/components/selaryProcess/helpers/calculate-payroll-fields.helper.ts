@@ -39,14 +39,11 @@ function computeHourlyRate(
   daysPerWeek: number,
   frequency: string
 ): number {
-  const weeksPerMonth = 4;
-  const monthsPerYear = 12;
-
   switch (frequency?.toUpperCase()) {
     case "PER_WEEK":
       return salary / (hoursPerDay * daysPerWeek);
     case "PER_MONTH":
-      return salary / (hoursPerDay * daysPerWeek * weeksPerMonth);
+      return (salary * 12) / (hoursPerDay * daysPerWeek * 52);
     default: // Assume annual
       return salary / (hoursPerDay * daysPerWeek * 52);
   }
@@ -89,6 +86,9 @@ export function calculatePayrollFieldsHelper(
 
     const hoursPerWeek = hoursPerDay * daysPerWeek;
 
+    const totalHour = hoursPerWeek * 52;
+    const currentMOnth = totalHour / 12;
+
     switch (paySchedule?.payFrequency) {
       case "EVERY_WEEK":
       case "EVERY_ONCE_WEEK":
@@ -96,12 +96,12 @@ export function calculatePayrollFieldsHelper(
         workingHours = 40;
         break;
       case "TWICE_A_MONTH":
-        salary = ratePerHour * hoursPerWeek * 2;
-        workingHours = 40 * 2;
+        salary = ratePerHour * (currentMOnth / 2);
+        workingHours = currentMOnth / 2;
         break;
       default:
-        salary = ratePerHour * hoursPerWeek * 4;
-        workingHours = 40 * 4;
+        salary = ratePerHour * currentMOnth;
+        workingHours = currentMOnth;
         break;
     }
   } else {
