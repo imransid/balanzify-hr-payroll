@@ -197,6 +197,8 @@ export class LeaveBalanceDetailsService {
         //     ? item.leaveBalances
         //     : JSON.stringify(item.leaveBalances);
 
+        item.leaveBalanceId = balanceID;
+
         return await this.update(item.id, item);
 
         // return await this.prisma.leaveBalanceDetails.update({
