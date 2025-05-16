@@ -93,7 +93,8 @@ export class LeaveBalanceDetailsService {
 
   async update(
     id: number,
-    updateData: UpdateLeaveBalanceDetailsInput
+    updateData: UpdateLeaveBalanceDetailsInput,
+    autoCreation: boolean = false
   ): Promise<LeaveBalanceDetails> {
     const leaveBalanceDetail = await this.prisma.leaveBalanceDetails.findUnique(
       {
@@ -101,12 +102,19 @@ export class LeaveBalanceDetailsService {
       }
     );
 
-    console.log("updateData", updateData);
-
-    if (!leaveBalanceDetail) {
+    if (!leaveBalanceDetail && autoCreation === false) {
       throw new NotFoundException(
         `Leave Balance Detail with ID ${id} not found`
       );
+    }
+
+    if (autoCreation && !leaveBalanceDetail) {
+      return await this.prisma.leaveBalanceDetails.create({
+        data: {
+          leaveBalanceId: updateData.leaveBalanceId,
+          leaveBalances: updateData.data,
+        },
+      });
     }
 
     try {
@@ -215,7 +223,7 @@ export class LeaveBalanceDetailsService {
         item.leaveBalanceId = balanceID;
         item.data = item.leaveBalances;
 
-        return await this.update(item.id, item);
+        return await this.update(item.id, item, true);
 
         // return await this.prisma.leaveBalanceDetails.update({
         //   where: {
