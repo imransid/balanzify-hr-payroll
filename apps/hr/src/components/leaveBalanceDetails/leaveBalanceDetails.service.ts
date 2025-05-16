@@ -200,6 +200,7 @@ export class LeaveBalanceDetailsService {
         //     : JSON.stringify(item.leaveBalances);
 
         item.leaveBalanceId = balanceID;
+        item.data = item.leaveBalances;
 
         return await this.update(item.id, item);
 
