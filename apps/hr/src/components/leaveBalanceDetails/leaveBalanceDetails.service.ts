@@ -101,6 +101,8 @@ export class LeaveBalanceDetailsService {
       }
     );
 
+    console.log("updateData", updateData);
+
     if (!leaveBalanceDetail) {
       throw new NotFoundException(
         `Leave Balance Detail with ID ${id} not found`
