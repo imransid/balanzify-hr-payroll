@@ -114,12 +114,25 @@ export class LeaveBalanceDetailsService {
         await this.prisma.leaveBalanceDetails.update({
           where: { id },
           data: {
-            leaveBalanceId: updateData.leaveBalanceId
-              ? updateData.leaveBalanceId
-              : null,
-            leaveBalances: updateData.data,
+            leaveBalances: JSON.stringify(updateData.data),
+            leaveBalance: updateData.leaveBalanceId
+              ? {
+                  connect: { id: updateData.leaveBalanceId },
+                }
+              : undefined,
           },
         });
+
+      // const updatedLeaveBalanceDetail =
+      //   await this.prisma.leaveBalanceDetails.update({
+      //     where: { id },
+      //     data: {
+      //       leaveBalanceId: updateData.leaveBalanceId
+      //         ? updateData.leaveBalanceId
+      //         : null,
+      //       leaveBalances: updateData.data,
+      //     },
+      //   });
 
       return updatedLeaveBalanceDetail;
     } catch (error) {
