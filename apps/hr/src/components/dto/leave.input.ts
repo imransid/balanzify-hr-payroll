@@ -14,7 +14,7 @@ import {
   IsOptional,
 } from "class-validator";
 import { Leave } from "../entities/leave.entity";
-
+import { Upload } from "scalars/upload.scalar";
 @InputType()
 export class CreateLeaveInput {
   @Field()
@@ -51,6 +51,12 @@ export class CreateLeaveInput {
   @IsNotEmpty()
   @IsBoolean()
   status: boolean;
+
+  @Field(() => [Upload], {
+    nullable: true,
+    description: "Input for File.",
+  })
+  documentationFile: Upload[];
 }
 
 @InputType()

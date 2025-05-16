@@ -48,9 +48,7 @@ function computeHourlyRate(
     case "PER_MONTH":
       return salary / (hoursPerDay * daysPerWeek * weeksPerMonth);
     default: // Assume annual
-      return (
-        salary / (hoursPerDay * daysPerWeek * weeksPerMonth * monthsPerYear)
-      );
+      return salary / (hoursPerDay * daysPerWeek * 52);
   }
 }
 

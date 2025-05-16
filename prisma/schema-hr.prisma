@@ -212,6 +212,7 @@ model Profile {
   timeSheetProcesses TimeSheetProcess[]
   payrolls           EmployeePayroll[] // 👈 One-to-many relation
   timeSheet          timeSheet[]
+  employeeLeave      EmployeeLeave[]
 
   @@index([email])
 }
@@ -624,6 +625,15 @@ model EmployeePayroll {
   netPaySummary String?
 
   companyID String?
+
+  profileId Int?
+  profile   Profile? @relation(fields: [profileId], references: [id])
+}
+
+model EmployeeLeave {
+  id Int @id @default(autoincrement())
+
+  selectLeave String?
 
   profileId Int?
   profile   Profile? @relation(fields: [profileId], references: [id])
