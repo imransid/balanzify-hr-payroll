@@ -215,14 +215,17 @@ export class LeaveBalanceDetailsService {
     try {
       const parsedData = JSON.parse(data);
 
-      const updatePromises = parsedData.map((item: any) => {
+      console.log(parsedData, "parsedData");
+
+      const updatePromises = parsedData.map(async (item: any) => {
         // Ensure leaveBalances is stored as a JSON string
+
         const formattedLeaveBalances =
           typeof item.leaveBalances === "string"
             ? item.leaveBalances
             : JSON.stringify(item.leaveBalances);
 
-        return this.prisma.leaveBalanceDetails.update({
+        await this.prisma.leaveBalanceDetails.update({
           where: {
             id: item.id,
           },
@@ -234,6 +237,8 @@ export class LeaveBalanceDetailsService {
           },
         });
       });
+
+      console.log("updatePromises", updatePromises);
 
       // Wait for all updates to finish
       const results = await Promise.all(updatePromises);
