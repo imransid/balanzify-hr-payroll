@@ -15,6 +15,7 @@ import {
 } from "class-validator";
 import { Profile } from "../entities/profile.entity";
 import { OnboardingType } from "../../prisma/OnboardingType.enum";
+import { GraphQLJSONObject } from "graphql-type-json";
 
 @InputType()
 export class CreateProfileInput {
@@ -123,4 +124,16 @@ export class ProfilePaginatedResult {
     this.currentPage = currentPage;
     this.totalCount = totalCount;
   }
+}
+
+@ObjectType()
+export class JobCardResponse {
+  @Field(() => Boolean)
+  success: boolean;
+
+  @Field(() => String)
+  message: string;
+
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  data: any;
 }

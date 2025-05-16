@@ -14,6 +14,7 @@ import { MailerService } from "@nestjs-modules/mailer";
 import { sendMail } from "../../../../../utils/email.util";
 import { OnboardingType } from "../../prisma/OnboardingType.enum";
 import { Profile } from "../entities/profile.entity";
+import moment from "moment";
 
 @Injectable()
 export class ProfileService {
@@ -191,5 +192,132 @@ export class ProfileService {
       totalPages: Math.ceil(totalCount / limit),
       currentPage: page,
     };
+  }
+
+  formatDate(date) {
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+  }
+
+  getTimeSheetDateRangeString(timeSheet) {
+    if (!timeSheet.length) return "No entries";
+
+    const startDates = timeSheet.map((entry) => new Date(entry.startTime));
+    const minDate = new Date(Math.min(...startDates));
+    const maxDate = new Date(Math.max(...startDates));
+
+    const formattedStart = this.formatDate(minDate); // e.g. "01 July 2024"
+    const formattedEnd = this.formatDate(maxDate); // e.g. "28 July 2024"
+
+    // Remove year from start if same year
+    const startMonth = minDate.toLocaleDateString("en-GB", { month: "long" });
+    const endYear = maxDate.getFullYear();
+    const startDay = String(minDate.getDate()).padStart(2, "0");
+
+    return `${startDay} ${startMonth} to ${formattedEnd}`;
+  }
+
+  async gettingJobCard(employeeID: string, profileId: number) {
+    try {
+      // Validate input
+      if (!employeeID && !profileId) {
+        throw new Error("At least profileId or employeeID must be provided.");
+      }
+
+      // Build query conditions
+      const conditions = [
+        ...(employeeID ? [{ employeeID }] : []),
+        ...(profileId ? [{ id: profileId }] : []),
+      ];
+
+      // Fetch profile with related data
+      const profile = await this.prisma.profile.findFirst({
+        where: { OR: conditions },
+        include: {
+          profileDetails: {
+            include: {
+              shift: true,
+            },
+          },
+          timeSheet: true,
+        },
+      });
+
+      if (!profile || !profile.profileDetails) {
+        throw new Error("Profile or profile details not found.");
+      }
+
+      const { timeSheet, profileDetails } = profile;
+      const { shift } = profileDetails;
+
+      let lateDays = 0;
+      let earlyOutCount = 0;
+
+      function getTimeInMinutes(dateTime) {
+        const date = new Date(dateTime);
+        return date.getUTCHours() * 60 + date.getUTCMinutes();
+      }
+
+      if (shift && shift.shiftIn && shift.shiftOut && timeSheet.length > 0) {
+        const shiftInMinutes = getTimeInMinutes(shift.shiftIn);
+        const shiftOutMinutes = getTimeInMinutes(shift.shiftOut);
+
+        timeSheet.forEach((entry) => {
+          const startMinutes = getTimeInMinutes(entry.startTime);
+          const endMinutes = getTimeInMinutes(entry.endTime);
+
+          if (startMinutes > shiftInMinutes) {
+            lateDays++;
+          }
+
+          if (endMinutes < shiftOutMinutes) {
+            earlyOutCount++;
+          }
+        });
+      }
+
+      const dateRangeStr = this.getTimeSheetDateRangeString(timeSheet);
+
+      const jobCardReport = {
+        employeeName: profile.employeeName ?? "N/A",
+        roleName: profileDetails.role ?? "N/A",
+        employeeId: profile.employeeID,
+        designation: profile.designation ?? "N/A",
+        department: profile.department ?? "N/A",
+        officeLocation: profileDetails.company ?? "N/A",
+        joinDate: profileDetails.dateOfJoining ?? "N/A",
+        releaseDate: "N/A",
+        presentDays: timeSheet.length,
+        earlyOutCount,
+        lateDays,
+        absentDays: 0,
+        leaveDays: 0,
+        timeDifference: "0 hr 0 Min",
+        approvedOT: "0 hr 0 Min",
+        dateRange: dateRangeStr,
+        profileImageUrl: profileDetails.photo ?? "default.png",
+        timeSheet: timeSheet,
+      };
+
+      return {
+        success: true,
+        message: "Job card report fetched successfully.",
+        data: jobCardReport,
+      };
+    } catch (error) {
+      // Log error for debugging
+      console.error("Error in gettingJobCard:", error);
+
+      // Throw or return error with meaningful message
+      return {
+        success: false,
+        message:
+          error instanceof Error ? error.message : "Unknown error occurred.",
+        data: null,
+      };
+    }
   }
 }

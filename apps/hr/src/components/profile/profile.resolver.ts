@@ -4,10 +4,12 @@ import {
   CreateProfileInput,
   UpdateProfileInput,
   ProfilePaginatedResult,
+  JobCardResponse,
 } from "../dto/profile.input";
 import { Profile } from "../entities/profile.entity";
 import { NotFoundException } from "@nestjs/common";
 import { GraphQLException } from "exceptions/graphql-exception";
+import { GraphQLJSONObject } from "graphql-type-json";
 
 @Resolver(() => Profile)
 export class ProfileResolver {
@@ -130,6 +132,22 @@ export class ProfileResolver {
     } catch (error) {
       throw new GraphQLException(
         "Failed to search profiles",
+        "INTERNAL_SERVER_ERROR"
+      );
+    }
+  }
+
+  @Query(() => GraphQLJSONObject)
+  async gettingJobCard(
+    @Args("profileId", { type: () => Int, nullable: true }) profileId?: number,
+    @Args("employeeID", { type: () => String, nullable: true })
+    employeeID?: string
+  ): Promise<JobCardResponse> {
+    try {
+      return await this.profileService.gettingJobCard(employeeID, profileId);
+    } catch (error) {
+      throw new GraphQLException(
+        "Failed to search gettingJobCard",
         "INTERNAL_SERVER_ERROR"
       );
     }
