@@ -65,6 +65,16 @@ export class LeaveBalanceDetailsService {
     return await this.fetchAllData(skip, limit, page, balanceID);
   }
 
+  async findOne(id: number): Promise<LeaveBalanceDetails> {
+    const leaveBalanceDetail = await this.prisma.leaveBalanceDetails.findUnique(
+      {
+        where: { id },
+      }
+    );
+
+    return leaveBalanceDetail;
+  }
+
   async fetchAllData(
     skip: number,
     limit: number,
@@ -122,7 +132,7 @@ export class LeaveBalanceDetailsService {
         await this.prisma.leaveBalanceDetails.update({
           where: { id },
           data: {
-            leaveBalances: JSON.stringify(updateData.data),
+            leaveBalances: updateData.data,
             leaveBalance: updateData.leaveBalanceId
               ? {
                   connect: { id: updateData.leaveBalanceId },
@@ -130,17 +140,6 @@ export class LeaveBalanceDetailsService {
               : undefined,
           },
         });
-
-      // const updatedLeaveBalanceDetail =
-      //   await this.prisma.leaveBalanceDetails.update({
-      //     where: { id },
-      //     data: {
-      //       leaveBalanceId: updateData.leaveBalanceId
-      //         ? updateData.leaveBalanceId
-      //         : null,
-      //       leaveBalances: updateData.data,
-      //     },
-      //   });
 
       return updatedLeaveBalanceDetail;
     } catch (error) {
@@ -150,8 +149,6 @@ export class LeaveBalanceDetailsService {
         "INTERNAL_SERVER_ERROR"
       );
     }
-
-    // return updatedLeaveBalanceDetail;
   }
 
   async remove(id: number) {
@@ -212,30 +209,13 @@ export class LeaveBalanceDetailsService {
     try {
       const parsedData = JSON.parse(data);
 
+      console.log("parsedData", parsedData);
+
       const updatePromises = await parsedData.map(async (item: any) => {
-        // Ensure leaveBalances is stored as a JSON string
-
-        // const formattedLeaveBalances =
-        //   typeof item.leaveBalances === "string"
-        //     ? item.leaveBalances
-        //     : JSON.stringify(item.leaveBalances);
-
         item.leaveBalanceId = balanceID;
         item.data = item.leaveBalances;
 
         return await this.update(item.id, item, true);
-
-        // return await this.prisma.leaveBalanceDetails.update({
-        //   where: {
-        //     id: item.id,
-        //   },
-        //   data: {
-        //     leaveBalanceId: balanceID,
-        //     leaveBalances: formattedLeaveBalances,
-        //     createdBy: item.createdBy ?? null,
-        //     companyId: item.companyId ?? null,
-        //   },
-        // });
       });
 
       console.log("updatePromises", updatePromises);

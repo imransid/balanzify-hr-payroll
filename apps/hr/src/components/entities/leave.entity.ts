@@ -1,28 +1,43 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, Int } from "@nestjs/graphql";
 
 @ObjectType()
-export class Leave {
+export class EmployeeLeave {
   @Field(() => Int)
   id: number;
 
-  @Field()
-  leaveName: string;
+  @Field({ nullable: true })
+  leaveType?: string;
 
-  @Field()
-  displayName: string;
+  @Field(() => Int, { nullable: true })
+  totalDays?: number;
 
-  @Field()
-  definition: string;
+  @Field(() => Int, { nullable: true })
+  deskLookByEmployeeID?: number;
 
-  @Field()
-  color: string;
+  @Field({ nullable: true })
+  deskLookByEmployeeName?: string;
 
-  @Field()
-  leaveType: string;
+  @Field({ nullable: true })
+  note?: string;
 
-  @Field(() => Int)
-  maxLeaveAllocation: number;
+  @Field({ nullable: true })
+  fromDate?: Date;
 
-  @Field()
-  status: boolean;
+  @Field({ nullable: true })
+  toDate?: Date;
+
+  @Field({ nullable: true })
+  status?: string;
+
+  @Field({ nullable: true })
+  docUrl?: string;
+
+  @Field(() => Int, { nullable: true })
+  leaveBalanceId?: number;
+
+  @Field(() => Int, { nullable: true })
+  leaveTypeId?: number;
+
+  @Field(() => Int, { nullable: true })
+  profileId?: number;
 }

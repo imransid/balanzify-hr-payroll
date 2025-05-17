@@ -1,76 +1,96 @@
 import {
-  Int,
-  PartialType,
   InputType,
   Field,
+  Int,
+  PartialType,
   ObjectType,
 } from "@nestjs/graphql";
-import {
-  IsNotEmpty,
-  IsString,
-  IsDate,
-  IsBoolean,
-  IsInt,
-  IsOptional,
-} from "class-validator";
-import { Leave } from "../entities/leave.entity";
+import { IsString, IsOptional, IsDate, IsInt } from "class-validator";
 import { Upload } from "scalars/upload.scalar";
+import { EmployeeLeave } from "../entities/leave.entity";
+
 @InputType()
-export class CreateLeaveInput {
-  @Field()
-  @IsNotEmpty()
-  @IsString()
-  leaveName: string;
-
-  @Field()
-  @IsNotEmpty()
-  @IsString()
-  displayName: string;
-
-  @Field()
-  @IsNotEmpty()
-  @IsString()
-  definition: string;
-
-  @Field()
-  @IsNotEmpty()
-  @IsString()
-  color: string;
-
-  @Field()
-  @IsNotEmpty()
-  @IsString()
-  leaveType: string;
-
-  @Field()
-  @IsNotEmpty()
+export class CreateEmployeeLeaveInput {
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
   @IsInt()
-  maxLeaveAllocation: number;
+  leaveBalanceId?: number;
 
-  @Field()
-  @IsNotEmpty()
-  @IsBoolean()
-  status: boolean;
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  leaveTypeId?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  leaveType?: string;
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  totalDays?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  selectLeave?: string;
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  deskLookByEmployeeID?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  deskLookByEmployeeName?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  note?: string;
+
+  @Field(() => Date, { nullable: true })
+  @IsOptional()
+  @IsDate()
+  fromDate?: Date;
+
+  @Field(() => Date, { nullable: true })
+  @IsOptional()
+  @IsDate()
+  toDate?: Date;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  status?: string;
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  profileId?: number;
 
   @Field(() => [Upload], {
     nullable: true,
-    description: "Input for File.",
+    description: "Supporting documentation file (optional)",
   })
-  documentationFile: Upload[];
+  documentationFile?: Upload[];
 }
 
 @InputType()
-export class UpdateLeaveInput extends PartialType(CreateLeaveInput) {
+export class UpdateEmployeeLeaveInput extends PartialType(
+  CreateEmployeeLeaveInput
+) {
   @Field(() => Int)
-  @IsNotEmpty()
   @IsInt()
   id: number;
 }
 
 @ObjectType()
 export class LeavePaginatedResult {
-  @Field(() => [Leave], { defaultValue: [] }) // Ensuring it's always an array
-  leaves: Leave[] = [];
+  @Field(() => [EmployeeLeave], { defaultValue: [] }) // Ensuring it's always an array
+  leaves: EmployeeLeave[] = [];
 
   @Field(() => Int)
   totalPages: number;
@@ -82,7 +102,7 @@ export class LeavePaginatedResult {
   totalCount: number;
 
   constructor(
-    leaves: Leave[],
+    leaves: EmployeeLeave[],
     totalPages: number,
     currentPage: number,
     totalCount: number

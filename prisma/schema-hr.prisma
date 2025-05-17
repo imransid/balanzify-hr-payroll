@@ -131,6 +131,8 @@ model LeaveType {
   includeHolidaysWithinLeavesONLeave Boolean @default(false)
   isCompensatory                     Boolean @default(false)
 
+  employeeLeave EmployeeLeave[] @relation("EmployeeLeave")
+
   createdBy Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -586,7 +588,8 @@ model leaveBalance {
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
 
-  details leaveBalanceDetails[] @relation("LeaveBalanceToDetails")
+  details       leaveBalanceDetails[] @relation("LeaveBalanceToDetails")
+  employeeLeave EmployeeLeave[]       @relation("EmployeeLeave")
 }
 
 model leaveBalanceDetails {
@@ -631,13 +634,23 @@ model EmployeePayroll {
 }
 
 model EmployeeLeave {
-  id Int @id @default(autoincrement())
+  id             Int           @id @default(autoincrement())
+  leaveBalanceId Int?
+  leaveBalance   leaveBalance? @relation("EmployeeLeave", fields: [leaveBalanceId], references: [id])
+
+  leaveTypeId   Int?
+  leaveTypeData LeaveType? @relation("EmployeeLeave", fields: [leaveTypeId], references: [id])
+
+  leaveType String?
+  totalDays Int?
 
   selectLeave            String?
   deskLookByEmployeeID   Int?
   deskLookByEmployeeName String?
-  note String?
-  
+  note                   String?
+  fromDate               DateTime?
+  toDate                 DateTime?
+  status                 String?
 
   profileId Int?
   profile   Profile? @relation(fields: [profileId], references: [id])
