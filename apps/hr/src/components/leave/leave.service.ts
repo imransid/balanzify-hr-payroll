@@ -74,29 +74,31 @@ export class LeaveService {
     const leaveBalanceDetails =
       await this.prisma.leaveBalanceDetails.findMany();
 
-    // 4. Match employee's leave balance record
-    const target = leaveBalanceDetails.find((item) => {
-      const parsed = JSON.parse(item.leaveBalances);
-      return parsed.EMPCode === employeeLeave.profileId.toString();
-    });
-
-    if (target) {
-      const parsedBalances = JSON.parse(target.leaveBalances);
-
-      const currentBalance = parseFloat(
-        parsedBalances[leaveType.displayName] || "0"
-      );
-      const updatedBalance = currentBalance - employeeLeave.totalDays;
-
-      parsedBalances[leaveType.displayName] = updatedBalance.toString();
-
-      // 5. Update leave balance record
-      await this.prisma.leaveBalanceDetails.update({
-        where: { id: target.id },
-        data: {
-          leaveBalances: JSON.stringify(parsedBalances),
-        },
+    if (updateLeaveInput.status === "APPROVAL") {
+      // 4. Match employee's leave balance record
+      const target = leaveBalanceDetails.find((item) => {
+        const parsed = JSON.parse(item.leaveBalances);
+        return parsed.EMPCode === employeeLeave.profileId.toString();
       });
+
+      if (target) {
+        const parsedBalances = JSON.parse(target.leaveBalances);
+
+        const currentBalance = parseFloat(
+          parsedBalances[leaveType.displayName] || "0"
+        );
+        const updatedBalance = currentBalance - employeeLeave.totalDays;
+
+        parsedBalances[leaveType.displayName] = updatedBalance.toString();
+
+        // 5. Update leave balance record
+        await this.prisma.leaveBalanceDetails.update({
+          where: { id: target.id },
+          data: {
+            leaveBalances: JSON.stringify(parsedBalances),
+          },
+        });
+      }
     }
 
     // 6. Update employee leave info

@@ -169,39 +169,72 @@ export class LeaveBalanceDetailsService {
     });
   }
 
-  async totalLeaveTypeAva(): Promise<LeaveBalanceSummary> {
+  async totalLeaveTypeAva() {
+    const leaveType = await this.prisma.leaveType.findMany({
+      select: {
+        displayName: true,
+      },
+    });
+
+    console.log("leaveType", leaveType);
+
     const leaveBalanceDetails = await this.prisma.leaveBalanceDetails.findMany({
       select: {
         leaveBalances: true,
       },
     });
 
-    const ignoreKeys = ["EMPCode", "EMPName", "createdBy"];
-    const totals: Record<string, number> = {};
+    // Step 1: Extract leave types
+    const leaveTypes = leaveType.map((type) => type.displayName);
 
-    for (const detail of leaveBalanceDetails) {
-      const balance = JSON.parse(detail.leaveBalances);
+    // Step 2: Initialize data structure
+    const returnRes: Record<
+      string,
+      { available: number; pending: number; reject: number; approve: number }
+    > = {};
+    leaveTypes.forEach((type) => {
+      returnRes[type] = { available: 0, pending: 0, reject: 0, approve: 0 };
+    });
 
-      for (const [key, value] of Object.entries(balance)) {
-        if (ignoreKeys.includes(key)) continue;
+    const employeeLeave = await this.prisma.employeeLeave.findMany({
+      include: {
+        leaveTypeData: true,
+      },
+    });
 
-        const numericValue = Number(value);
-        if (!isNaN(numericValue)) {
-          totals[key] = (totals[key] || 0) + numericValue;
+    employeeLeave.forEach((leave) => {
+      const type = leave.leaveTypeData.displayName; // e.g., 'SHORT', 'ANNUAL'
+      const status = leave.status; // e.g., 'APPROVE', 'PENDING'
+
+      // Check if this type exists in returnRes
+      if (returnRes[type]) {
+        if (status === "APPROVE") {
+          returnRes[type].approve += 1;
+        } else if (status === "PENDING") {
+          returnRes[type].pending += 1;
+        } else if (status === "REJECT") {
+          returnRes[type].reject += 1;
         }
       }
+    });
+
+    // Step 3: Loop and parse leave balances
+    for (const detail of leaveBalanceDetails) {
+      const balances = JSON.parse(detail.leaveBalances);
+
+      leaveTypes.forEach((type) => {
+        const leaveValue = parseInt(balances[type], 10); // Convert from string to number
+        if (!isNaN(leaveValue)) {
+          returnRes[type].available += leaveValue;
+        }
+      });
     }
 
-    const data: LeaveTypeTotal[] = Object.entries(totals).map(
-      ([type, total]) => ({
-        type,
-        total,
-      })
-    );
+    console.log(returnRes);
 
     return {
       message: "Total Leave Type Summary",
-      data,
+      data: returnRes,
     };
   }
 

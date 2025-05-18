@@ -54,8 +54,8 @@ export class LeaveBalanceDetailsResolver {
     }
   }
 
-  @Query(() => LeaveBalanceSummary)
-  async totalLeaveTypeAva(): Promise<LeaveBalanceSummary> {
+  @Query(() => GraphQLJSONObject)
+  async totalLeaveTypeAva(): Promise<any> {
     try {
       return await this.leaveBalanceDetailsService.totalLeaveTypeAva();
     } catch (error) {
