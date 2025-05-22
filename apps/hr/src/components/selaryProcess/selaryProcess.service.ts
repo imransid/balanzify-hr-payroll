@@ -13,6 +13,7 @@ import {
   UpdateEmployeePayrollInput,
 } from "../dto/create-employee-payroll.input";
 import { EmployeePayroll } from "../entities/employee-payroll.entity";
+import { netPayHelper } from "./helpers/payrollTax-helper";
 
 @Injectable()
 export class EmployeePayrollService {
@@ -75,19 +76,29 @@ export class EmployeePayrollService {
         let employeeDeduction = 0;
         let employeeContribution = 0;
 
-        const strArray = profile.profileDetails.deduction_Contribution;
+        const strArray: string[] =
+          profile.profileDetails.deduction_Contribution;
 
         let parsedArray = [];
 
-        strArray.forEach((item) => {
-          try {
-            const validJsonStr = item.replace(/'/g, '"');
-            const parsed = JSON.parse(validJsonStr);
+        try {
+          // Replace single quotes around keys and values
+          const validJsonStr = strArray[0]
+            .replace(/([{,]\s*)'([^']+?)'\s*:/g, '$1"$2":') // keys
+            .replace(/:\s*'([^']+?)'(?=[,}])/g, ': "$1"'); // values
+
+          // Parse the fixed JSON string
+          const parsed = JSON.parse(validJsonStr);
+
+          // If it's an array, spread into parsedArray
+          if (Array.isArray(parsed)) {
             parsedArray.push(...parsed);
-          } catch (e) {
-            console.error("Failed to parse item:", item);
+          } else {
+            parsedArray.push(parsed);
           }
-        });
+        } catch (e) {
+          console.error("Failed to parse deduction_Contribution:", e.message);
+        }
 
         if (parsedArray.length > 0) {
           const totalCompanyAnnualMax = parsedArray.reduce((sum, item) => {
@@ -102,17 +113,30 @@ export class EmployeePayrollService {
           employeeDeduction = totalEmployeeAnnualMax;
         }
 
-        const { regularSalary, overtimePay, totalPay } =
-          this.calculateEmployeeSalary(
-            currentProfileHourlySalary,
-            workingHours,
-            details.paySchedule,
-            details
-          );
+        const { totalPay } = this.calculateEmployeeSalary(
+          currentProfileHourlySalary,
+          workingHours,
+          details.paySchedule,
+          details
+        );
 
-        const netPaySummary = await this.netPaySummaryCalculation(totalPay);
+        const yearlySealery = parseFloat(rate) * 8 * 5 * 52;
+
+        const netPaySummary = await this.netPaySummaryCalculation(
+          yearlySealery,
+          workingHours
+        );
+
+        this.netPayDetails(
+          grossPay,
+          details.paySchedule,
+          details,
+          rate,
+          workingHours
+        );
 
         const netPay = await this.netPayCalculation(
+          //total need to pay
           totalPay,
           details.maritalStatus,
           employeeDeduction
@@ -150,7 +174,8 @@ export class EmployeePayrollService {
   }
 
   private async netPaySummaryCalculation(
-    amount: number
+    amount: number,
+    hours: number
   ): Promise<NetPaySummary> {
     let employeeDta = await this.payrollTaxService.taxRate(
       amount,
@@ -158,6 +183,9 @@ export class EmployeePayrollService {
     );
 
     let employerDta = await this.payrollTaxService.taxRateEmployer(amount);
+
+    employeeDta.federalTaxWithHoldingHourlyRate =
+      employeeDta.federalTaxWithHoldingHourlyRate * hours;
 
     return {
       employeeDta,
@@ -462,7 +490,8 @@ export class EmployeePayrollService {
           profile?.profileDetails?.maritalStatus || "Single";
 
         const netPaySummary = await this.netPaySummaryCalculation(
-          parseFloat(e.grossPay)
+          parseFloat(e.grossPay),
+          20
         );
 
         const netPay = await this.netPayCalculation(
@@ -489,6 +518,7 @@ export class EmployeePayrollService {
             taxableIncome: 0,
             federalTaxWithHoldingMonthlyRate: 0,
             federalTaxWithHoldingWeeklyRate: 0,
+            federalTaxWithHoldingHourlyRate: 0,
           },
           employerDta: {
             medicareTax: 0,
@@ -515,6 +545,8 @@ export class EmployeePayrollService {
               summary?.employeeDta?.federalTaxWithHoldingMonthlyRate || 0;
             totalSummary.employeeDta.federalTaxWithHoldingWeeklyRate +=
               summary?.employeeDta?.federalTaxWithHoldingWeeklyRate || 0;
+            totalSummary.employeeDta.federalTaxWithHoldingHourlyRate +=
+              summary?.employeeDta?.federalTaxWithHoldingHourlyRate || 0;
 
             // Employer data
             totalSummary.employerDta.medicareTax +=
@@ -564,5 +596,55 @@ export class EmployeePayrollService {
     );
 
     return returnResData;
+  }
+
+  private async netPayDetails(
+    grossPay: number,
+    paySchedule: any,
+    details: any,
+    rate: string,
+    workingHours: number
+  ) {
+    const yearlySealery = parseFloat(rate) * 8 * 5 * 52;
+    const workingWeeklyHour = details.hoursPerDay * details.dayForWeek;
+
+    let employeeDta = await this.payrollTaxService.taxRate(
+      yearlySealery,
+      FilingStatus.SINGLE
+    );
+
+    let returnData = employeeDta;
+
+    if (details.payType === "HOURLY") {
+    } else {
+    }
+
+    console.log(
+      "grossPay",
+      grossPay,
+      "paySchedule",
+      // paySchedule,
+      "details",
+      details.payType,
+      details.payFrequency,
+      "rate",
+      rate,
+      "workingHours",
+      workingHours,
+      parseFloat(rate) * 8 * 5 * 52,
+      employeeDta.federalTaxWithHoldingHourlyRate * workingHours,
+      ":::",
+      employeeDta.federalTaxWithHoldingHourlyRate * 8 * 5 * 4,
+      employeeDta.federalTaxWithHoldingHourlyRate * 8 * 5 * 52,
+      employeeDta
+    );
+
+    await netPayHelper(
+      details,
+      grossPay,
+      paySchedule,
+      parseInt(rate),
+      workingHours
+    );
   }
 }

@@ -21,6 +21,9 @@ export class EmployeeTaxRate {
 
   @Field()
   federalTaxWithHoldingWeeklyRate: number;
+
+  @Field()
+  federalTaxWithHoldingHourlyRate: number;
 }
 
 @ObjectType()

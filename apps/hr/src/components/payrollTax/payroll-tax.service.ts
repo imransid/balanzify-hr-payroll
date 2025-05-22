@@ -96,6 +96,7 @@ export class PayrollTaxService {
 
     const monthlyRate = (await taxAmount).totalTax / 12;
     const weeklyRate = (await taxAmount).totalTax / 52;
+    const hourlyRate = (await taxAmount).totalTax / (5 * 8 * 52);
 
     // Return the calculated tax rates in the TaxRate entity
     return {
@@ -105,6 +106,7 @@ export class PayrollTaxService {
       socialSecurityTax: socialSecurityTax,
       federalTaxWithHoldingMonthlyRate: monthlyRate,
       federalTaxWithHoldingWeeklyRate: weeklyRate,
+      federalTaxWithHoldingHourlyRate: hourlyRate,
     };
   }
 
@@ -121,6 +123,8 @@ export class PayrollTaxService {
 
     const additionalMedicareTax = this.additionalMedicareTax(amount, 0.9, true);
 
+    const hourlyRate = 0; //(await taxAmount).totalTax / (5 * 8 * 52);
+
     // Return the calculated tax rates in the TaxRate entity
     return {
       federalTaxWithHoldingYearly: 12, //(await taxAmount).totalTax,
@@ -129,6 +133,7 @@ export class PayrollTaxService {
       socialSecurityTax: socialSecurityTax,
       federalTaxWithHoldingMonthlyRate: monthlyRate,
       federalTaxWithHoldingWeeklyRate: weeklyRate,
+      federalTaxWithHoldingHourlyRate: hourlyRate,
     };
   }
 

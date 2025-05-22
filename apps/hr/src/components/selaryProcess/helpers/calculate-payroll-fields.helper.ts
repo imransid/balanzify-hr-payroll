@@ -73,6 +73,8 @@ export function calculatePayrollFieldsHelper(
   let overTime = 0;
   let bonus = 0;
 
+  console.log("payType", payType);
+
   // 2. Calculate salary and hourly rate
   if (payType === "HOURLY") {
     salary = ratePerHour * (totalWorkedMinutes / 60);
@@ -124,7 +126,7 @@ export function calculatePayrollFieldsHelper(
   ).toFixed(2);
 
   return {
-    rate: ratePerHour.toFixed(2),
+    rate: ratePerHour.toString(),
     salary: salary.toFixed(2),
     OT: details?.overTime ? "0" : "0",
     doubleOT: details?.doubleOverTimePay ? "0" : "0",

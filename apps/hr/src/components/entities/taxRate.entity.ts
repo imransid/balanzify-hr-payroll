@@ -19,6 +19,9 @@ export class TaxRate {
 
   @Field()
   federalTaxWithHoldingWeeklyRate: number;
+
+  @Field()
+  federalTaxWithHoldingHourlyRate: number;
 }
 @ObjectType()
 export class TaxRateEmployer {
@@ -42,6 +45,7 @@ export interface EmployeeTaxData {
   socialSecurityTax: number;
   federalTaxWithHoldingMonthlyRate: number;
   federalTaxWithHoldingWeeklyRate: number;
+  federalTaxWithHoldingHourlyRate: number;
 }
 
 export interface EmployerTaxData {
