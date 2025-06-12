@@ -14,7 +14,7 @@ export class AdditionAndDeductionService {
   async create(
     input: CreatePayrollAdditionAndDeductionInput
   ): Promise<PayrollAdditionAndDeduction> {
-    return this.prisma.additionAndDeduction.create({
+    return this.prisma.payrollAdditionAndDeduction.create({
       data: {
         ...input,
       },
@@ -28,12 +28,11 @@ export class AdditionAndDeductionService {
     const skip = (page - 1) * limit;
 
     const [items, totalCount] = await Promise.all([
-      this.prisma.additionAndDeduction.findMany({
+      this.prisma.payrollAdditionAndDeduction.findMany({
         skip,
         take: limit,
-        include: { details: true },
       }),
-      this.prisma.additionAndDeduction.count(),
+      this.prisma.payrollAdditionAndDeduction.count(),
     ]);
 
     return {
@@ -45,9 +44,8 @@ export class AdditionAndDeductionService {
   }
 
   async findOne(id: number): Promise<PayrollAdditionAndDeduction> {
-    const item = await this.prisma.additionAndDeduction.findUnique({
+    const item = await this.prisma.payrollAdditionAndDeduction.findUnique({
       where: { id },
-      include: { details: true },
     });
 
     if (!item) {
@@ -65,7 +63,7 @@ export class AdditionAndDeductionService {
   ): Promise<PayrollAdditionAndDeduction> {
     await this.findOne(id);
 
-    return this.prisma.additionAndDeduction.update({
+    return this.prisma.payrollAdditionAndDeduction.update({
       where: { id },
       data: {
         ...input,
@@ -75,7 +73,7 @@ export class AdditionAndDeductionService {
 
   async remove(id: number): Promise<PayrollAdditionAndDeduction> {
     await this.findOne(id);
-    return this.prisma.additionAndDeduction.delete({ where: { id } });
+    return this.prisma.payrollAdditionAndDeduction.delete({ where: { id } });
   }
 
   async search(
@@ -86,17 +84,16 @@ export class AdditionAndDeductionService {
     const skip = (page - 1) * limit;
 
     const [items, totalCount] = await Promise.all([
-      this.prisma.additionAndDeduction.findMany({
+      this.prisma.payrollAdditionAndDeduction.findMany({
         where: {
-          title: { contains: query, mode: "insensitive" },
+          amount: { contains: query, mode: "insensitive" },
         },
         skip,
         take: limit,
-        include: { details: true },
       }),
-      this.prisma.additionAndDeduction.count({
+      this.prisma.payrollAdditionAndDeduction.count({
         where: {
-          title: { contains: query, mode: "insensitive" },
+          amount: { contains: query, mode: "insensitive" },
         },
       }),
     ]);
