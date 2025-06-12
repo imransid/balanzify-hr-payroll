@@ -43,6 +43,8 @@ import { EmployeePayrollProcessResolver } from "./selaryProcess/selaryProcess.re
 import { EmployeePayrollService } from "./selaryProcess/selaryProcess.service";
 import { PunchDataService } from "./punchData/punchData.service";
 import { PunchDataResolver } from "./punchData/punchData.resolver";
+import { AdditionAndDeductionResolver } from "./additionAndDeduction/addtionAndDeduction.resolver";
+import { AdditionAndDeductionService } from "./additionAndDeduction/addtionAndDeduction.service";
 
 @Module({
   imports: [
@@ -100,6 +102,8 @@ import { PunchDataResolver } from "./punchData/punchData.resolver";
     EmployeePayrollService,
     PunchDataResolver,
     PunchDataService,
+    AdditionAndDeductionResolver,
+    AdditionAndDeductionService,
   ],
 })
 export class ComponentsModule {}

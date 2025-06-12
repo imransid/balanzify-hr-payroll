@@ -655,3 +655,16 @@ model EmployeeLeave {
   profileId Int?
   profile   Profile? @relation(fields: [profileId], references: [id])
 }
+
+model PayrollAdditionAndDeduction {
+  id          Int       @id @default(autoincrement())
+  uid         String    @unique
+  kind        String?
+  amount      String?
+  inputDate   DateTime?
+  joinDate    DateTime?
+  designation String?
+  department  String?
+  remark      String?
+  employee    String?
+}
