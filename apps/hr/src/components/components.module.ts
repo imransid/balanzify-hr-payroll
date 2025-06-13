@@ -45,6 +45,8 @@ import { PunchDataService } from "./punchData/punchData.service";
 import { PunchDataResolver } from "./punchData/punchData.resolver";
 import { AdditionAndDeductionResolver } from "./additionAndDeduction/addtionAndDeduction.resolver";
 import { AdditionAndDeductionService } from "./additionAndDeduction/addtionAndDeduction.service";
+import { PayslipResolver } from "./payslip/payslip.resolver";
+import { PayslipService } from "./payslip/payslip.service";
 
 @Module({
   imports: [
@@ -104,6 +106,8 @@ import { AdditionAndDeductionService } from "./additionAndDeduction/addtionAndDe
     PunchDataService,
     AdditionAndDeductionResolver,
     AdditionAndDeductionService,
+    PayslipService,
+    PayslipResolver,
   ],
 })
 export class ComponentsModule {}
