@@ -489,6 +489,9 @@ model generalSettings {
   emailTemplate                                String?
   processPayrollAccountingEntryBasedOnEmployee Boolean?
 
+  companyID  String?
+  employeeID String?
+
   createdBy Int?
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
@@ -667,4 +670,5 @@ model PayrollAdditionAndDeduction {
   department  String?
   remark      String?
   employee    String?
+  companyId   String?
 }

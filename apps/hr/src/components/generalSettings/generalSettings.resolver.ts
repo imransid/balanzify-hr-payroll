@@ -116,14 +116,22 @@ export class GeneralSettingsResolver {
 
   @Query(() => GeneralSettingsPaginatedResult)
   async searchGeneralSettings(
-    @Args("query", { type: () => String }) query: string,
-    @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
-    page: number,
-    @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    @Args("query", { type: () => String, nullable: true }) query?: string,
+    @Args("employeeID", { type: () => String, nullable: true })
+    employeeID?: string,
+    @Args("companyID", { type: () => String, nullable: true })
+    companyID?: string,
+    @Args("page", { type: () => Int, nullable: true }) page = 1,
+    @Args("limit", { type: () => Int, nullable: true }) limit = 10
   ): Promise<GeneralSettingsPaginatedResult> {
     try {
-      return await this.generalSettingsService.search(query, page, limit);
+      return await this.generalSettingsService.search(
+        query ?? "",
+        page,
+        limit,
+        employeeID,
+        companyID
+      );
     } catch (error) {
       throw new GraphQLException(
         "Failed to search general settings",

@@ -64,6 +64,16 @@ export class CreateGeneralSettingsInput {
 
   @Field({ nullable: true })
   @IsOptional()
+  @IsString()
+  companyID?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  employeeID?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
   @IsBoolean()
   processPayrollAccountingEntryBasedOnEmployee?: boolean;
 

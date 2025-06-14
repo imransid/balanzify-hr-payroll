@@ -33,6 +33,12 @@ export class GeneralSettings {
   emailTemplate?: string;
 
   @Field({ nullable: true })
+  companyID?: string;
+
+  @Field({ nullable: true })
+  employeeID?: string;
+
+  @Field({ nullable: true })
   processPayrollAccountingEntryBasedOnEmployee?: boolean;
 
   @Field(() => Int, { nullable: true })

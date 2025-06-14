@@ -72,26 +72,68 @@ export class GeneralSettingsService {
   async search(
     query: string,
     page = 1,
-    limit = 10
+    limit = 10,
+    employeeID?: string,
+    companyID?: string
   ): Promise<GeneralSettingsPaginatedResult> {
     const skip = (page - 1) * limit;
 
+    const filters: any[] = [];
+
+    // Only apply query filter if not empty
+    if (query && query.trim() !== "") {
+      filters.push(
+        {
+          id: !isNaN(Number(query)) ? Number(query) : undefined,
+        },
+        {
+          employeeID: {
+            contains: query,
+            mode: "insensitive",
+          },
+        },
+        {
+          companyID: {
+            contains: query,
+            mode: "insensitive",
+          },
+        }
+      );
+    }
+
+    // Only apply employeeID filter if not empty
+    if (employeeID && employeeID.trim() !== "") {
+      filters.push({
+        employeeID: {
+          contains: employeeID,
+          mode: "insensitive",
+        },
+      });
+    }
+
+    // Only apply companyID filter if not empty
+    if (companyID && companyID.trim() !== "") {
+      filters.push({
+        companyID: {
+          contains: companyID,
+          mode: "insensitive",
+        },
+      });
+    }
+
+    // If no filters provided, return all
+    const where = filters.length > 0 ? { OR: filters } : {};
+
     const [settings, totalCount] = await Promise.all([
       this.prisma.generalSettings.findMany({
-        where: {
-          emailTemplate: { contains: query, mode: "insensitive" }, // You can modify this based on other searchable fields
-        },
+        where,
         skip,
         take: limit,
         orderBy: {
           createdAt: "desc",
         },
       }),
-      this.prisma.generalSettings.count({
-        where: {
-          emailTemplate: { contains: query, mode: "insensitive" },
-        },
-      }),
+      this.prisma.generalSettings.count({ where }),
     ]);
 
     return {

@@ -21,6 +21,11 @@ export class CreatePayrollAdditionAndDeductionInput {
   @IsString()
   uid: string;
 
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  companyId: string;
+
   @Field({ nullable: true })
   @IsOptional()
   @IsString()

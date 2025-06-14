@@ -9,6 +9,9 @@ export class PayrollAdditionAndDeduction {
   uid?: string;
 
   @Field({ nullable: true })
+  companyId?: string;
+
+  @Field({ nullable: true })
   kind?: string;
 
   @Field({ nullable: true })
