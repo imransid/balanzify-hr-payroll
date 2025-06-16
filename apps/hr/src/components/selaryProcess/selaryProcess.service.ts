@@ -15,6 +15,11 @@ import {
 import { EmployeePayroll } from "../entities/employee-payroll.entity";
 import { netPayHelper } from "./helpers/payrollTax-helper";
 
+import {
+  calculateStateIncomeTax,
+  calculateUnemploymentInsurance,
+} from "./helpers/stateTaxCalculation.helper";
+
 @Injectable()
 export class EmployeePayrollService {
   constructor(
@@ -500,6 +505,31 @@ export class EmployeePayrollService {
           e.employeeDeduction
         );
 
+        // state tax calculation
+
+        const stateName = "California";
+        const stateIncomeTax = calculateStateIncomeTax(
+          parseFloat(e.grossPay) * 12,
+          marriedStatus,
+          stateName
+        );
+        const unemploymentTax = calculateUnemploymentInsurance(
+          parseFloat(e.grossPay) * 12,
+          stateName
+        );
+
+        // console.log(
+        //   "stateIncomeTax",
+        //   stateIncomeTax,
+        //   "unemploymentTax",
+        //   unemploymentTax
+        // );
+
+        const resStateValue = {
+          stateIncomeTax: stateIncomeTax,
+          unemploymentTax: unemploymentTax,
+        };
+
         const previousCalculatedFederalData =
           await this.prisma.employeePayroll.findMany({
             where: {
@@ -557,6 +587,8 @@ export class EmployeePayrollService {
               summary?.employerDta?.additionalMedicareTax || 0;
             totalSummary.employerDta.futaTax +=
               summary?.employerDta?.futaTax || 0;
+
+            // state calculation
           } catch (error) {
             console.error(
               "Failed to parse netPaySummary:",
@@ -589,6 +621,7 @@ export class EmployeePayrollService {
           profileID: e.profileID,
           storeNetPaySummary: totalSummary,
           profile: profile,
+          stateTaxValue: resStateValue,
         };
 
         return data;

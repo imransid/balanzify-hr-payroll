@@ -51,6 +51,15 @@ export class NetPaySummary {
 }
 
 @ObjectType()
+export class StateTaxValue {
+  @Field()
+  stateIncomeTax: number;
+
+  @Field()
+  unemploymentTax: number;
+}
+
+@ObjectType()
 export class EmployeePayrollProcess {
   @Field(() => Int, { nullable: true })
   id?: number;
@@ -114,6 +123,9 @@ export class EmployeePayrollProcess {
 
   @Field(() => NetPaySummary, { nullable: true })
   netPaySummary?: NetPaySummary;
+
+  @Field(() => StateTaxValue, { nullable: true })
+  stateTaxValue?: StateTaxValue;
 
   @Field(() => NetPaySummary, { nullable: true })
   storeNetPaySummary?: NetPaySummary;
