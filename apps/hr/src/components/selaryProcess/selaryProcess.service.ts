@@ -507,7 +507,7 @@ export class EmployeePayrollService {
 
         // state tax calculation
 
-        const stateName = "California";
+        const stateName = profile.profileDetails.stateWhereTheEmployeeLives; // "California";
         const stateIncomeTax = calculateStateIncomeTax(
           parseFloat(e.grossPay) * 12,
           marriedStatus,
