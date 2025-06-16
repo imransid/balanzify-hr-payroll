@@ -255,6 +255,11 @@ export class CreateLeaveTypeInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
+  selectLeave?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
   displayName?: string;
 
   @Field({ nullable: true })

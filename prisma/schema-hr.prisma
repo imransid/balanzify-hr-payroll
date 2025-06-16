@@ -102,6 +102,8 @@ model LeaveType {
   definition  String?
   color       String?
 
+  selectLeave String?
+
   leaveTypeHourly  Int?
   leaveTypeMaxHour Int?
 

@@ -101,6 +101,9 @@ export class LeaveType {
   @Field(() => Int)
   id: number;
 
+  @Field({ nullable: true })
+  selectLeave?: string;
+
   // Basic
   @Field({ nullable: true })
   leaveName?: string;
