@@ -47,6 +47,8 @@ import { AdditionAndDeductionResolver } from "./additionAndDeduction/addtionAndD
 import { AdditionAndDeductionService } from "./additionAndDeduction/addtionAndDeduction.service";
 import { PayslipResolver } from "./payslip/payslip.resolver";
 import { PayslipService } from "./payslip/payslip.service";
+import { GeneralTaxService } from "./generalTaxesSettings/general-tax.service";
+import { GeneralTaxResolver } from "./generalTaxesSettings/general-tax.resolver";
 
 @Module({
   imports: [
@@ -108,6 +110,8 @@ import { PayslipService } from "./payslip/payslip.service";
     AdditionAndDeductionService,
     PayslipService,
     PayslipResolver,
+    GeneralTaxResolver,
+    GeneralTaxService,
   ],
 })
 export class ComponentsModule {}

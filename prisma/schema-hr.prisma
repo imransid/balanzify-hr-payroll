@@ -140,49 +140,6 @@ model LeaveType {
   updatedAt DateTime @updatedAt
 }
 
-// model LeaveType {
-//   id          Int    @id @default(autoincrement())
-//   leaveName   String
-//   displayName String
-//   definition  String
-//   color       String
-
-//   leaveTypeHourly  Int
-//   leaveTypeMaxHour Int
-
-//   maxLeaveAllocation         Int
-//   allowLeaveApplicationAfter Int
-//   maxConsecutiveLeave        Int
-
-//   maxCarryForwardedLeaves    Int?
-//   expireCarryForwardedLeaves Int?
-
-//   allowEncashment     Boolean
-//   maxEncashableLeaves Int?
-//   minEncashableLeaves Int?
-//   earningComponents   String?
-
-//   isEarnedLeaves     Boolean
-//   earnLeaveFragrancy String?
-//   allocatedOnDays    String?
-//   Rounders           String?
-
-//   status StatusType
-
-//   isLeaveWithoutPay                  Boolean @default(false)
-//   isOptionalLeaves                   Boolean @default(false)
-//   allowNegativeBalance               Boolean @default(false)
-//   allowOverAllocation                Boolean @default(false)
-//   includeHolidaysWithinLeavesONLeave Boolean @default(false)
-//   isCompensatory                     Boolean @default(false)
-
-//   createdBy Int?
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-
-//   encashments LeaveEncashment[]
-// }
-
 enum OnboardingType {
   EMPLOYEE_SELF_ONBOARD_WITH_1_9 @map("EMPLOYEE_SELF_ONBOARD_WITH_1_9")
   EMPLOYEE_SELF_ONBOARD          @map("EMPLOYEE_SELF_ONBOARD")
@@ -217,6 +174,7 @@ model Profile {
   payrolls           EmployeePayroll[] // 👈 One-to-many relation
   timeSheet          timeSheet[]
   employeeLeave      EmployeeLeave[]
+  generalTax         GeneralTax[]
 
   @@index([email])
 }
@@ -673,4 +631,28 @@ model PayrollAdditionAndDeduction {
   remark      String?
   employee    String?
   companyId   String?
+}
+
+model GeneralTax {
+  id               Int     @id @default(autoincrement())
+  companyLegalName String?
+  companyType      String?
+
+  // Address Block 1
+  state1         String?
+  city           String?
+  streetAddress1 String?
+  zipCode        String?
+
+  // Address Block 2
+  state2         String?
+  streetAddress2 String?
+
+  // Address Block 3
+  state3 String?
+
+  companyId String?
+
+  profileId Int?
+  profile   Profile? @relation(fields: [profileId], references: [id])
 }
