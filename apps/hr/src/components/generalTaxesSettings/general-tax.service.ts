@@ -88,6 +88,7 @@ export class GeneralTaxService {
             { city: { contains: query, mode: "insensitive" } },
             { state1: { contains: query, mode: "insensitive" } },
             { streetAddress1: { contains: query, mode: "insensitive" } },
+            { companyId: { contains: query, mode: "insensitive" } },
           ],
         },
         skip,
