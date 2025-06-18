@@ -27,6 +27,106 @@ export class EmployeePayrollService {
     private readonly payrollTaxService: PayrollTaxService
   ) {}
 
+  async processSinglePayroll(profile: any, index: number) {
+    const details = profile.profileDetails;
+    const timeSheet = profile.timeSheetProcesses;
+
+    console.log("timeSheet", timeSheet);
+
+    const {
+      rate,
+      salary,
+      OT,
+      doubleOT,
+      bonus,
+      workingHours,
+      grossPay,
+      currentProfileHourlySalary,
+    } = this.calculatePayrollFields(details, timeSheet, details.paySchedule);
+
+    let employeeDeduction = 0;
+    let employeeContribution = 0;
+
+    const strArray: string[] = profile.profileDetails.deduction_Contribution;
+    let parsedArray = [];
+
+    try {
+      const validJsonStr = strArray[0]
+        .replace(/([{,]\s*)'([^']+?)'\s*:/g, '$1"$2":') // keys
+        .replace(/:\s*'([^']+?)'(?=[,}])/g, ': "$1"'); // values
+
+      const parsed = JSON.parse(validJsonStr);
+      parsedArray.push(...(Array.isArray(parsed) ? parsed : [parsed]));
+    } catch (e) {
+      console.error("Failed to parse deduction_Contribution:", e.message);
+    }
+
+    if (parsedArray.length > 0) {
+      employeeContribution = parsedArray.reduce(
+        (sum, item) => sum + Number(item.compnay_annual_max || 0),
+        0
+      );
+      employeeDeduction = parsedArray.reduce(
+        (sum, item) => sum + Number(item.employee_annual_max || 0),
+        0
+      );
+    }
+
+    const { totalPay } = this.calculateEmployeeSalary(
+      currentProfileHourlySalary,
+      workingHours,
+      details.paySchedule,
+      details
+    );
+
+    const yearlySealery = parseFloat(rate) * 8 * 5 * 52;
+
+    const netPaySummary = await this.netPaySummaryCalculation(
+      yearlySealery,
+      workingHours
+    );
+
+    this.netPayDetails(
+      grossPay,
+      details.paySchedule,
+      details,
+      rate,
+      workingHours
+    );
+
+    const netPay = await this.netPayCalculation(
+      totalPay,
+      details.maritalStatus,
+      employeeDeduction
+    );
+
+    return {
+      id: index + 1,
+      employeeName:
+        `${profile.employeeName} ${profile.middleName || ""} ${profile.lastName || ""}`.trim(),
+      workingHrs: `${workingHours}`,
+      Rate: rate,
+      Salary: salary.toString(),
+      OT: "0",
+      doubleOT: "0",
+      PTO: "0",
+      holydayPay: "0",
+      bonus: "0",
+      commission: "0",
+      total: workingHours.toString(),
+      grossPay: grossPay.toFixed(2).toString(),
+      profile: profile as any,
+      paySchedule: details.paySchedule,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      employeeContribution,
+      employeeDeduction,
+      netPaySummary,
+      netPay,
+      profileID: profile.id,
+    };
+  }
+
   async getAllEmployeePayroll(
     payScheduleId: number
   ): Promise<EmployeePayrollProcess[]> {
@@ -59,121 +159,127 @@ export class EmployeePayrollService {
     }
 
     const payrollList = await Promise.all(
-      allProfile.map(async (profile, index) => {
-        const details = profile.profileDetails;
-        const timeSheet = profile.timeSheetProcesses;
-
-        const {
-          rate,
-          salary,
-          OT,
-          doubleOT,
-          bonus,
-          workingHours,
-          grossPay,
-          currentProfileHourlySalary,
-        } = this.calculatePayrollFields(
-          details,
-          timeSheet,
-          details.paySchedule
-        );
-
-        let employeeDeduction = 0;
-        let employeeContribution = 0;
-
-        const strArray: string[] =
-          profile.profileDetails.deduction_Contribution;
-
-        let parsedArray = [];
-
-        try {
-          // Replace single quotes around keys and values
-          const validJsonStr = strArray[0]
-            .replace(/([{,]\s*)'([^']+?)'\s*:/g, '$1"$2":') // keys
-            .replace(/:\s*'([^']+?)'(?=[,}])/g, ': "$1"'); // values
-
-          // Parse the fixed JSON string
-          const parsed = JSON.parse(validJsonStr);
-
-          // If it's an array, spread into parsedArray
-          if (Array.isArray(parsed)) {
-            parsedArray.push(...parsed);
-          } else {
-            parsedArray.push(parsed);
-          }
-        } catch (e) {
-          console.error("Failed to parse deduction_Contribution:", e.message);
-        }
-
-        if (parsedArray.length > 0) {
-          const totalCompanyAnnualMax = parsedArray.reduce((sum, item) => {
-            return sum + Number(item.compnay_annual_max);
-          }, 0);
-
-          const totalEmployeeAnnualMax = parsedArray.reduce((sum, item) => {
-            return sum + Number(item.employee_annual_max);
-          }, 0);
-
-          employeeContribution = totalCompanyAnnualMax;
-          employeeDeduction = totalEmployeeAnnualMax;
-        }
-
-        const { totalPay } = this.calculateEmployeeSalary(
-          currentProfileHourlySalary,
-          workingHours,
-          details.paySchedule,
-          details
-        );
-
-        const yearlySealery = parseFloat(rate) * 8 * 5 * 52;
-
-        const netPaySummary = await this.netPaySummaryCalculation(
-          yearlySealery,
-          workingHours
-        );
-
-        this.netPayDetails(
-          grossPay,
-          details.paySchedule,
-          details,
-          rate,
-          workingHours
-        );
-
-        const netPay = await this.netPayCalculation(
-          //total need to pay
-          totalPay,
-          details.maritalStatus,
-          employeeDeduction
-        );
-
-        return {
-          id: index + 1,
-          employeeName:
-            `${profile.employeeName} ${profile.middleName || ""} ${profile.lastName || ""}`.trim(),
-          workingHrs: `${workingHours}`,
-          Rate: rate,
-          Salary: salary.toString(), //salary.toFixed(2),
-          OT: "0",
-          doubleOT: "0",
-          PTO: "0", // Placeholder
-          holydayPay: "0", // Placeholder
-          bonus: "0",
-          commission: "0", // Placeholder
-          total: workingHours.toString(),
-          grossPay: grossPay.toFixed(2).toString(),
-          profile: profile as any,
-          paySchedule: paySchedule as any,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          employeeContribution,
-          employeeDeduction,
-          netPaySummary: netPaySummary,
-          netPay: netPay,
-          profileID: profile.id,
-        };
-      })
+      allProfile.map((profile, index) =>
+        this.processSinglePayroll(profile, index)
+      )
     );
+
+    // const payrollList = await Promise.all(
+    //   allProfile.map(async (profile, index) => {
+    //     const details = profile.profileDetails;
+    //     const timeSheet = profile.timeSheetProcesses;
+
+    //     const {
+    //       rate,
+    //       salary,
+    //       OT,
+    //       doubleOT,
+    //       bonus,
+    //       workingHours,
+    //       grossPay,
+    //       currentProfileHourlySalary,
+    //     } = this.calculatePayrollFields(
+    //       details,
+    //       timeSheet,
+    //       details.paySchedule
+    //     );
+
+    //     let employeeDeduction = 0;
+    //     let employeeContribution = 0;
+
+    //     const strArray: string[] =
+    //       profile.profileDetails.deduction_Contribution;
+
+    //     let parsedArray = [];
+
+    //     try {
+    //       // Replace single quotes around keys and values
+    //       const validJsonStr = strArray[0]
+    //         .replace(/([{,]\s*)'([^']+?)'\s*:/g, '$1"$2":') // keys
+    //         .replace(/:\s*'([^']+?)'(?=[,}])/g, ': "$1"'); // values
+
+    //       // Parse the fixed JSON string
+    //       const parsed = JSON.parse(validJsonStr);
+
+    //       // If it's an array, spread into parsedArray
+    //       if (Array.isArray(parsed)) {
+    //         parsedArray.push(...parsed);
+    //       } else {
+    //         parsedArray.push(parsed);
+    //       }
+    //     } catch (e) {
+    //       console.error("Failed to parse deduction_Contribution:", e.message);
+    //     }
+
+    //     if (parsedArray.length > 0) {
+    //       const totalCompanyAnnualMax = parsedArray.reduce((sum, item) => {
+    //         return sum + Number(item.compnay_annual_max);
+    //       }, 0);
+
+    //       const totalEmployeeAnnualMax = parsedArray.reduce((sum, item) => {
+    //         return sum + Number(item.employee_annual_max);
+    //       }, 0);
+
+    //       employeeContribution = totalCompanyAnnualMax;
+    //       employeeDeduction = totalEmployeeAnnualMax;
+    //     }
+
+    //     const { totalPay } = this.calculateEmployeeSalary(
+    //       currentProfileHourlySalary,
+    //       workingHours,
+    //       details.paySchedule,
+    //       details
+    //     );
+
+    //     const yearlySealery = parseFloat(rate) * 8 * 5 * 52;
+
+    //     const netPaySummary = await this.netPaySummaryCalculation(
+    //       yearlySealery,
+    //       workingHours
+    //     );
+
+    //     this.netPayDetails(
+    //       grossPay,
+    //       details.paySchedule,
+    //       details,
+    //       rate,
+    //       workingHours
+    //     );
+
+    //     const netPay = await this.netPayCalculation(
+    //       //total need to pay
+    //       totalPay,
+    //       details.maritalStatus,
+    //       employeeDeduction
+    //     );
+
+    //     return {
+    //       id: index + 1,
+    //       employeeName:
+    //         `${profile.employeeName} ${profile.middleName || ""} ${profile.lastName || ""}`.trim(),
+    //       workingHrs: `${workingHours}`,
+    //       Rate: rate,
+    //       Salary: salary.toString(), //salary.toFixed(2),
+    //       OT: "0",
+    //       doubleOT: "0",
+    //       PTO: "0", // Placeholder
+    //       holydayPay: "0", // Placeholder
+    //       bonus: "0",
+    //       commission: "0", // Placeholder
+    //       total: workingHours.toString(),
+    //       grossPay: grossPay.toFixed(2).toString(),
+    //       profile: profile as any,
+    //       paySchedule: paySchedule as any,
+    //       createdAt: new Date(),
+    //       updatedAt: new Date(),
+    //       employeeContribution,
+    //       employeeDeduction,
+    //       netPaySummary: netPaySummary,
+    //       netPay: netPay,
+    //       profileID: profile.id,
+    //     };
+    //   })
+    // );
 
     return payrollList;
   }
@@ -480,33 +586,31 @@ export class EmployeePayrollService {
       return [];
     }
 
-    const returnResData: EmployeePayrollProcess[] = await Promise.all(
-      strArray.map(async (e) => {
+    let returnResData = await Promise.all(
+      strArray.map(async (e, i) => {
         const profile = await this.prisma.profile.findUnique({
           where: {
-            id: e.profileID,
+            id: e.profile.id,
           },
           include: {
-            profileDetails: true,
+            profileDetails: {
+              include: {
+                paySchedule: true,
+              },
+            },
+            timeSheet: true,
+            timeSheetProcesses: true,
           },
         });
+
+        profile.profileDetails.salary = e.Salary;
+
+        let responseCalculation = await this.processSinglePayroll(profile, i);
 
         const marriedStatus =
           profile?.profileDetails?.maritalStatus || "Single";
 
-        const netPaySummary = await this.netPaySummaryCalculation(
-          parseFloat(e.grossPay),
-          20
-        );
-
-        const netPay = await this.netPayCalculation(
-          parseFloat(e.grossPay),
-          marriedStatus,
-          e.employeeDeduction
-        );
-
-        // state tax calculation
-
+        //     // state tax calculation
         const stateName = profile.profileDetails.stateWhereTheEmployeeLives; // "California";
         const stateIncomeTax = calculateStateIncomeTax(
           parseFloat(e.grossPay) * 12,
@@ -518,18 +622,10 @@ export class EmployeePayrollService {
           stateName
         );
 
-        // console.log(
-        //   "stateIncomeTax",
-        //   stateIncomeTax,
-        //   "unemploymentTax",
-        //   unemploymentTax
-        // );
-
         const resStateValue = {
           stateIncomeTax: stateIncomeTax,
           unemploymentTax: unemploymentTax,
         };
-
         const previousCalculatedFederalData =
           await this.prisma.employeePayroll.findMany({
             where: {
@@ -539,7 +635,6 @@ export class EmployeePayrollService {
               netPaySummary: true,
             },
           });
-
         let totalSummary = {
           employeeDta: {
             federalTaxWithHoldingYearly: 0,
@@ -557,11 +652,9 @@ export class EmployeePayrollService {
             futaTax: 0,
           },
         };
-
         for (const record of previousCalculatedFederalData) {
           try {
             const summary = JSON.parse(record.netPaySummary);
-
             // Employee data
             totalSummary.employeeDta.federalTaxWithHoldingYearly +=
               summary?.employeeDta?.federalTaxWithHoldingYearly || 0;
@@ -577,7 +670,6 @@ export class EmployeePayrollService {
               summary?.employeeDta?.federalTaxWithHoldingWeeklyRate || 0;
             totalSummary.employeeDta.federalTaxWithHoldingHourlyRate +=
               summary?.employeeDta?.federalTaxWithHoldingHourlyRate || 0;
-
             // Employer data
             totalSummary.employerDta.medicareTax +=
               summary?.employerDta?.medicareTax || 0;
@@ -597,7 +689,6 @@ export class EmployeePayrollService {
             );
           }
         }
-
         const data: EmployeePayrollProcess = {
           id: parseInt(e.id) || 0,
           employeeName: e.employeeName,
@@ -614,16 +705,15 @@ export class EmployeePayrollService {
           employeeContribution: e.employeeContribution,
           employeeDeduction: e.employeeDeduction,
           grossPay: e.grossPay,
-          netPay: netPay,
+          netPay: responseCalculation.netPay,
           createdAt: new Date(e.createdAt),
           updatedAt: new Date(e.updatedAt),
-          netPaySummary: netPaySummary,
+          netPaySummary: responseCalculation.netPaySummary,
           profileID: e.profileID,
           storeNetPaySummary: totalSummary,
-          profile: profile,
+          profile: responseCalculation.profile,
           stateTaxValue: resStateValue,
         };
-
         return data;
       })
     );

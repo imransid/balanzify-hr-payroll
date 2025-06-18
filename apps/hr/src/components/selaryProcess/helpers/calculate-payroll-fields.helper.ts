@@ -63,7 +63,12 @@ export function calculatePayrollFieldsHelper(
 
   // 1. Calculate total worked minutes
   const totalWorkedMinutes = timeSheet.reduce((acc, entry) => {
-    return acc + parseWorkedMinutes(entry.totalWorked);
+    return (
+      acc +
+      parseWorkedMinutes(
+        entry.totalWorked === undefined ? entry.totalTime : entry.totalWorked
+      )
+    );
   }, 0);
 
   let workingHours = +(totalWorkedMinutes / 60).toFixed(2);
@@ -72,8 +77,6 @@ export function calculatePayrollFieldsHelper(
   let grossPay = 0;
   let overTime = 0;
   let bonus = 0;
-
-  console.log("payType", payType);
 
   // 2. Calculate salary and hourly rate
   if (payType === "HOURLY") {
@@ -124,6 +127,8 @@ export function calculatePayrollFieldsHelper(
     monthlySalary /
     (workingDaysPerMonth * workingHoursPerDay * 12)
   ).toFixed(2);
+
+  console.log("step 16767");
 
   return {
     rate: ratePerHour.toString(),
