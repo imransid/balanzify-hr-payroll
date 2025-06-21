@@ -246,14 +246,18 @@ export class SettingsResolver {
 
   @Query(() => SettingsPaginatedResult)
   async searchSettings(
-    @Args("query", { type: () => String }) query: string,
+    @Args("profileId", { type: () => String }) profileId: number,
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
     limit: number
   ): Promise<SettingsPaginatedResult> {
     try {
-      return await this.settingsService.search(query, page, limit);
+      return await this.settingsService.searchByProfileId(
+        profileId,
+        page,
+        limit
+      );
     } catch (error) {
       throw new GraphQLException(
         "Failed to search settings records",

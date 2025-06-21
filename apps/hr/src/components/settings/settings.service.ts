@@ -289,33 +289,55 @@ export class SettingsService {
     return new SettingsPaginatedResult(items, 1, 1, items.length);
   }
 
-  async search(
-    query: string,
+  async searchByProfileId(
+    profileId: number,
     page = 1,
     limit = 10
   ): Promise<SettingsPaginatedResult> {
     const skip = (page - 1) * limit;
-    const [items, totalCount] = await Promise.all([
-      this.prisma.settings.findMany({
-        where: {
-          contact: {
-            emailAddress: { contains: query, mode: "insensitive" },
-          },
-        },
-        skip,
-        take: limit,
-      }),
-      this.prisma.settings.count({
-        where: {
-          contact: {
-            emailAddress: { contains: query, mode: "insensitive" },
-          },
-        },
-      }),
+
+    const [
+      notificationSettings,
+      employeePermissions,
+      businessAccounts,
+      principalOfficers,
+      printingOptions,
+      directDeposits,
+      contactInfos,
+    ] = await Promise.all([
+      this.prisma.notificationSettings.findMany({ where: { profileId } }),
+      this.prisma.employeeProfilePermissions.findMany({ where: { profileId } }),
+      this.prisma.businessBankAccount.findMany({ where: { profileId } }),
+      this.prisma.principalOfficer.findMany({ where: { profileId } }),
+      this.prisma.printingOptions.findMany({ where: { profileId } }),
+      this.prisma.directDepositOptions.findMany({ where: { profileId } }),
+      this.prisma.contactInfo.findMany({ where: { profileId } }),
     ]);
 
+    const allItems: Array<
+      | NotificationSettings
+      | EmployeeProfilePermissions
+      | BusinessBankAccount
+      | PrincipalOfficer
+      | PrintingOptions
+      | DirectDepositOptions
+      | ContactInfo
+    > = [
+      ...notificationSettings,
+      ...employeePermissions,
+      ...businessAccounts,
+      ...principalOfficers,
+      ...printingOptions,
+      ...directDeposits,
+      ...contactInfos,
+    ];
+
+    const totalCount = allItems.length;
+
+    const paginatedItems = allItems.slice(skip, skip + limit);
+
     return new SettingsPaginatedResult(
-      items,
+      paginatedItems,
       Math.ceil(totalCount / limit),
       page,
       totalCount
