@@ -165,16 +165,23 @@ model Profile {
   companyID  String?
   employeeID String? @unique
 
-  createdBy          Int?
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
-  profileDetails     profileDetails?
+  createdBy                  Int?
+  createdAt                  DateTime                     @default(now())
+  updatedAt                  DateTime                     @updatedAt
+  profileDetails             profileDetails?
   // 👇 One-to-many relation
-  timeSheetProcesses TimeSheetProcess[]
-  payrolls           EmployeePayroll[] // 👈 One-to-many relation
-  timeSheet          timeSheet[]
-  employeeLeave      EmployeeLeave[]
-  generalTax         GeneralTax[]
+  timeSheetProcesses         TimeSheetProcess[]
+  payrolls                   EmployeePayroll[] // 👈 One-to-many relation
+  timeSheet                  timeSheet[]
+  employeeLeave              EmployeeLeave[]
+  generalTax                 GeneralTax[]
+  notificationSettings       NotificationSettings[]
+  employeeProfilePermissions EmployeeProfilePermissions[]
+  businessBankAccount        BusinessBankAccount[]
+  principalOfficer           PrincipalOfficer[]
+  printingOptions            PrintingOptions[]
+  directDepositOptions       DirectDepositOptions[]
+  contactInfo                ContactInfo[]
 
   @@index([email])
 }
