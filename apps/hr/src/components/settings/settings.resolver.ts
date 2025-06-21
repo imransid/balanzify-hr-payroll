@@ -146,19 +146,21 @@ export class SettingsResolver {
     }
   }
 
-
-
   @Mutation(() => SettingsPaginatedResult)
   async updateSettings(
     @Args("id", { type: () => Int }) id: number,
-    @Args("notification") notification: UpdateNotificationSettingsInput,
-    @Args("employeeProfile")
-    employeeProfile: UpdateEmployeeProfilePermissionsInput,
-    @Args("businessBank") businessBank: UpdateBusinessBankAccountInput,
-    @Args("principalOfficer") principalOfficer: UpdatePrincipalOfficerInput,
-    @Args("printing") printing: UpdatePrintingOptionsInput,
-    @Args("directDeposit") directDeposit: UpdateDirectDepositOptionsInput,
-    @Args("contact") contact: UpdateContactInfoInput
+    @Args("notification", { nullable: true })
+    notification?: UpdateNotificationSettingsInput,
+    @Args("employeeProfile", { nullable: true })
+    employeeProfile?: UpdateEmployeeProfilePermissionsInput,
+    @Args("businessBank", { nullable: true })
+    businessBank?: UpdateBusinessBankAccountInput,
+    @Args("principalOfficer", { nullable: true })
+    principalOfficer?: UpdatePrincipalOfficerInput,
+    @Args("printing", { nullable: true }) printing?: UpdatePrintingOptionsInput,
+    @Args("directDeposit", { nullable: true })
+    directDeposit?: UpdateDirectDepositOptionsInput,
+    @Args("contact", { nullable: true }) contact?: UpdateContactInfoInput
   ): Promise<SettingsPaginatedResult> {
     try {
       return await this.settingsService.update(

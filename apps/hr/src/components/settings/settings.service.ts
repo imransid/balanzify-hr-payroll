@@ -85,47 +85,72 @@ export class SettingsService {
 
   async update(
     id: number,
-    notification: UpdateNotificationSettingsInput,
-    employeeProfile: UpdateEmployeeProfilePermissionsInput,
-    businessBank: UpdateBusinessBankAccountInput,
-    principalOfficer: UpdatePrincipalOfficerInput,
-    printing: UpdatePrintingOptionsInput,
-    directDeposit: UpdateDirectDepositOptionsInput,
-    contact: UpdateContactInfoInput
+    notification?: UpdateNotificationSettingsInput,
+    employeeProfile?: UpdateEmployeeProfilePermissionsInput,
+    businessBank?: UpdateBusinessBankAccountInput,
+    principalOfficer?: UpdatePrincipalOfficerInput,
+    printing?: UpdatePrintingOptionsInput,
+    directDeposit?: UpdateDirectDepositOptionsInput,
+    contact?: UpdateContactInfoInput
   ): Promise<SettingsPaginatedResult> {
     await this.findOne(id);
 
-    const [notificationRecord] = await Promise.all([
-      this.prisma.notificationSettings.update({
-        where: { id },
-        data: notification,
-      }),
-      this.prisma.employeeProfilePermissions.update({
-        where: { id },
-        data: employeeProfile,
-      }),
-      this.prisma.businessBankAccount.update({
-        where: { id },
-        data: businessBank,
-      }),
-      this.prisma.principalOfficer.update({
-        where: { id },
-        data: principalOfficer,
-      }),
-      this.prisma.printingOptions.update({ where: { id }, data: printing }),
-      this.prisma.directDepositOptions.update({
-        where: { id },
-        data: directDeposit,
-      }),
-      this.prisma.contactInfo.update({ where: { id }, data: contact }),
-    ]);
+    const updatePromises = [];
 
-    return {
-      items: [notificationRecord],
-      totalCount: 1,
-      totalPages: 1,
-      currentPage: 1,
-    };
+    if (notification) {
+      updatePromises.push(
+        this.prisma.notificationSettings.update({
+          where: { id },
+          data: notification,
+        })
+      );
+    }
+    if (employeeProfile) {
+      updatePromises.push(
+        this.prisma.employeeProfilePermissions.update({
+          where: { id },
+          data: employeeProfile,
+        })
+      );
+    }
+    if (businessBank) {
+      updatePromises.push(
+        this.prisma.businessBankAccount.update({
+          where: { id },
+          data: businessBank,
+        })
+      );
+    }
+    if (principalOfficer) {
+      updatePromises.push(
+        this.prisma.principalOfficer.update({
+          where: { id },
+          data: principalOfficer,
+        })
+      );
+    }
+    if (printing) {
+      updatePromises.push(
+        this.prisma.printingOptions.update({ where: { id }, data: printing })
+      );
+    }
+    if (directDeposit) {
+      updatePromises.push(
+        this.prisma.directDepositOptions.update({
+          where: { id },
+          data: directDeposit,
+        })
+      );
+    }
+    if (contact) {
+      updatePromises.push(
+        this.prisma.contactInfo.update({ where: { id }, data: contact })
+      );
+    }
+
+    const results = await Promise.all(updatePromises);
+
+    return new SettingsPaginatedResult(results, 1, 1, results.length);
   }
 
   async remove(id: number): Promise<SettingsPaginatedResult> {
