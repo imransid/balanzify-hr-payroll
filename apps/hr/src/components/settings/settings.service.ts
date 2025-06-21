@@ -44,33 +44,43 @@ export class SettingsService {
   constructor(private readonly prisma: PrismaHrService) {}
 
   async createNotificationSettings(input: CreateNotificationSettingsInput) {
-    return this.prisma.notificationSettings.create({ data: input });
+    const item = await this.prisma.notificationSettings.create({ data: input });
+
+    return new SettingsPaginatedResult([item], 1, 1, 1);
   }
 
   async createEmployeeProfilePermissions(
     input: CreateEmployeeProfilePermissionsInput
   ) {
-    return this.prisma.employeeProfilePermissions.create({ data: input });
+    const item = await this.prisma.employeeProfilePermissions.create({
+      data: input,
+    });
+    return new SettingsPaginatedResult([item], 1, 1, 1);
   }
 
   async createBusinessBankAccount(input: CreateBusinessBankAccountInput) {
-    return this.prisma.businessBankAccount.create({ data: input });
+    const item = await this.prisma.businessBankAccount.create({ data: input });
+    return new SettingsPaginatedResult([item], 1, 1, 1);
   }
 
   async createPrincipalOfficer(input: CreatePrincipalOfficerInput) {
-    return this.prisma.principalOfficer.create({ data: input });
+    const item = await this.prisma.principalOfficer.create({ data: input });
+    return new SettingsPaginatedResult([item], 1, 1, 1);
   }
 
   async createPrintingOptions(input: CreatePrintingOptionsInput) {
-    return this.prisma.printingOptions.create({ data: input });
+    const item = await this.prisma.printingOptions.create({ data: input });
+    return new SettingsPaginatedResult([item], 1, 1, 1);
   }
 
   async createDirectDepositOptions(input: CreateDirectDepositOptionsInput) {
-    return this.prisma.directDepositOptions.create({ data: input });
+    const item = await this.prisma.directDepositOptions.create({ data: input });
+    return new SettingsPaginatedResult([item], 1, 1, 1);
   }
 
   async createContactInfo(input: CreateContactInfoInput) {
-    return this.prisma.contactInfo.create({ data: input });
+    const item = await this.prisma.contactInfo.create({ data: input });
+    return new SettingsPaginatedResult([item], 1, 1, 1);
   }
 
   async update(
