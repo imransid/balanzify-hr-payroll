@@ -305,13 +305,41 @@ export class SettingsService {
       directDeposits,
       contactInfos,
     ] = await Promise.all([
-      this.prisma.notificationSettings.findMany({ where: { profileId } }),
-      this.prisma.employeeProfilePermissions.findMany({ where: { profileId } }),
-      this.prisma.businessBankAccount.findMany({ where: { profileId } }),
-      this.prisma.principalOfficer.findMany({ where: { profileId } }),
-      this.prisma.printingOptions.findMany({ where: { profileId } }),
-      this.prisma.directDepositOptions.findMany({ where: { profileId } }),
-      this.prisma.contactInfo.findMany({ where: { profileId } }),
+      await this.prisma.notificationSettings.findMany({
+        where: {
+          OR: [{ profileId: profileId }],
+        },
+      }),
+      await this.prisma.employeeProfilePermissions.findMany({
+        where: {
+          OR: [{ profileId: profileId }],
+        },
+      }),
+      await this.prisma.businessBankAccount.findMany({
+        where: {
+          OR: [{ profileId: profileId }],
+        },
+      }),
+      await this.prisma.principalOfficer.findMany({
+        where: {
+          OR: [{ profileId: profileId }],
+        },
+      }),
+      await this.prisma.printingOptions.findMany({
+        where: {
+          OR: [{ profileId: profileId }],
+        },
+      }),
+      await this.prisma.directDepositOptions.findMany({
+        where: {
+          OR: [{ profileId: profileId }],
+        },
+      }),
+      await this.prisma.contactInfo.findMany({
+        where: {
+          OR: [{ profileId: profileId }],
+        },
+      }),
     ]);
 
     const allItems: Array<

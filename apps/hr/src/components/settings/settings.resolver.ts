@@ -246,22 +246,28 @@ export class SettingsResolver {
 
   @Query(() => SettingsPaginatedResult)
   async searchSettings(
-    @Args("profileId", { type: () => String }) profileId: number,
+    @Args("profileId", { type: () => Int }) profileId: number,
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
-    page: number,
+    page?: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit?: number
   ): Promise<SettingsPaginatedResult> {
     try {
-      return await this.settingsService.searchByProfileId(
+      console.log("test ::::: => ");
+
+      const test = await this.settingsService.searchByProfileId(
         profileId,
         page,
         limit
       );
+
+      console.log("test :: => ", test);
+
+      return test;
     } catch (error) {
       throw new GraphQLException(
-        "Failed to search settings records",
-        "INTERNAL_SERVER_ERROR"
+        "Failed to search settings  records",
+        "INTERNAL_SERVER_ERROR" + error.toString()
       );
     }
   }
