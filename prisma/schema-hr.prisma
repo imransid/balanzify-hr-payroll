@@ -656,3 +656,103 @@ model GeneralTax {
   profileId Int?
   profile   Profile? @relation(fields: [profileId], references: [id])
 }
+
+model NotificationSettings {
+  id                 Int      @id @default(autoincrement())
+  clientPaydayEmails Boolean?
+  paydayReminders    Boolean?
+  reminderType       String?
+  taxSetupReminders  Boolean?
+
+  companyId String?
+
+  profileId Int?
+  profile   Profile? @relation(fields: [profileId], references: [id])
+}
+
+model EmployeeProfilePermissions {
+  id                Int      @id @default(autoincrement())
+  personalInfo      Boolean?
+  taxWithholdings   Boolean?
+  directDepositEdit Boolean?
+
+  companyId String?
+
+  profileId Int?
+  profile   Profile? @relation(fields: [profileId], references: [id])
+}
+
+model BusinessBankAccount {
+  id              Int     @id @default(autoincrement())
+  legalName       String?
+  businessEmail   String?
+  website         String?
+  industry        String?
+  businessType    String?
+  businessPhone   String?
+  businessAddress String?
+  businessApt     String?
+  businessZip     String?
+  businessCity    String?
+  businessState   String?
+
+  companyId String?
+
+  profileId Int?
+  profile   Profile? @relation(fields: [profileId], references: [id])
+}
+
+model PrincipalOfficer {
+  id                    Int      @id @default(autoincrement())
+  ownerTitle            String?
+  ownerFirstName        String?
+  ownerLastName         String?
+  mobileNumber          String?
+  sameAsBusinessPhone   Boolean?
+  ssnLast4              String?
+  dateOfBirth           String?
+  personalAddress       String?
+  personalApt           String?
+  personalZip           String?
+  sameAsBusinessAddress Boolean?
+
+  companyId String?
+
+  profileId Int?
+  profile   Profile? @relation(fields: [profileId], references: [id])
+}
+
+model PrintingOptions {
+  id                Int      @id @default(autoincrement())
+  payStubsOnly      Boolean?
+  payChecksAndStubs Boolean?
+
+  companyId String?
+
+  profileId Int?
+  profile   Profile? @relation(fields: [profileId], references: [id])
+}
+
+model DirectDepositOptions {
+  id      Int      @id @default(autoincrement())
+  sameDay Boolean?
+  fiveDay Boolean?
+
+  companyId String?
+
+  profileId Int?
+  profile   Profile? @relation(fields: [profileId], references: [id])
+}
+
+model ContactInfo {
+  id            Int     @id @default(autoincrement())
+  firstName     String?
+  lastName      String?
+  businessPhone String?
+  emailAddress  String?
+
+  companyId String?
+
+  profileId Int?
+  profile   Profile? @relation(fields: [profileId], references: [id])
+}

@@ -49,6 +49,8 @@ import { PayslipResolver } from "./payslip/payslip.resolver";
 import { PayslipService } from "./payslip/payslip.service";
 import { GeneralTaxService } from "./generalTaxesSettings/general-tax.service";
 import { GeneralTaxResolver } from "./generalTaxesSettings/general-tax.resolver";
+import { SettingsResolver } from "./settings/settings.resolver";
+import { SettingsService } from "./settings/settings.service";
 
 @Module({
   imports: [
@@ -112,6 +114,8 @@ import { GeneralTaxResolver } from "./generalTaxesSettings/general-tax.resolver"
     PayslipResolver,
     GeneralTaxResolver,
     GeneralTaxService,
+    SettingsResolver,
+    SettingsService,
   ],
 })
 export class ComponentsModule {}
