@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@apollo/server": "^4.11.2",
+    "@moovio/sdk": "^0.12.5",
     "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/apollo": "^12.2.2",
     "@nestjs/common": "^10.0.0",
@@ -60,7 +61,8 @@
     "passport-google-oauth20": "^2.0.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

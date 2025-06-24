@@ -51,6 +51,8 @@ import { GeneralTaxService } from "./generalTaxesSettings/general-tax.service";
 import { GeneralTaxResolver } from "./generalTaxesSettings/general-tax.resolver";
 import { SettingsResolver } from "./settings/settings.resolver";
 import { SettingsService } from "./settings/settings.service";
+import { MoovService } from "./moov/moov.service";
+import { MoovResolver } from "./moov/moov.resolver";
 
 @Module({
   imports: [
@@ -116,6 +118,8 @@ import { SettingsService } from "./settings/settings.service";
     GeneralTaxService,
     SettingsResolver,
     SettingsService,
+    MoovService,
+    MoovResolver,
   ],
 })
 export class ComponentsModule {}

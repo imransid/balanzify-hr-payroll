@@ -34,10 +34,12 @@ export class ProfileResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyId", { type: () => String, nullable: true })
+    companyId: string
   ): Promise<ProfilePaginatedResult> {
     try {
-      return await this.profileService.findAll(page, limit);
+      return await this.profileService.findAll(page, limit, companyId);
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch profiles",

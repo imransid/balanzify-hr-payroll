@@ -77,13 +77,20 @@ export class ProfileService {
     }
   }
 
-  async findAll(page = 1, limit = 10): Promise<ProfilePaginatedResult> {
+  async findAll(
+    page = 1,
+    limit = 10,
+    companyID: string
+  ): Promise<ProfilePaginatedResult> {
     const skip = (page - 1) * limit;
 
     const [profiles, totalCount] = await Promise.all([
       this.prisma.profile.findMany({
         skip,
         take: limit,
+        where: {
+          employeeID: companyID,
+        },
         include: {
           profileDetails: {
             include: {
@@ -180,6 +187,9 @@ export class ProfileService {
             },
             {
               email: { contains: query, mode: "insensitive" },
+            },
+            {
+              companyID: { contains: query, mode: "insensitive" },
             },
           ],
         },
