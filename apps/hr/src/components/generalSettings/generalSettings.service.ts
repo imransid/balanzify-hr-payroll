@@ -19,13 +19,20 @@ export class GeneralSettingsService {
     });
   }
 
-  async findAll(page = 1, limit = 10): Promise<GeneralSettingsPaginatedResult> {
+  async findAll(
+    page = 1,
+    limit = 10,
+    companyID: string
+  ): Promise<GeneralSettingsPaginatedResult> {
     const skip = (page - 1) * limit;
 
     const [settings, totalCount] = await Promise.all([
       this.prisma.generalSettings.findMany({
         skip,
         take: limit,
+        where: {
+          companyID: companyID,
+        },
         orderBy: {
           createdAt: "desc",
         },

@@ -313,6 +313,7 @@ export class SettingsService {
       await this.prisma.employeeProfilePermissions.findMany({
         where: {
           OR: [{ profileId: profileId }],
+          
         },
       }),
       await this.prisma.businessBankAccount.findMany({

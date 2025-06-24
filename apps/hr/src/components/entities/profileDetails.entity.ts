@@ -173,4 +173,11 @@ export class ProfileDetails {
   @Field(() => Int, { nullable: true }) createdBy?: number;
   @Field({ nullable: true }) createdAt?: Date;
   @Field() updatedAt: Date;
+
+  @Field({ nullable: true }) emergency_email?: string;
+  @Field({ nullable: true }) authorize_to_work_until?: string;
+  @Field({ nullable: true }) i94_admission_number?: string;
+  @Field({ nullable: true }) passport_origin?: string;
+  @Field({ nullable: true }) account_routing_number?: string;
+  @Field({ nullable: true }) claim_dependents?: string;
 }

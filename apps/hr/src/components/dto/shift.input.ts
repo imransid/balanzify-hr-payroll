@@ -91,6 +91,10 @@ export class CreateShiftInput {
   @Field(() => Int, { nullable: true })
   @IsOptional()
   createdBy?: number;
+
+  @Field()
+  @IsOptional()
+  companyId?: string;
 }
 
 // Update Shift Input Type

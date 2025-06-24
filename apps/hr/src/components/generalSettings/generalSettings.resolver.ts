@@ -37,10 +37,11 @@ export class GeneralSettingsResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyID", { type: () => String, nullable: true }) companyID
   ): Promise<GeneralSettingsPaginatedResult> {
     try {
-      return await this.generalSettingsService.findAll(page, limit);
+      return await this.generalSettingsService.findAll(page, limit, companyID);
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch general settings",

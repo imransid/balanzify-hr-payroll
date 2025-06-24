@@ -46,4 +46,7 @@ export class Shift {
 
   @Field()
   tiffinOut: string;
+
+  @Field()
+  companyId?: string;
 }

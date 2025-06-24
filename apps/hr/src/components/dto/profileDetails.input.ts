@@ -270,6 +270,25 @@ export class CreateProfileDetailsInput {
   @IsOptional()
   @IsInt()
   createdBy?: number;
+
+  @Field({ nullable: true }) @IsOptional() @IsString() emergency_email?: string;
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  authorize_to_work_until?: string;
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  i94_admission_number?: string;
+  @Field({ nullable: true }) @IsOptional() @IsString() passport_origin?: string;
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  account_routing_number?: string;
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  claim_dependents?: string;
 }
 
 @InputType()

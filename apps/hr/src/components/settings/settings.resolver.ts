@@ -261,8 +261,6 @@ export class SettingsResolver {
         limit
       );
 
-      console.log("test :: => ", test);
-
       return test;
     } catch (error) {
       throw new GraphQLException(
