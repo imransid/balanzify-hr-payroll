@@ -89,7 +89,7 @@ export class ProfileService {
         skip,
         take: limit,
         where: {
-          employeeID: companyID,
+          companyID: companyID,
         },
         include: {
           profileDetails: {
