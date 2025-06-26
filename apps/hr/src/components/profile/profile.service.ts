@@ -84,6 +84,18 @@ export class ProfileService {
   ): Promise<ProfilePaginatedResult> {
     const skip = (page - 1) * limit;
 
+    let totalCountData = 0;
+
+    if (companyID) {
+      const total = await this.prisma.profile.findMany({
+        where: {
+          companyID: companyID,
+        },
+      });
+
+      totalCountData = total.length;
+    }
+
     const [profiles, totalCount] = await Promise.all([
       this.prisma.profile.findMany({
         skip,
@@ -102,16 +114,14 @@ export class ProfileService {
         },
       }) || [],
 
-      this.prisma.profile.count({
-        where: { companyID },
-      }),
+      this.prisma.profile.count(),
     ]);
 
     return {
       profiles: Array.isArray(profiles) ? profiles : [],
       totalPages: Math.ceil(totalCount / limit),
       currentPage: page,
-      totalCount,
+      totalCount: companyID ? totalCountData : totalCount,
     };
   }
 
