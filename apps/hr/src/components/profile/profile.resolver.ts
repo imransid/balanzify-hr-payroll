@@ -124,7 +124,6 @@ export class ProfileResolver {
   @Query(() => ProfilePaginatedResult)
   async searchProfiles(
     @Args("query", { type: () => String, nullable: true }) query?: string,
-    @Args("companyID", { type: () => String, nullable: true })
     companyID?: string,
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page = 1,
@@ -132,7 +131,7 @@ export class ProfileResolver {
     limit = 10
   ): Promise<ProfilePaginatedResult> {
     try {
-      return await this.profileService.search(query, companyID, page, limit);
+      return await this.profileService.search(query, page, limit);
     } catch (error) {
       throw new GraphQLException(
         "Failed to search profiles",

@@ -33,10 +33,12 @@ export class ShiftResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyId")
+    companyId?: string
   ): Promise<ShiftPaginatedResult> {
     try {
-      return await this.shiftService.findAll(page, limit);
+      return await this.shiftService.findAll(page, limit, companyId);
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch shifts",

@@ -169,7 +169,6 @@ export class ProfileService {
 
   async search(
     query: string,
-    companyID: string,
     page = 1,
     limit = 10
   ): Promise<ProfilePaginatedResult> {
@@ -186,7 +185,7 @@ export class ProfileService {
               email: { contains: query, mode: "insensitive" },
             },
             {
-              companyID: { contains: companyID, mode: "insensitive" },
+              companyID: { contains: query, mode: "insensitive" },
             },
           ],
         },

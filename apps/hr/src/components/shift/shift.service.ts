@@ -19,15 +19,26 @@ export class ShiftService {
   }
 
   // Get a paginated list of shifts
-  async findAll(page = 1, limit = 10): Promise<ShiftPaginatedResult> {
+  async findAll(
+    page = 1,
+    limit = 10,
+    companyId: string
+  ): Promise<ShiftPaginatedResult> {
     const skip = (page - 1) * limit;
 
     const [shifts, totalCount] = await Promise.all([
       this.prisma.shift.findMany({
         skip,
         take: limit,
+        where: {
+          companyId: companyId,
+        },
       }) || [], // Ensure it's always an array
-      this.prisma.shift.count(),
+      this.prisma.shift.count({
+        where: {
+          companyId: companyId,
+        },
+      }),
     ]);
 
     return {
@@ -78,6 +89,10 @@ export class ShiftService {
       this.prisma.shift.findMany({
         where: {
           shiftName: { contains: query, mode: "insensitive" }, // Case-insensitive search
+          companyId: {
+            contains: query,
+            mode: "insensitive",
+          },
         },
         skip,
         take: limit,
