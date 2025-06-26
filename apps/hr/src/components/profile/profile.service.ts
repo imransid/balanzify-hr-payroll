@@ -66,7 +66,7 @@ export class ProfileService {
     Complete Onboarding
   </a>
 `;
-        sendMail(createProfileInput.email, subject, body, this.mailService);
+        // sendMail(createProfileInput.email, subject, body, this.mailService);
       }
 
       return profile;
