@@ -14,6 +14,8 @@ import { MailerService } from "@nestjs-modules/mailer";
 import { sendMail } from "../../../../../utils/email.util";
 import { OnboardingType } from "../../prisma/OnboardingType.enum";
 import { Profile } from "../entities/profile.entity";
+
+import { Prisma } from "@prisma/client";
 import moment from "moment";
 
 @Injectable()
@@ -169,26 +171,29 @@ export class ProfileService {
 
   async search(
     query: string,
+    companyId: string,
     page = 1,
     limit = 10
   ): Promise<ProfilePaginatedResult> {
     const skip = (page - 1) * limit;
 
+    const whereClause = {
+      companyId,
+      ...(query && {
+        email: {
+          contains: query,
+          mode: "insensitive" as any,
+        },
+        employeeName: {
+          contains: query,
+          mode: "insensitive" as any,
+        },
+      }),
+    };
+
     const [profiles, totalCount] = await Promise.all([
       this.prisma.profile.findMany({
-        where: {
-          OR: [
-            {
-              employeeName: { contains: query, mode: "insensitive" },
-            },
-            {
-              email: { contains: query, mode: "insensitive" },
-            },
-            {
-              companyID: { contains: query, mode: "insensitive" },
-            },
-          ],
-        },
+        where: whereClause,
         include: {
           profileDetails: true,
         },
@@ -196,19 +201,7 @@ export class ProfileService {
         take: limit,
       }),
       this.prisma.profile.count({
-        where: {
-          OR: [
-            {
-              employeeName: { contains: query, mode: "insensitive" },
-            },
-            {
-              email: { contains: query, mode: "insensitive" },
-            },
-            {
-              companyID: { contains: query, mode: "insensitive" },
-            },
-          ],
-        },
+        where: whereClause,
       }),
     ]);
 

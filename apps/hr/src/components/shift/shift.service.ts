@@ -77,35 +77,38 @@ export class ShiftService {
     });
   }
 
-  // Search shifts based on query (e.g., by shift name)
+  // Search shifts based on query (e.g., by shift name) and companyId
   async search(
     query: string,
     page = 1,
-    limit = 10
+    limit = 10,
+    companyId: string
   ): Promise<ShiftPaginatedResult> {
     const skip = (page - 1) * limit;
 
+    const whereClause = {
+      companyId,
+      ...(query && {
+        shiftName: {
+          contains: query,
+          mode: "insensitive" as any,
+        },
+      }),
+    };
+
     const [shifts, totalCount] = await Promise.all([
       this.prisma.shift.findMany({
-        where: {
-          shiftName: { contains: query, mode: "insensitive" }, // Case-insensitive search
-          companyId: {
-            contains: query,
-            mode: "insensitive",
-          },
-        },
+        where: whereClause,
         skip,
         take: limit,
       }),
       this.prisma.shift.count({
-        where: {
-          shiftName: { contains: query, mode: "insensitive" },
-        },
+        where: whereClause,
       }),
     ]);
 
     return {
-      shifts: shifts, // Ensure it matches Shift type
+      shifts,
       totalCount,
       totalPages: Math.ceil(totalCount / limit),
       currentPage: page,

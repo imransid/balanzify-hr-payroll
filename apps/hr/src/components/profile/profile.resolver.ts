@@ -131,7 +131,7 @@ export class ProfileResolver {
     limit = 10
   ): Promise<ProfilePaginatedResult> {
     try {
-      return await this.profileService.search(query, page, limit);
+      return await this.profileService.search(query, companyID, page, limit);
     } catch (error) {
       throw new GraphQLException(
         "Failed to search profiles",
