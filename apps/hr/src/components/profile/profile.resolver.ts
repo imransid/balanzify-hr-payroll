@@ -124,6 +124,7 @@ export class ProfileResolver {
   @Query(() => ProfilePaginatedResult)
   async searchProfiles(
     @Args("query", { type: () => String, nullable: true }) query?: string,
+    @Args("companyID", { type: () => String, nullable: true })
     companyID?: string,
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page = 1,
