@@ -101,7 +101,10 @@ export class ProfileService {
           },
         },
       }) || [],
-      this.prisma.profile.count(),
+
+      this.prisma.profile.count({
+        where: { companyID },
+      }),
     ]);
 
     return {
