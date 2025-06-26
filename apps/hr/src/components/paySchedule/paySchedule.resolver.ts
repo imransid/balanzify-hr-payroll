@@ -33,10 +33,11 @@ export class PayScheduleResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyID") companyID: string
   ): Promise<PaySchedulePaginatedResult> {
     try {
-      return await this.payScheduleService.findAll(page, limit);
+      return await this.payScheduleService.findAll(page, limit, companyID);
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch pay schedules",

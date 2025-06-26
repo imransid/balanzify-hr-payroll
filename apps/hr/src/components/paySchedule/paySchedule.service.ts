@@ -21,19 +21,28 @@ export class PayScheduleService {
   }
 
   // Get a paginated list of pay schedules
-  async findAll(page = 1, limit = 10): Promise<PaySchedulePaginatedResult> {
+  async findAll(
+    page = 1,
+    limit = 1,
+    companyID?: string // Made optional
+  ): Promise<PaySchedulePaginatedResult> {
     const skip = (page - 1) * limit;
+
+    const whereClause = companyID ? { companyID } : {}; // Conditionally filter by companyID
 
     const [paySchedules, totalCount] = await Promise.all([
       this.prisma.paySchedule.findMany({
+        where: whereClause,
         skip,
         take: limit,
-      }) || [], // Ensure it's always an array
-      this.prisma.paySchedule.count(),
+      }) || [],
+      this.prisma.paySchedule.count({
+        where: whereClause,
+      }),
     ]);
 
     return {
-      paySchedules: Array.isArray(paySchedules) ? paySchedules : [], // Safety check
+      paySchedules: Array.isArray(paySchedules) ? paySchedules : [],
       totalPages: Math.ceil(totalCount / limit),
       currentPage: page,
       totalCount,
