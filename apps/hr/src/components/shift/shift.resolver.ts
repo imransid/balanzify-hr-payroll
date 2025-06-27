@@ -117,7 +117,7 @@ export class ShiftResolver {
     limit: number
   ): Promise<ShiftPaginatedResult> {
     try {
-      return await this.shiftService.search(query, page, limit, companyId);
+      return await this.shiftService.search(query, companyId, page, limit);
     } catch (error) {
       throw new GraphQLException(
         "Failed to search shifts",

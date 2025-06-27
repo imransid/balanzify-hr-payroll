@@ -78,40 +78,60 @@ export class ShiftService {
   }
 
   // Search shifts based on query (e.g., by shift name) and companyId
+
   async search(
     query: string,
+    companyId: string,
     page = 1,
-    limit = 10,
-    companyId: string
+    limit = 10
   ): Promise<ShiftPaginatedResult> {
-    const skip = (page - 1) * limit;
+    try {
+      const skip = (page - 1) * limit;
 
-    const whereClause = {
-      companyId,
-      ...(query && {
-        shiftName: {
-          contains: query,
-          mode: "insensitive" as any,
-        },
-      }),
-    };
+      const whereClause: any = {
+        companyID: companyId,
+      };
 
-    const [shifts, totalCount] = await Promise.all([
-      this.prisma.shift.findMany({
-        where: whereClause,
-        skip,
-        take: limit,
-      }),
-      this.prisma.shift.count({
-        where: whereClause,
-      }),
-    ]);
+      if (query) {
+        whereClause.OR = [
+          {
+            email: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+          {
+            employeeName: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ];
+      }
 
-    return {
-      shifts,
-      totalCount,
-      totalPages: Math.ceil(totalCount / limit),
-      currentPage: page,
-    };
+      const [shifts, totalCount] = await Promise.all([
+        this.prisma.shift.findMany({
+          where: whereClause,
+          include: {
+            profileDetails: true,
+          },
+          skip,
+          take: limit,
+        }),
+        this.prisma.shift.count({
+          where: whereClause,
+        }),
+      ]);
+
+      return {
+        shifts,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        currentPage: page,
+      };
+    } catch (error) {
+      console.error("🔴 Prisma Search Error:", error); // Add detailed logging
+      throw new Error("Failed to search profiles");
+    }
   }
 }
