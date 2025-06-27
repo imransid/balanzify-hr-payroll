@@ -83,7 +83,7 @@ export class DesignationService {
       const skip = (page - 1) * limit;
 
       const whereClause: any = {
-        companyID: companyId,
+        companyId: companyId,
       };
 
       if (query) {
