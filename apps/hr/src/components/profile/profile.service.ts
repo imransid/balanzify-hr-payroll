@@ -14,8 +14,6 @@ import { MailerService } from "@nestjs-modules/mailer";
 import { sendMail } from "../../../../../utils/email.util";
 import { OnboardingType } from "../../prisma/OnboardingType.enum";
 import { Profile } from "../entities/profile.entity";
-
-import { Prisma } from "@prisma/client";
 import moment from "moment";
 
 @Injectable()
@@ -175,42 +173,54 @@ export class ProfileService {
     page = 1,
     limit = 10
   ): Promise<ProfilePaginatedResult> {
-    const skip = (page - 1) * limit;
+    try {
+      const skip = (page - 1) * limit;
 
-    const whereClause = {
-      companyId,
-      ...(query && {
-        email: {
-          contains: query,
-          mode: "insensitive" as any,
-        },
-        employeeName: {
-          contains: query,
-          mode: "insensitive" as any,
-        },
-      }),
-    };
+      const whereClause: any = {
+        companyID: companyId,
+      };
 
-    const [profiles, totalCount] = await Promise.all([
-      this.prisma.profile.findMany({
-        where: whereClause,
-        include: {
-          profileDetails: true,
-        },
-        skip,
-        take: limit,
-      }),
-      this.prisma.profile.count({
-        where: whereClause,
-      }),
-    ]);
+      if (query) {
+        whereClause.OR = [
+          {
+            email: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+          {
+            employeeName: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ];
+      }
 
-    return {
-      profiles,
-      totalCount,
-      totalPages: Math.ceil(totalCount / limit),
-      currentPage: page,
-    };
+      const [profiles, totalCount] = await Promise.all([
+        this.prisma.profile.findMany({
+          where: whereClause,
+          include: {
+            profileDetails: true,
+          },
+          skip,
+          take: limit,
+        }),
+        this.prisma.profile.count({
+          where: whereClause,
+        }),
+      ]);
+
+      return {
+        profiles,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        currentPage: page,
+      };
+    } catch (error) {
+      console.error("🔴 Prisma Search Error:", error); // Add detailed logging
+      throw new Error("Failed to search profiles");
+    }
   }
 
   formatDate(date) {
