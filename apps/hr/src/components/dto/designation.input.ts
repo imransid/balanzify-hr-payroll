@@ -25,6 +25,11 @@ export class CreateDesignationInput {
   @IsNotEmpty()
   @IsString()
   designation: string;
+
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  companyId: string;
 }
 
 @InputType()

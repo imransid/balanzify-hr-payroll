@@ -33,10 +33,12 @@ export class DesignationResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyId", { type: () => String })
+    companyId: string
   ): Promise<DesignationsPaginatedResult> {
     try {
-      return await this.designationService.findAll(page, limit);
+      return await this.designationService.findAll(page, limit, companyId);
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch designations",

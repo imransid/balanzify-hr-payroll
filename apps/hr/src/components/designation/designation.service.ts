@@ -19,15 +19,22 @@ export class DesignationService {
     });
   }
 
-  async findAll(page = 1, limit = 10): Promise<DesignationsPaginatedResult> {
+  async findAll(
+    page = 1,
+    limit = 10,
+    companyId: string
+  ): Promise<DesignationsPaginatedResult> {
     const skip = (page - 1) * limit;
 
     const [designations, totalCount] = await Promise.all([
       this.prisma.designation.findMany({
         skip,
         take: limit,
+        where: { companyId }, // Filter by companyId
       }) || [], // Ensure it's always an array
-      this.prisma.designation.count(),
+      this.prisma.designation.count({
+        where: { companyId }, // Ensure count is scoped to the same filter
+      }),
     ]);
 
     return {
@@ -68,31 +75,55 @@ export class DesignationService {
 
   async search(
     query: string,
+    companyId: string,
     page = 1,
     limit = 10
   ): Promise<DesignationsPaginatedResult> {
-    const skip = (page - 1) * limit;
+    try {
+      const skip = (page - 1) * limit;
 
-    const [designations, totalCount] = await Promise.all([
-      this.prisma.designation.findMany({
-        where: {
-          designationName: { contains: query, mode: "insensitive" }, // ✅ Corrected search filter
-        },
-        skip,
-        take: limit,
-      }),
-      this.prisma.designation.count({
-        where: {
-          designationName: { contains: query, mode: "insensitive" },
-        },
-      }),
-    ]);
+      const whereClause: any = {
+        companyID: companyId,
+      };
 
-    return {
-      designations: designations, // ✅ Ensure it matches designation type
-      totalCount, // ✅ Matches DTO property
-      totalPages: Math.ceil(totalCount / limit),
-      currentPage: page,
-    };
+      if (query) {
+        whereClause.OR = [
+          {
+            email: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+          {
+            employeeName: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ];
+      }
+
+      const [designations, totalCount] = await Promise.all([
+        this.prisma.designation.findMany({
+          where: whereClause,
+
+          skip,
+          take: limit,
+        }),
+        this.prisma.designation.count({
+          where: whereClause,
+        }),
+      ]);
+
+      return {
+        designations,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        currentPage: page,
+      };
+    } catch (error) {
+      console.error("🔴 Prisma Search Error:", error); // Add detailed logging
+      throw new Error("Failed to search profiles");
+    }
   }
 }

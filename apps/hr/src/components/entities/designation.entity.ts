@@ -10,4 +10,7 @@ export class Designation {
 
   @Field()
   designation: string;
+
+  @Field()
+  companyId: string;
 }
