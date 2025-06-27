@@ -89,13 +89,13 @@ export class DesignationService {
       if (query) {
         whereClause.OR = [
           {
-            email: {
+            designationName: {
               contains: query,
               mode: "insensitive",
             },
           },
           {
-            employeeName: {
+            designation: {
               contains: query,
               mode: "insensitive",
             },
