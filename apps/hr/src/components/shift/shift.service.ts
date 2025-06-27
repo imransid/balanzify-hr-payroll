@@ -95,13 +95,7 @@ export class ShiftService {
       if (query) {
         whereClause.OR = [
           {
-            email: {
-              contains: query,
-              mode: "insensitive",
-            },
-          },
-          {
-            employeeName: {
+            shiftName: {
               contains: query,
               mode: "insensitive",
             },
@@ -112,9 +106,6 @@ export class ShiftService {
       const [shifts, totalCount] = await Promise.all([
         this.prisma.shift.findMany({
           where: whereClause,
-          include: {
-            profileDetails: true,
-          },
           skip,
           take: limit,
         }),
