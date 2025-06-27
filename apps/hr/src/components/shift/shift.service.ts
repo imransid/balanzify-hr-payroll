@@ -11,11 +11,15 @@ import { Shift } from "../entities/shift.entity";
 export class ShiftService {
   constructor(private readonly prisma: PrismaHrService) {}
 
-  // Create a new shift
   async create(createShiftInput: CreateShiftInput): Promise<Shift> {
-    return this.prisma.shift.create({
-      data: createShiftInput,
-    });
+    try {
+      return await this.prisma.shift.create({
+        data: createShiftInput,
+      });
+    } catch (error) {
+      console.error("Failed to create shift:", error);
+      throw new Error("Shift creation failed");
+    }
   }
 
   // Get a paginated list of shifts
@@ -89,7 +93,7 @@ export class ShiftService {
       const skip = (page - 1) * limit;
 
       const whereClause: any = {
-        companyID: companyId,
+        companyId: companyId,
       };
 
       if (query) {
