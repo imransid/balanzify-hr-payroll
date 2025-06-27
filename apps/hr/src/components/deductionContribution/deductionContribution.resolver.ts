@@ -37,10 +37,15 @@ export class DeductionContributionResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyId", { type: () => String }) companyId: string
   ): Promise<DeductionContributionPaginatedResult> {
     try {
-      return await this.deductionContributionService.findAll(page, limit);
+      return await this.deductionContributionService.findAll(
+        page,
+        limit,
+        companyId
+      );
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch DeductionContributions",
@@ -117,13 +122,19 @@ export class DeductionContributionResolver {
   @Query(() => DeductionContributionPaginatedResult)
   async searchDeductionContributions(
     @Args("query", { type: () => String }) query: string,
+    @Args("companyId", { type: () => String }) companyId: string,
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
     limit: number
   ): Promise<DeductionContributionPaginatedResult> {
     try {
-      return await this.deductionContributionService.search(query, page, limit);
+      return await this.deductionContributionService.search(
+        query,
+        companyId,
+        page,
+        limit
+      );
     } catch (error) {
       throw new GraphQLException(
         "Failed to search DeductionContributions",

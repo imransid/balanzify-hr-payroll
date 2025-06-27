@@ -19,4 +19,7 @@ export class DeductionContribution {
 
   @Field()
   status: boolean;
+
+  @Field()
+  companyId: string;
 }

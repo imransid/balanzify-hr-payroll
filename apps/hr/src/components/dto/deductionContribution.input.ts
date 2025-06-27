@@ -34,6 +34,11 @@ export class CreateDeductionContributionInput {
   @IsNotEmpty()
   @IsBoolean()
   status: boolean;
+
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  companyId: string;
 }
 
 @InputType()

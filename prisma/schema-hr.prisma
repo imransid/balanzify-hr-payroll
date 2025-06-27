@@ -78,6 +78,7 @@ model deductionContribution {
   type                      String
   taxOptions                String
   status                    Boolean
+  companyId                 String
 
   createdBy Int?
   createdAt DateTime  @default(now())

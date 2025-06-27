@@ -21,7 +21,8 @@ export class DeductionContributionService {
 
   async findAll(
     page = 1,
-    limit = 10
+    limit = 10,
+    companyId: string
   ): Promise<DeductionContributionPaginatedResult> {
     const skip = (page - 1) * limit;
 
@@ -29,6 +30,7 @@ export class DeductionContributionService {
       this.prisma.deductionContribution.findMany({
         skip,
         take: limit,
+        where: { companyId }, // Filter by companyId
       }) || [], // Ensure it's always an array
       this.prisma.deductionContribution.count(),
     ]);
@@ -73,34 +75,51 @@ export class DeductionContributionService {
       where: { id },
     });
   }
-
   async search(
     query: string,
+    companyId: string,
     page = 1,
     limit = 10
   ): Promise<DeductionContributionPaginatedResult> {
-    const skip = (page - 1) * limit;
+    try {
+      const skip = (page - 1) * limit;
 
-    const [deductionContributions, totalCount] = await Promise.all([
-      this.prisma.deductionContribution.findMany({
-        where: {
-          title: { contains: query, mode: "insensitive" }, // ✅ Corrected search filter
-        },
-        skip,
-        take: limit,
-      }),
-      this.prisma.deductionContribution.count({
-        where: {
-          title: { contains: query, mode: "insensitive" },
-        },
-      }),
-    ]);
+      const whereClause: any = {
+        companyId: companyId,
+      };
 
-    return {
-      deductionContributions: deductionContributions, // ✅ Ensure it matches HolidayPaginatedResult type
-      totalCount, // ✅ Matches DTO property
-      totalPages: Math.ceil(totalCount / limit),
-      currentPage: page,
-    };
+      if (query) {
+        whereClause.OR = [
+          {
+            title: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ];
+      }
+
+      const [deductionContributions, totalCount] = await Promise.all([
+        this.prisma.deductionContribution.findMany({
+          where: whereClause,
+
+          skip,
+          take: limit,
+        }),
+        this.prisma.deductionContribution.count({
+          where: whereClause,
+        }),
+      ]);
+
+      return {
+        deductionContributions,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        currentPage: page,
+      };
+    } catch (error) {
+      console.error("🔴 Prisma Search Error:", error); // Add detailed logging
+      throw new Error("Failed to search profiles");
+    }
   }
 }
