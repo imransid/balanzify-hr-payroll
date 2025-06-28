@@ -47,6 +47,9 @@ export class HolidayDetails {
   @Field({ nullable: true })
   Type?: string;
 
+  @Field()
+  companyId?: string;
+
   @Field({ nullable: true })
   Description?: string;
 

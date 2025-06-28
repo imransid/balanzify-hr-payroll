@@ -29,10 +29,11 @@ export class HolidayResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyId", { type: () => String }) companyId: string
   ): Promise<HolidayPaginatedResult> {
     try {
-      return await this.holidayService.findAll(page, limit);
+      return await this.holidayService.findAll(page, limit, companyId);
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch holidays",
@@ -106,10 +107,11 @@ export class HolidayResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyId", { type: () => String }) companyId: string
   ): Promise<HolidayPaginatedResult> {
     try {
-      return await this.holidayService.search(query, page, limit);
+      return await this.holidayService.search(query, companyId, limit, page);
     } catch (error) {
       throw new GraphQLException(
         "Failed to search holidays",

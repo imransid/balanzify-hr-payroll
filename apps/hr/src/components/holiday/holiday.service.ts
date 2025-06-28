@@ -22,6 +22,7 @@ export class HolidayService {
       weekend,
       totalHoliday,
       status,
+      companyId,
     } = createHolidayInput;
 
     return this.prisma.holiday.create({
@@ -33,6 +34,7 @@ export class HolidayService {
         country,
         weekend,
         totalHoliday,
+        companyId: companyId,
         status,
         details: details
           ? {
@@ -51,13 +53,20 @@ export class HolidayService {
     });
   }
 
-  async findAll(page = 1, limit = 10): Promise<HolidayPaginatedResult> {
+  async findAll(
+    page = 1,
+    limit = 10,
+    companyId: string
+  ): Promise<HolidayPaginatedResult> {
     const skip = (page - 1) * limit;
 
     const [holidays, totalCount] = await Promise.all([
       this.prisma.holiday.findMany({
         skip,
         take: limit,
+        where: {
+          companyId: companyId,
+        },
         include: {
           details: true,
         },
@@ -129,31 +138,49 @@ export class HolidayService {
 
   async search(
     query: string,
+    companyId: string,
     page = 1,
     limit = 10
   ): Promise<HolidayPaginatedResult> {
-    const skip = (page - 1) * limit;
+    try {
+      const skip = (page - 1) * limit;
 
-    const [holidays, totalCount] = await Promise.all([
-      this.prisma.holiday.findMany({
-        where: {
-          name: { contains: query, mode: "insensitive" }, // ✅ Corrected search filter
-        },
-        skip,
-        take: limit,
-      }),
-      this.prisma.holiday.count({
-        where: {
-          name: { contains: query, mode: "insensitive" },
-        },
-      }),
-    ]);
+      const whereClause: any = {
+        companyId: companyId,
+      };
 
-    return {
-      holidays: holidays, // ✅ Ensure it matches HolidayPaginatedResult type
-      totalCount, // ✅ Matches DTO property
-      totalPages: Math.ceil(totalCount / limit),
-      currentPage: page,
-    };
+      if (query) {
+        whereClause.OR = [
+          {
+            name: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ];
+      }
+
+      const [holidays, totalCount] = await Promise.all([
+        this.prisma.holiday.findMany({
+          where: whereClause,
+
+          skip,
+          take: limit,
+        }),
+        this.prisma.holiday.count({
+          where: whereClause,
+        }),
+      ]);
+
+      return {
+        holidays: holidays,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        currentPage: page,
+      };
+    } catch (error) {
+      console.error("🔴 Prisma Search Error:", error); // Add detailed logging
+      throw new Error("Failed to search profiles");
+    }
   }
 }

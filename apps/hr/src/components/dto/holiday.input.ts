@@ -48,6 +48,11 @@ export class CreateHolidayInput {
   @Field()
   @IsNotEmpty()
   @IsString()
+  companyId: string;
+
+  @Field()
+  @IsNotEmpty()
+  @IsString()
   color: string;
 
   @Field()

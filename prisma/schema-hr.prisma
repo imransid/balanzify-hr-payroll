@@ -20,6 +20,8 @@ model holiday {
   status       Boolean
   color        String
 
+  companyId String
+
   createdBy Int?
   createdAt DateTime  @default(now())
   updateAt  DateTime? @default(now())
