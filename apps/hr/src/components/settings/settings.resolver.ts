@@ -192,10 +192,15 @@ export class SettingsResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyId", { type: () => String }) companyId: string
   ): Promise<SettingsPaginatedResult> {
     try {
-      return await this.settingsService.findAllPaginated(page, limit);
+      return await this.settingsService.findAllPaginated(
+        page,
+        limit,
+        companyId
+      );
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch settings records",
@@ -246,6 +251,7 @@ export class SettingsResolver {
 
   @Query(() => SettingsPaginatedResult)
   async searchSettings(
+    @Args("companyId", { type: () => String }) companyId: string,
     @Args("profileId", { type: () => Int }) profileId: number,
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page?: number,
@@ -253,12 +259,11 @@ export class SettingsResolver {
     limit?: number
   ): Promise<SettingsPaginatedResult> {
     try {
-      console.log("test ::::: => ");
-
       const test = await this.settingsService.searchByProfileId(
         profileId,
         page,
-        limit
+        limit,
+        companyId
       );
 
       return test;

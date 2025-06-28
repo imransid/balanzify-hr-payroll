@@ -176,11 +176,15 @@ export class SettingsService {
 
   async findAllPaginated(
     page = 1,
-    limit = 10
+    limit = 10,
+    companyId: string
   ): Promise<SettingsPaginatedResult> {
     const skip = (page - 1) * limit;
 
     const profileIds = await this.prisma.profile.findMany({
+      where: {
+        companyID: companyId,
+      },
       skip,
       take: limit,
       select: { id: true },
@@ -292,7 +296,8 @@ export class SettingsService {
   async searchByProfileId(
     profileId: number,
     page = 1,
-    limit = 10
+    limit = 10,
+    companyId: string
   ): Promise<SettingsPaginatedResult> {
     const skip = (page - 1) * limit;
 
@@ -307,38 +312,37 @@ export class SettingsService {
     ] = await Promise.all([
       await this.prisma.notificationSettings.findMany({
         where: {
-          OR: [{ profileId: profileId }],
+          OR: [{ profileId: profileId, companyId: companyId }],
         },
       }),
       await this.prisma.employeeProfilePermissions.findMany({
         where: {
-          OR: [{ profileId: profileId }],
-          
+          OR: [{ profileId: profileId, companyId: companyId }],
         },
       }),
       await this.prisma.businessBankAccount.findMany({
         where: {
-          OR: [{ profileId: profileId }],
+          OR: [{ profileId: profileId, companyId: companyId }],
         },
       }),
       await this.prisma.principalOfficer.findMany({
         where: {
-          OR: [{ profileId: profileId }],
+          OR: [{ profileId: profileId, companyId: companyId }],
         },
       }),
       await this.prisma.printingOptions.findMany({
         where: {
-          OR: [{ profileId: profileId }],
+          OR: [{ profileId: profileId, companyId: companyId }],
         },
       }),
       await this.prisma.directDepositOptions.findMany({
         where: {
-          OR: [{ profileId: profileId }],
+          OR: [{ profileId: profileId, companyId: companyId }],
         },
       }),
       await this.prisma.contactInfo.findMany({
         where: {
-          OR: [{ profileId: profileId }],
+          OR: [{ profileId: profileId, companyId: companyId }],
         },
       }),
     ]);
