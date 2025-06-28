@@ -234,6 +234,8 @@ model LeaveEncashment {
   department         String
   leaveBalancePeriod String
 
+  companyId String
+
   encashmentDate DateTime
 
   leaveEncasementDetails String?

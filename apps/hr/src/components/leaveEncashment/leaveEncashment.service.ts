@@ -25,12 +25,16 @@ export class LeaveEncashmentService {
   // Get a paginated list of leave encashments
   async findAll(
     page = 1,
-    limit = 10
+    limit = 10,
+    companyId: string
   ): Promise<LeaveEncashmentInputPaginatedResult> {
     const skip = (page - 1) * limit;
 
     const [leaveEncashments, totalCount] = await Promise.all([
       this.prisma.leaveEncashment.findMany({
+        where: {
+          companyId: companyId,
+        },
         skip,
         take: limit,
       }) || [], // Ensure it's always an array
@@ -86,63 +90,56 @@ export class LeaveEncashmentService {
   }
 
   // Search leave encashments based on query (e.g., by employee name or leave period)
+
   async search(
     query: string,
+    companyId: string,
     page = 1,
     limit = 10
   ): Promise<LeaveEncashmentInputPaginatedResult> {
-    const skip = (page - 1) * limit;
+    try {
+      const skip = (page - 1) * limit;
 
-    const [leaveEncashments, totalCount] = await Promise.all([
-      this.prisma.leaveEncashment.findMany({
-        where: {
-          OR: [
-            {
-              employeeName: {
-                contains: query,
-                mode: "insensitive",
-              },
-            },
-            {
-              leavePeriod: {
-                contains: query,
-                mode: "insensitive",
-              },
-            },
-          ],
-        },
-        skip,
-        take: limit,
+      const whereClause: any = {
+        companyId: companyId,
+      };
 
-        orderBy: { createdAt: "desc" }, // Optional: order results by creation date
-      }),
-      this.prisma.leaveEncashment.count({
-        where: {
-          OR: [
-            {
-              employeeName: {
-                contains: query,
-                mode: "insensitive",
-              },
+      if (query) {
+        whereClause.OR = [
+          {
+            employeeName: {
+              contains: query,
+              mode: "insensitive",
             },
-            {
-              leavePeriod: {
-                contains: query,
-                mode: "insensitive",
-              },
+            leavePeriod: {
+              contains: query,
+              mode: "insensitive",
             },
-          ],
-        },
-      }),
-    ]);
+          },
+        ];
+      }
 
-    return {
-      leaveEncashment: leaveEncashments.map((leaveEncashment) => ({
-        ...leaveEncashment,
-      })),
-      totalCount,
-      totalPages: Math.ceil(totalCount / limit),
-      currentPage: page,
-    };
+      const [leaveEncashments, totalCount] = await Promise.all([
+        this.prisma.leaveEncashment.findMany({
+          where: whereClause,
+
+          skip,
+          take: limit,
+        }),
+        this.prisma.leaveEncashment.count({
+          where: whereClause,
+        }),
+      ]);
+
+      return {
+        leaveEncashment: leaveEncashments,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        currentPage: page,
+      };
+    } catch (error) {
+      console.error("🔴 Prisma Search Error:", error); // Add detailed logging
+      throw new Error("Failed to search profiles");
+    }
   }
 }

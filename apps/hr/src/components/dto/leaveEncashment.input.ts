@@ -28,6 +28,11 @@ export class CreateLeaveEncashmentInput {
   @Field()
   @IsNotEmpty()
   @IsString()
+  companyId: string;
+
+  @Field()
+  @IsNotEmpty()
+  @IsString()
   employeeName: string;
 
   @Field()

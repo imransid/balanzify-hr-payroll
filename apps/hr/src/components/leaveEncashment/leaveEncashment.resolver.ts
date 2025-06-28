@@ -34,13 +34,14 @@ export class LeaveEncashmentResolver {
 
   @Query(() => LeaveEncashmentInputPaginatedResult)
   async leaveEncashments(
+    @Args("companyId", { type: () => String }) companyId: string,
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
     limit: number
   ): Promise<LeaveEncashmentInputPaginatedResult> {
     try {
-      return await this.leaveEncashmentService.findAll(page, limit);
+      return await this.leaveEncashmentService.findAll(page, limit, companyId);
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch leave encashments",
@@ -116,6 +117,7 @@ export class LeaveEncashmentResolver {
 
   @Query(() => LeaveEncashmentInputPaginatedResult)
   async searchLeaveEncashments(
+    @Args("companyId", { type: () => String }) companyId: string,
     @Args("query", { type: () => String }) query: string,
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
@@ -123,7 +125,12 @@ export class LeaveEncashmentResolver {
     limit: number
   ): Promise<LeaveEncashmentInputPaginatedResult> {
     try {
-      return await this.leaveEncashmentService.search(query, page, limit);
+      return await this.leaveEncashmentService.search(
+        query,
+        companyId,
+        page,
+        limit
+      );
     } catch (error) {
       throw new GraphQLException(
         "Failed to search leave encashments",
