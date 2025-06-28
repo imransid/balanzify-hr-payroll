@@ -29,13 +29,14 @@ export class LeaveTypeResolver {
 
   @Query(() => LeaveTypePaginatedResult)
   async leaveTypes(
+    @Args("companyId", { type: () => String }) companyId: string,
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
     limit: number
   ): Promise<LeaveTypePaginatedResult> {
     try {
-      return await this.leaveTypeService.findAll(page, limit);
+      return await this.leaveTypeService.findAll(page, limit, companyId);
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch leave types",
@@ -107,6 +108,7 @@ export class LeaveTypeResolver {
 
   @Query(() => LeaveTypePaginatedResult)
   async searchLeaveTypes(
+    @Args("companyId", { type: () => String }) companyId: string,
     @Args("query", { type: () => String }) query: string,
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
@@ -114,7 +116,7 @@ export class LeaveTypeResolver {
     limit: number
   ): Promise<LeaveTypePaginatedResult> {
     try {
-      return await this.leaveTypeService.search(query, page, limit);
+      return await this.leaveTypeService.search(query, companyId, page, limit);
     } catch (error) {
       throw new GraphQLException(
         "Failed to search leave types",

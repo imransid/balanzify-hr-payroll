@@ -139,6 +139,8 @@ model LeaveType {
 
   employeeLeave EmployeeLeave[] @relation("EmployeeLeave")
 
+  companyId String
+
   createdBy Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

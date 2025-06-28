@@ -17,11 +17,18 @@ export class LeaveTypeService {
     });
   }
 
-  async findAll(page = 1, limit = 10): Promise<LeaveTypePaginatedResult> {
+  async findAll(
+    page = 1,
+    limit = 10,
+    companyId: string
+  ): Promise<LeaveTypePaginatedResult> {
     const skip = (page - 1) * limit;
 
     const [leaveTypes, totalCount] = await Promise.all([
       this.prisma.leaveType.findMany({
+        where: {
+          companyId: companyId,
+        },
         skip,
         take: limit,
       }) || [],
@@ -64,31 +71,49 @@ export class LeaveTypeService {
 
   async search(
     query: string,
+    companyId: string,
     page = 1,
     limit = 10
   ): Promise<LeaveTypePaginatedResult> {
-    const skip = (page - 1) * limit;
+    try {
+      const skip = (page - 1) * limit;
 
-    const [leaveTypes, totalCount] = await Promise.all([
-      this.prisma.leaveType.findMany({
-        where: {
-          leaveName: { contains: query, mode: "insensitive" },
-        },
-        skip,
-        take: limit,
-      }),
-      this.prisma.leaveType.count({
-        where: {
-          leaveName: { contains: query, mode: "insensitive" },
-        },
-      }),
-    ]);
+      const whereClause: any = {
+        companyId: companyId,
+      };
 
-    return {
-      leaveTypes,
-      totalCount,
-      totalPages: Math.ceil(totalCount / limit),
-      currentPage: page,
-    };
+      if (query) {
+        whereClause.OR = [
+          {
+            leaveName: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ];
+      }
+
+      const [leaveTypes, totalCount] = await Promise.all([
+        this.prisma.leaveType.findMany({
+          where: whereClause,
+
+          skip,
+          take: limit,
+        }),
+        this.prisma.leaveType.count({
+          where: whereClause,
+        }),
+      ]);
+
+      return {
+        leaveTypes,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        currentPage: page,
+      };
+    } catch (error) {
+      console.error("🔴 Prisma Search Error:", error); // Add detailed logging
+      throw new Error("Failed to search profiles");
+    }
   }
 }
