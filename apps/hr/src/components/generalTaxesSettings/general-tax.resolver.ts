@@ -9,6 +9,8 @@ import { GeneralTax } from "../entities/general-tax.entity";
 import { NotFoundException } from "@nestjs/common";
 import { GraphQLException } from "exceptions/graphql-exception";
 
+// companyId
+
 @Resolver(() => GeneralTax)
 export class GeneralTaxResolver {
   constructor(private readonly generalTaxService: GeneralTaxService) {}
@@ -32,10 +34,11 @@ export class GeneralTaxResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyId", { type: () => String }) companyId: string
   ): Promise<GeneralTaxPaginatedResult> {
     try {
-      return await this.generalTaxService.findAll(page, limit);
+      return await this.generalTaxService.findAll(page, limit, companyId);
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch general taxes",
@@ -111,10 +114,11 @@ export class GeneralTaxResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyId", { type: () => String }) companyId: string
   ): Promise<GeneralTaxPaginatedResult> {
     try {
-      return await this.generalTaxService.search(query, page, limit);
+      return await this.generalTaxService.search(query, companyId, page, limit);
     } catch (error) {
       throw new GraphQLException(
         "Failed to search general taxes",

@@ -16,11 +16,14 @@ export class GeneralTaxService {
     });
   }
 
-  async findAll(page: number = 1, limit: number = 10) {
+  async findAll(page: number = 1, limit: number = 10, companyId: string) {
     const skip = (page - 1) * limit;
 
     const [data, totalCount] = await Promise.all([
       this.prisma.generalTax.findMany({
+        where: {
+          companyId: companyId,
+        },
         skip,
         take: limit,
         orderBy: { id: "desc" },
@@ -76,45 +79,54 @@ export class GeneralTaxService {
     return this.prisma.generalTax.delete({ where: { id } });
   }
 
-  async search(query: string, page: number = 1, limit: number = 10) {
-    const skip = (page - 1) * limit;
+  async search(query: string, companyId: string, page = 1, limit = 10) {
+    try {
+      const skip = (page - 1) * limit;
 
-    const [data, totalCount] = await Promise.all([
-      this.prisma.generalTax.findMany({
-        where: {
-          OR: [
-            { companyLegalName: { contains: query, mode: "insensitive" } },
-            { companyType: { contains: query, mode: "insensitive" } },
-            { city: { contains: query, mode: "insensitive" } },
-            { state1: { contains: query, mode: "insensitive" } },
-            { streetAddress1: { contains: query, mode: "insensitive" } },
-            { companyId: { contains: query, mode: "insensitive" } },
-          ],
-        },
-        skip,
-        take: limit,
-        orderBy: { id: "desc" },
-      }),
-      this.prisma.generalTax.count({
-        where: {
-          OR: [
-            { companyLegalName: { contains: query, mode: "insensitive" } },
-            { companyType: { contains: query, mode: "insensitive" } },
-            { city: { contains: query, mode: "insensitive" } },
-            { state1: { contains: query, mode: "insensitive" } },
-            { streetAddress1: { contains: query, mode: "insensitive" } },
-          ],
-        },
-      }),
-    ]);
+      const whereClause: any = {
+        companyId: companyId,
+      };
 
-    const totalPages = Math.ceil(totalCount / limit);
+      if (query) {
+        whereClause.OR = [
+          {
+            companyLegalName: {
+              contains: query,
+              mode: "insensitive",
+            },
+            companyType: {
+              contains: query,
+              mode: "insensitive",
+            },
+            city: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ];
+      }
 
-    return {
-      generalTaxes: data,
-      totalPages,
-      currentPage: page,
-      totalCount,
-    };
+      const [generalTaxes, totalCount] = await Promise.all([
+        this.prisma.generalTax.findMany({
+          where: whereClause,
+
+          skip,
+          take: limit,
+        }),
+        this.prisma.generalTax.count({
+          where: whereClause,
+        }),
+      ]);
+
+      return {
+        generalTaxes,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        currentPage: page,
+      };
+    } catch (error) {
+      console.error("🔴 Prisma Search Error:", error); // Add detailed logging
+      throw new Error("Failed to search profiles");
+    }
   }
 }
