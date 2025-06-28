@@ -33,10 +33,11 @@ export class DocumentationResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyId", { type: () => String }) companyId: string
   ): Promise<DocumentationPaginatedResult> {
     try {
-      return await this.documentationService.findAll(page, limit);
+      return await this.documentationService.findAll(page, limit, companyId);
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch documentations",
@@ -116,10 +117,16 @@ export class DocumentationResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyId", { type: () => String }) companyId: string
   ): Promise<DocumentationPaginatedResult> {
     try {
-      return await this.documentationService.search(query, page, limit);
+      return await this.documentationService.search(
+        query,
+        companyId,
+        page,
+        limit
+      );
     } catch (error) {
       throw new GraphQLException(
         "Failed to search documentations",

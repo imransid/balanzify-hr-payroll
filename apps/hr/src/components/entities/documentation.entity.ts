@@ -19,6 +19,9 @@ export class Documentation {
   uploadedBy: string;
 
   @Field()
+  companyId: string;
+
+  @Field()
   documentationURL: string;
 
   @Field(() => Int, { nullable: true })

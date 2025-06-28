@@ -51,6 +51,11 @@ export class CreateAttendanceInput {
   @IsString()
   status?: string;
 
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  companyID?: string;
+
   @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt()

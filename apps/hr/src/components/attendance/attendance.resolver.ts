@@ -9,6 +9,8 @@ import { Attendance } from "../entities/attendance.entity";
 import { NotFoundException } from "@nestjs/common";
 import { GraphQLException } from "exceptions/graphql-exception";
 
+// w
+
 @Resolver(() => Attendance)
 export class AttendanceResolver {
   constructor(private readonly attendanceService: AttendanceService) {}
@@ -32,10 +34,11 @@ export class AttendanceResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyId", { type: () => String }) companyId: string
   ): Promise<AttendancePaginatedResult> {
     try {
-      return await this.attendanceService.findAll(page, limit);
+      return await this.attendanceService.findAll(page, limit, companyId);
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch attendances",
@@ -111,10 +114,11 @@ export class AttendanceResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyId", { type: () => String }) companyId: string
   ): Promise<AttendancePaginatedResult> {
     try {
-      return await this.attendanceService.search(query, page, limit);
+      return await this.attendanceService.search(query, page, limit, companyId);
     } catch (error) {
       throw new GraphQLException(
         "Failed to search attendances",

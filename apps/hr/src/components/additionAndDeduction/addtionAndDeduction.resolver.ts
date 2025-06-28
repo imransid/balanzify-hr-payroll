@@ -37,10 +37,15 @@ export class AdditionAndDeductionResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyId", { type: () => String }) companyId: string
   ): Promise<PayrollAdditionAndDeductionPaginatedResult> {
     try {
-      return await this.additionAndDeductionService.findAll(page, limit);
+      return await this.additionAndDeductionService.findAll(
+        page,
+        limit,
+        companyId
+      );
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch addition/deduction records",
@@ -120,10 +125,16 @@ export class AdditionAndDeductionResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyId", { type: () => String }) companyId: string
   ): Promise<PayrollAdditionAndDeductionPaginatedResult> {
     try {
-      return await this.additionAndDeductionService.search(query, page, limit);
+      return await this.additionAndDeductionService.search(
+        query,
+        page,
+        limit,
+        companyId
+      );
     } catch (error) {
       throw new GraphQLException(
         "Failed to search addition/deduction records",

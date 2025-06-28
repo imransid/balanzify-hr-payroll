@@ -34,4 +34,7 @@ export class Attendance {
 
   @Field()
   updatedAt: Date;
+
+  @Field({ nullable: true })
+  companyID: string;
 }

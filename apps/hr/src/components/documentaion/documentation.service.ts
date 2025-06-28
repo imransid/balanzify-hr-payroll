@@ -46,13 +46,20 @@ export class DocumentationService {
     });
   }
 
-  async findAll(page = 1, limit = 10): Promise<DocumentationPaginatedResult> {
+  async findAll(
+    page = 1,
+    limit = 10,
+    companyId: string
+  ): Promise<DocumentationPaginatedResult> {
     const skip = (page - 1) * limit;
 
     const [documentations, totalCount] = await Promise.all([
       this.prisma.documentation.findMany({
         skip,
         take: limit,
+        where: {
+          companyId: companyId,
+        },
         orderBy: {
           createdAt: "desc",
         },
@@ -138,34 +145,49 @@ export class DocumentationService {
 
   async search(
     query: string,
+    companyId: string,
     page = 1,
     limit = 10
   ): Promise<DocumentationPaginatedResult> {
-    const skip = (page - 1) * limit;
+    try {
+      const skip = (page - 1) * limit;
 
-    const [documentations, totalCount] = await Promise.all([
-      this.prisma.documentation.findMany({
-        where: {
-          documentationName: { contains: query, mode: "insensitive" },
-        },
-        skip,
-        take: limit,
-        orderBy: {
-          createdAt: "desc",
-        },
-      }),
-      this.prisma.documentation.count({
-        where: {
-          documentationName: { contains: query, mode: "insensitive" },
-        },
-      }),
-    ]);
+      const whereClause: any = {
+        companyId: companyId,
+      };
 
-    return {
-      documentations,
-      totalCount,
-      totalPages: Math.ceil(totalCount / limit),
-      currentPage: page,
-    };
+      if (query) {
+        whereClause.OR = [
+          {
+            documentationName: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ];
+      }
+
+      const [documentations, totalCount] = await Promise.all([
+        this.prisma.documentation.findMany({
+          where: whereClause,
+
+          skip,
+          take: limit,
+        }),
+        this.prisma.documentation.count({
+          where: whereClause,
+        }),
+      ]);
+
+      return {
+        documentations,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        currentPage: page,
+      };
+    } catch (error) {
+      console.error("🔴 Prisma Search Error:", error); // Add detailed logging
+      throw new Error("Failed to search profiles");
+    }
   }
 }

@@ -41,6 +41,11 @@ export class CreateDocumentationInput {
   @IsOptional()
   @IsInt()
   createdBy?: number;
+
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  companyId: string;
 }
 
 @InputType()
