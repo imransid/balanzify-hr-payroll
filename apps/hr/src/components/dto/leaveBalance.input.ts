@@ -41,6 +41,11 @@ export class CreateLeaveBalanceInput {
   @IsOptional()
   @IsInt()
   createdBy?: number;
+
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  companyId: string;
 }
 
 // === Update Input ===

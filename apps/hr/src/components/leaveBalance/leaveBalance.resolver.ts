@@ -33,10 +33,11 @@ export class LeaveBalanceResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyId", { type: () => String }) companyId: string
   ): Promise<LeaveBalancePaginatedResult> {
     try {
-      return await this.leaveBalanceService.findAll(page, limit);
+      return await this.leaveBalanceService.findAll(page, limit, companyId);
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch leave balances",
@@ -109,6 +110,7 @@ export class LeaveBalanceResolver {
 
   @Query(() => LeaveBalancePaginatedResult)
   async searchLeaveBalances(
+    @Args("companyId", { type: () => String }) companyId: string,
     @Args("query", { type: () => String, nullable: true }) query?: string,
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page?: number,
@@ -118,6 +120,7 @@ export class LeaveBalanceResolver {
     try {
       return await this.leaveBalanceService.search(
         query ?? "",
+        companyId,
         page ?? 1,
         limit ?? 10
       );

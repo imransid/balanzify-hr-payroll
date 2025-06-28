@@ -6,7 +6,7 @@ import {
   LeaveBalancePaginatedResult,
 } from "../dto/leaveBalance.input";
 import { LeaveBalance } from "../entities/leaveBalance.entity";
-
+//companyId
 @Injectable()
 export class LeaveBalanceService {
   constructor(private readonly prisma: PrismaHrService) {}
@@ -19,12 +19,19 @@ export class LeaveBalanceService {
     });
   }
 
-  async findAll(page = 1, limit = 10): Promise<LeaveBalancePaginatedResult> {
+  async findAll(
+    page = 1,
+    limit = 10,
+    companyId: string
+  ): Promise<LeaveBalancePaginatedResult> {
     const skip = (page - 1) * limit;
 
     const [leaveBalances, totalCount] = await Promise.all([
       this.prisma.leaveBalance.findMany({
         skip,
+        where: {
+          companyId: companyId,
+        },
         take: limit,
         orderBy: {
           createdAt: "desc",
@@ -73,34 +80,49 @@ export class LeaveBalanceService {
 
   async search(
     query: string,
+    companyId: string,
     page = 1,
     limit = 10
   ): Promise<LeaveBalancePaginatedResult> {
-    const skip = (page - 1) * limit;
+    try {
+      const skip = (page - 1) * limit;
 
-    const [leaveBalances, totalCount] = await Promise.all([
-      this.prisma.leaveBalance.findMany({
-        where: {
-          title: { contains: query, mode: "insensitive" },
-        },
-        skip,
-        take: limit,
-        orderBy: {
-          createdAt: "desc",
-        },
-      }),
-      this.prisma.leaveBalance.count({
-        where: {
-          title: { contains: query, mode: "insensitive" },
-        },
-      }),
-    ]);
+      const whereClause: any = {
+        companyId: companyId,
+      };
 
-    return {
-      leaveBalances,
-      totalCount,
-      totalPages: Math.ceil(totalCount / limit),
-      currentPage: page,
-    };
+      if (query) {
+        whereClause.OR = [
+          {
+            title: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ];
+      }
+
+      const [leaveBalances, totalCount] = await Promise.all([
+        this.prisma.leaveBalance.findMany({
+          where: whereClause,
+
+          skip,
+          take: limit,
+        }),
+        this.prisma.leaveBalance.count({
+          where: whereClause,
+        }),
+      ]);
+
+      return {
+        leaveBalances,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        currentPage: page,
+      };
+    } catch (error) {
+      console.error("🔴 Prisma Search Error:", error); // Add detailed logging
+      throw new Error("Failed to search profiles");
+    }
   }
 }
