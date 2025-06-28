@@ -80,34 +80,51 @@ export class PayScheduleService {
     });
   }
 
-  // Search pay schedules based on query (e.g., by schedule name or date)
   async search(
     query: string,
+    companyId: string,
     page = 1,
     limit = 10
   ): Promise<PaySchedulePaginatedResult> {
-    const skip = (page - 1) * limit;
+    try {
+      const skip = (page - 1) * limit;
 
-    const [paySchedules, totalCount] = await Promise.all([
-      this.prisma.paySchedule.findMany({
-        where: {
-          payScheduleName: { contains: query, mode: "insensitive" }, // Case-insensitive search
-        },
-        skip,
-        take: limit,
-      }),
-      this.prisma.paySchedule.count({
-        where: {
-          payScheduleName: { contains: query, mode: "insensitive" },
-        },
-      }),
-    ]);
+      const whereClause: any = {
+        companyID: companyId,
+      };
 
-    return {
-      paySchedules, // Ensure it matches PaySchedule type
-      totalCount,
-      totalPages: Math.ceil(totalCount / limit),
-      currentPage: page,
-    };
+      if (query) {
+        whereClause.OR = [
+          {
+            payScheduleName: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ];
+      }
+
+      const [paySchedules, totalCount] = await Promise.all([
+        this.prisma.paySchedule.findMany({
+          where: whereClause,
+
+          skip,
+          take: limit,
+        }),
+        this.prisma.paySchedule.count({
+          where: whereClause,
+        }),
+      ]);
+
+      return {
+        paySchedules,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        currentPage: page,
+      };
+    } catch (error) {
+      console.error("🔴 Prisma Search Error:", error); // Add detailed logging
+      throw new Error("Failed to search profiles");
+    }
   }
 }

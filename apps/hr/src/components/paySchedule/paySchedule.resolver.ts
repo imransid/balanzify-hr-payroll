@@ -34,10 +34,10 @@ export class PayScheduleResolver {
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
     limit: number,
-    @Args("companyID") companyID: string
+    @Args("companyId", { type: () => String }) companyId: string
   ): Promise<PaySchedulePaginatedResult> {
     try {
-      return await this.payScheduleService.findAll(page, limit, companyID);
+      return await this.payScheduleService.findAll(page, limit, companyId);
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch pay schedules",
@@ -110,6 +110,7 @@ export class PayScheduleResolver {
 
   @Query(() => PaySchedulePaginatedResult)
   async searchPaySchedules(
+    @Args("companyId", { type: () => String }) companyId: string,
     @Args("query", { type: () => String }) query: string,
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
@@ -117,7 +118,12 @@ export class PayScheduleResolver {
     limit: number
   ): Promise<PaySchedulePaginatedResult> {
     try {
-      return await this.payScheduleService.search(query, page, limit);
+      return await this.payScheduleService.search(
+        query,
+        companyId,
+        page,
+        limit
+      );
     } catch (error) {
       throw new GraphQLException(
         "Failed to search pay schedules",
