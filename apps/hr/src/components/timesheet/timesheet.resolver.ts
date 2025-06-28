@@ -33,10 +33,11 @@ export class TimeSheetResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyId", { type: () => String }) companyId: string
   ): Promise<TimeSheetsPaginatedResult> {
     try {
-      return await this.timeSheetService.findAll(page, limit);
+      return await this.timeSheetService.findAll(page, limit, companyId);
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch time sheets" + error.toString(),
@@ -109,6 +110,7 @@ export class TimeSheetResolver {
 
   @Query(() => TimeSheetsPaginatedResult)
   async searchTimeSheets(
+    @Args("companyId", { type: () => String }) companyId: string,
     @Args("query", { type: () => String }) query: string,
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
@@ -116,7 +118,7 @@ export class TimeSheetResolver {
     limit: number
   ): Promise<TimeSheetsPaginatedResult> {
     try {
-      return await this.timeSheetService.search(query, page, limit);
+      return await this.timeSheetService.search(query, companyId, page, limit);
     } catch (error) {
       throw new GraphQLException(
         "Failed to search time sheets" + error.toString(),

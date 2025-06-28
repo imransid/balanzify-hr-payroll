@@ -71,13 +71,20 @@ export class TimeSheetService {
     });
   }
 
-  async findAll(page = 1, limit = 10): Promise<TimeSheetsPaginatedResult> {
+  async findAll(
+    page = 1,
+    limit = 10,
+    companyId: string
+  ): Promise<TimeSheetsPaginatedResult> {
     const skip = (page - 1) * limit;
 
     const [timeSheets, totalCount] = await Promise.all([
       this.prisma.timeSheet.findMany({
         skip,
         take: limit,
+        where: {
+          companyId: companyId, // Filter by company ID
+        },
         orderBy: {
           createdAt: "desc",
         },
@@ -141,35 +148,48 @@ export class TimeSheetService {
 
   async search(
     query: string,
+    companyId: string,
     page = 1,
     limit = 10
   ): Promise<TimeSheetsPaginatedResult> {
-    const skip = (page - 1) * limit;
+    try {
+      const skip = (page - 1) * limit;
 
-    const numericQuery = Number(query);
-    const isNumeric = !isNaN(numericQuery);
+      const whereClause: any = {
+        companyId: companyId,
+      };
 
-    const whereClause = isNumeric ? { employeeId: numericQuery } : {}; // optionally expand with relation fields if needed
+      if (query) {
+        whereClause.OR = [
+          {
+            employeeId: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ];
+      }
 
-    const [timeSheets, totalCount] = await Promise.all([
-      this.prisma.timeSheet.findMany({
-        where: whereClause,
-        skip,
-        take: limit,
-        orderBy: {
-          createdAt: "desc", // or whatever valid field
-        },
-      }),
-      this.prisma.timeSheet.count({
-        where: whereClause,
-      }),
-    ]);
+      const [timeSheets, totalCount] = await Promise.all([
+        this.prisma.timeSheet.findMany({
+          where: whereClause,
+          skip,
+          take: limit,
+        }),
+        this.prisma.timeSheet.count({
+          where: whereClause,
+        }),
+      ]);
 
-    return {
-      timeSheets,
-      totalCount,
-      totalPages: Math.ceil(totalCount / limit),
-      currentPage: page,
-    };
+      return {
+        timeSheets,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        currentPage: page,
+      };
+    } catch (error) {
+      console.error("🔴 Prisma Search Error:", error); // Add detailed logging
+      throw new Error("Failed to search profiles");
+    }
   }
 }

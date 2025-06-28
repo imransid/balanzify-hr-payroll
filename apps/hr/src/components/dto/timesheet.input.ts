@@ -25,6 +25,10 @@ export class CreateTimeSheetInput {
   @IsString()
   remarks?: string;
 
+  @Field()
+  @IsString()
+  companyId: string;
+
   @Field({ nullable: true })
   @IsOptional()
   startTime?: Date;

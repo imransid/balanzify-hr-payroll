@@ -539,6 +539,8 @@ model timeSheet {
   overtimeMinutes  Int?
   lateMinutes      Int?
 
+  companyId String
+
   profile Profile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
   createdBy Int?
