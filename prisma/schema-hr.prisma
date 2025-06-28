@@ -639,6 +639,8 @@ model EmployeeLeave {
   toDate                 DateTime?
   status                 String?
 
+  companyId String
+
   profileId Int?
   profile   Profile? @relation(fields: [profileId], references: [id])
 }

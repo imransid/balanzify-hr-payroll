@@ -25,11 +25,18 @@ export class LeaveService {
   }
 
   // Find all leaves with pagination
-  async findAll(page = 1, limit = 10): Promise<LeavePaginatedResult> {
+  async findAll(
+    page = 1,
+    limit = 10,
+    companyId: string
+  ): Promise<LeavePaginatedResult> {
     const skip = (page - 1) * limit;
 
     const [leaves, totalCount] = await Promise.all([
       this.prisma.EmployeeLeave.findMany({
+        where: {
+          companyId: companyId,
+        },
         skip,
         take: limit,
       }) || [], // Ensure it's always an array

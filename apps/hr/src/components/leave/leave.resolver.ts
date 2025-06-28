@@ -32,10 +32,11 @@ export class LeaveResolver {
     @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
     page: number,
     @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-    limit: number
+    limit: number,
+    @Args("companyId", { type: () => String }) companyId: string
   ): Promise<LeavePaginatedResult> {
     try {
-      return await this.leaveService.findAll(page, limit);
+      return await this.leaveService.findAll(page, limit, companyId);
     } catch (error) {
       throw new GraphQLException(
         "Failed to fetch leaves",
@@ -43,26 +44,6 @@ export class LeaveResolver {
       );
     }
   }
-
-  // @Query(() => EmployeeLeave)
-  // async leave(
-  //   @Args("id", { type: () => Int }) id: number
-  // ): Promise<EmployeeLeave> {
-  //   try {
-  //     return await this.leaveService.findOne(id);
-  //   } catch (error) {
-  //     if (error instanceof NotFoundException) {
-  //       throw new GraphQLException(
-  //         `Leave with ID ${id} not found`,
-  //         "NOT_FOUND"
-  //       );
-  //     }
-  //     throw new GraphQLException(
-  //       "Failed to fetch leave",
-  //       "INTERNAL_SERVER_ERROR"
-  //     );
-  //   }
-  // }
 
   @Mutation(() => EmployeeLeave)
   async updateLeave(
@@ -84,42 +65,4 @@ export class LeaveResolver {
       );
     }
   }
-
-  // @Mutation(() => EmployeeLeave)
-  // async removeLeave(
-  //   @Args("id", { type: () => Int }) id: number
-  // ): Promise<EmployeeLeave> {
-  //   try {
-  //     return await this.leaveService.remove(id);
-  //   } catch (error) {
-  //     if (error instanceof NotFoundException) {
-  //       throw new GraphQLException(
-  //         `Leave with ID ${id} not found`,
-  //         "NOT_FOUND"
-  //       );
-  //     }
-  //     throw new GraphQLException(
-  //       "Failed to remove leave",
-  //       "INTERNAL_SERVER_ERROR"
-  //     );
-  //   }
-  // }
-
-  // @Query(() => LeavePaginatedResult)
-  // async searchLeaves(
-  //   @Args("query", { type: () => String }) query: string,
-  //   @Args("page", { type: () => Int, nullable: true, defaultValue: 1 })
-  //   page: number,
-  //   @Args("limit", { type: () => Int, nullable: true, defaultValue: 10 })
-  //   limit: number
-  // ): Promise<LeavePaginatedResult> {
-  //   try {
-  //     return await this.leaveService.search(query, page, limit);
-  //   } catch (error) {
-  //     throw new GraphQLException(
-  //       "Failed to search leaves",
-  //       "INTERNAL_SERVER_ERROR"
-  //     );
-  //   }
-  // }
 }

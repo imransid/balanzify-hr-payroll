@@ -5,7 +5,13 @@ import {
   PartialType,
   ObjectType,
 } from "@nestjs/graphql";
-import { IsString, IsOptional, IsDate, IsInt } from "class-validator";
+import {
+  IsString,
+  IsOptional,
+  IsDate,
+  IsInt,
+  IsNotEmpty,
+} from "class-validator";
 import { Upload } from "scalars/upload.scalar";
 import { EmployeeLeave } from "../entities/leave.entity";
 
@@ -25,6 +31,11 @@ export class CreateEmployeeLeaveInput {
   @IsOptional()
   @IsString()
   leaveType?: string;
+
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  companyId: string;
 
   @Field(() => Int, { nullable: true })
   @IsOptional()
