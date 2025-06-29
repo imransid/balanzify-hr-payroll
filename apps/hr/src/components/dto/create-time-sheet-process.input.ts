@@ -23,6 +23,11 @@ export class CreateTimeSheetProcessInput {
 
   @Field()
   @IsNotEmpty()
+  @IsString()
+  companyId: string;
+
+  @Field()
+  @IsNotEmpty()
   @IsDate()
   endProcessTIme: Date;
 

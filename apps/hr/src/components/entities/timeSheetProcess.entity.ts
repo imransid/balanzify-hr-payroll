@@ -6,6 +6,9 @@ export class TimeSheetProcess {
   @Field(() => Int)
   id: number;
 
+  @Field()
+  companyId: string;
+
   @Field({ nullable: true })
   employeeId: string;
 

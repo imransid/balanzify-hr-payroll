@@ -561,6 +561,7 @@ model TimeSheetProcess {
   dateType         String
   remark           String
   totalWorked      String
+  companyId        String
 
   profileId Int
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)

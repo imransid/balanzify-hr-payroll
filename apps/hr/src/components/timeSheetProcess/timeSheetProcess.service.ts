@@ -31,13 +31,10 @@ export class TimeSheetProcessService {
 
       const timeSheetProcesses = await Promise.all(
         profiles.map(async (e) => {
-          console.log("Processing employee ID:", e.id);
-          console.log("Start:", input.startProcessTime);
-          console.log("End:", input.endProcessTIme);
-
           const timeSheets = await this.prisma.timeSheet.findMany({
             where: {
               employeeId: e.id,
+              companyId: input.companyId,
               startTime: {
                 gte: new Date(input.startProcessTime),
               },
@@ -91,6 +88,7 @@ export class TimeSheetProcessService {
               dateType: input.dateType,
               profileId: e.id,
               createdBy: input.createdBy || null,
+              companyId: input.companyId,
             },
           });
 
@@ -132,7 +130,8 @@ export class TimeSheetProcessService {
 
   async findAll(
     page = 1,
-    limit = 10
+    limit = 10,
+    companyId: string
   ): Promise<TimeSheetProcessPaginatedResult> {
     const skip = (page - 1) * limit;
 
@@ -140,6 +139,9 @@ export class TimeSheetProcessService {
       this.prisma.timeSheetProcess.findMany({
         skip,
         take: limit,
+        where: {
+          companyId: companyId,
+        },
         include: {
           profile: {
             include: {
@@ -217,31 +219,48 @@ export class TimeSheetProcessService {
 
   async search(
     query: string,
+    companyId: string,
     page = 1,
     limit = 10
   ): Promise<TimeSheetProcessPaginatedResult> {
-    const skip = (page - 1) * limit;
+    try {
+      const skip = (page - 1) * limit;
 
-    const [items, totalCount] = await Promise.all([
-      this.prisma.timeSheetProcess.findMany({
-        where: {
-          dateType: { contains: query, mode: "insensitive" },
-        },
-        skip,
-        take: limit,
-      }),
-      this.prisma.timeSheetProcess.count({
-        where: {
-          dateType: { contains: query, mode: "insensitive" },
-        },
-      }),
-    ]);
+      const whereClause: any = {
+        companyId: companyId,
+      };
 
-    return new TimeSheetProcessPaginatedResult(
-      items,
-      Math.ceil(totalCount / limit),
-      page,
-      totalCount
-    );
+      if (query) {
+        whereClause.OR = [
+          {
+            dateType: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ];
+      }
+
+      const [item, totalCount] = await Promise.all([
+        this.prisma.timeSheetProcess.findMany({
+          where: whereClause,
+          skip,
+          take: limit,
+        }),
+        this.prisma.timeSheetProcess.count({
+          where: whereClause,
+        }),
+      ]);
+
+      return {
+        timeSheetProcesses: item,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        currentPage: page,
+      };
+    } catch (error) {
+      console.error("🔴 Prisma Search Error:", error); // Add detailed logging
+      throw new Error("Failed to search profiles");
+    }
   }
 }
