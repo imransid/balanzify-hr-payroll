@@ -77,6 +77,7 @@ export class PunchDataService {
       createdAt: new Date(row.createdAt),
       status: row.status,
       updatedAt: new Date(row.updatedAt),
+      companyId: createPunchDataInput.companyId, // Use companyId from input
     }));
 
     const res = await Promise.all(

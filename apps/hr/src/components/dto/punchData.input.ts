@@ -1,5 +1,5 @@
 import { InputType, Field } from "@nestjs/graphql";
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { Upload } from "scalars/upload.scalar";
 
 @InputType()
@@ -18,6 +18,10 @@ export class CreatePunchDataInput {
   // @IsNotEmpty()
   // @IsString()
   // companyID: string;
+
+  @Field()
+  @IsString()
+  companyId: string;
 
   @Field(() => [Upload], {
     nullable: true,

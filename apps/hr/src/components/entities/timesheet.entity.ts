@@ -38,4 +38,7 @@ export class TimeSheet {
 
   @Field({ nullable: true })
   updatedAt?: Date;
+
+  @Field()
+  companyId: string;
 }
