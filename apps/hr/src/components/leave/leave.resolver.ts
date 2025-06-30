@@ -45,6 +45,21 @@ export class LeaveResolver {
     }
   }
 
+  @Query(() => LeavePaginatedResult)
+  async leaveDetails(
+    @Args("id", { type: () => Int }) id: number,
+    @Args("companyId", { type: () => String }) companyId: string
+  ): Promise<EmployeeLeave> {
+    try {
+      return await this.leaveService.findOneWithCompany(id, companyId);
+    } catch (error) {
+      throw new GraphQLException(
+        "Failed to fetch leaves",
+        "INTERNAL_SERVER_ERROR"
+      );
+    }
+  }
+
   @Mutation(() => EmployeeLeave)
   async updateLeave(
     @Args("id", { type: () => Int }) id: number,

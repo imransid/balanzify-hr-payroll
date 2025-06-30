@@ -51,11 +51,28 @@ export class LeaveService {
     };
   }
 
+  async findOneWithCompany(
+    id: number,
+    companyId: string
+  ): Promise<EmployeeLeave> {
+    const leave = await this.prisma.employeeLeave.findFirst({
+      where: { id, companyId },
+    });
+
+    if (!leave) {
+      throw new NotFoundException(
+        `Leave with ID ${id} not found in this company`
+      );
+    }
+
+    return leave;
+  }
+
   // Find a single leave by ID
   async findOne(id: number): Promise<EmployeeLeave> {
     const leave = await this.prisma.EmployeeLeave.findUnique({ where: { id } });
     if (!leave) {
-      throw new NotFoundException(`Leave with ID ${id} not found`);
+      throw new NotFoundException("Leave with ID ${id} not found");
     }
     return leave;
   }
