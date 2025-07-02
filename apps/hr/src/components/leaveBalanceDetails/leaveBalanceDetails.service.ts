@@ -169,14 +169,15 @@ export class LeaveBalanceDetailsService {
     });
   }
 
-  async totalLeaveTypeAva() {
+  async totalLeaveTypeAva(companyId: string) {
     const leaveType = await this.prisma.leaveType.findMany({
+      where: {
+        companyId: companyId,
+      },
       select: {
         displayName: true,
       },
     });
-
-    console.log("leaveType", leaveType);
 
     const leaveBalanceDetails = await this.prisma.leaveBalanceDetails.findMany({
       select: {

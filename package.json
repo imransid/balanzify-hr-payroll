@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@apollo/server": "^4.11.2",
+    "@moovio/node": "^1.2.2",
     "@moovio/sdk": "^0.12.5",
     "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/apollo": "^12.2.2",

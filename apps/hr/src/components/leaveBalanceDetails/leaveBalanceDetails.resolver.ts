@@ -55,9 +55,11 @@ export class LeaveBalanceDetailsResolver {
   }
 
   @Query(() => GraphQLJSONObject)
-  async totalLeaveTypeAva(): Promise<any> {
+  async totalLeaveTypeAva(
+    @Args("companyId", { type: () => String }) companyId: string
+  ): Promise<any> {
     try {
-      return await this.leaveBalanceDetailsService.totalLeaveTypeAva();
+      return await this.leaveBalanceDetailsService.totalLeaveTypeAva(companyId);
     } catch (error) {
       if (error instanceof NotFoundException) {
       }

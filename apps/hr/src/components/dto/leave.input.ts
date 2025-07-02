@@ -82,6 +82,11 @@ export class CreateEmployeeLeaveInput {
   @IsInt()
   profileId?: number;
 
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  docUrl?: string;
+
   @Field(() => [Upload], {
     nullable: true,
     description: "Supporting documentation file (optional)",
