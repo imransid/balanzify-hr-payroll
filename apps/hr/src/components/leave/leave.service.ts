@@ -19,8 +19,28 @@ export class LeaveService {
   async create(
     createLeaveInput: CreateEmployeeLeaveInput
   ): Promise<EmployeeLeave> {
+    const { leaveBalanceId, leaveTypeId, profileId, ...rest } =
+      createLeaveInput;
+
     return this.prisma.employeeLeave.create({
-      data: createLeaveInput,
+      data: {
+        ...rest,
+        ...(leaveBalanceId && {
+          leaveBalance: {
+            connect: { id: leaveBalanceId },
+          },
+        }),
+        ...(leaveTypeId && {
+          leaveTypeData: {
+            connect: { id: leaveTypeId },
+          },
+        }),
+        ...(profileId && {
+          profile: {
+            connect: { id: profileId },
+          },
+        }),
+      },
     });
   }
 

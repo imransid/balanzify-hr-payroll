@@ -650,7 +650,7 @@ model EmployeeLeave {
 
   companyId String
 
-  docUrl String
+  docUrl String?
 
   profileId Int?
   profile   Profile? @relation(fields: [profileId], references: [id])
