@@ -118,8 +118,8 @@ import { MoovResolver } from "./moov/moov.resolver";
     GeneralTaxService,
     SettingsResolver,
     SettingsService,
-    MoovService,
-    MoovResolver,
+    // MoovService,
+    // MoovResolver,
   ],
 })
 export class ComponentsModule {}
