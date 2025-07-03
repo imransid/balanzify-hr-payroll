@@ -82,7 +82,7 @@ export class CreateEmployeeLeaveInput {
   @IsInt()
   profileId?: number;
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
   @IsInt()
   docUrl?: string;
