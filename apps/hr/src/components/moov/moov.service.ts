@@ -201,6 +201,8 @@ export class MoovService implements OnModuleInit {
           // refreshToken: 'optional_if_using_refresh_flow'
         });
 
+      console.log("Moov Access Token:", tokenResponse);
+
       this.logger.log(`Access Token: ${tokenResponse}`);
       return tokenResponse;
     } catch (error) {

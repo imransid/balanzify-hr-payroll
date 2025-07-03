@@ -87,11 +87,11 @@ export class CreateEmployeeLeaveInput {
   @IsInt()
   docUrl?: string;
 
-  @Field(() => [Upload], {
-    nullable: true,
-    description: "Supporting documentation file (optional)",
-  })
-  documentationFile?: Upload[];
+  // @Field(() => [Upload], {
+  //   nullable: true,
+  //   description: "Supporting documentation file (optional)",
+  // })
+  // documentationFile?: Upload[];
 }
 
 @InputType()

@@ -223,8 +223,11 @@ export class LeaveBalanceDetailsService {
     for (const detail of leaveBalanceDetails) {
       const balances = JSON.parse(detail.leaveBalances);
 
+      console.log("balances", balances);
+
       leaveTypes.forEach((type) => {
         const leaveValue = parseInt(balances[type], 10); // Convert from string to number
+        // check
         if (!isNaN(leaveValue)) {
           returnRes[type].available += leaveValue;
         }
