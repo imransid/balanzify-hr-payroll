@@ -60,7 +60,11 @@ export class LeaveService {
         skip,
         take: limit,
       }) || [], // Ensure it's always an array
-      this.prisma.EmployeeLeave.count(),
+      this.prisma.EmployeeLeave.count({
+        where: {
+          companyId: companyId,
+        },
+      }),
     ]);
 
     return {
