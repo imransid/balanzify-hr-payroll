@@ -681,6 +681,8 @@ model GeneralTax {
   streetAddress1 String?
   zipCode        String?
 
+  ein Int?
+
   // Address Block 2
   state2         String?
   streetAddress2 String?

@@ -77,6 +77,10 @@ export class CreateGeneralSettingsInput {
   @IsBoolean()
   processPayrollAccountingEntryBasedOnEmployee?: boolean;
 
+  @Field({ nullable: true })
+  @IsOptional()
+  ein?: number;
+
   @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt()
