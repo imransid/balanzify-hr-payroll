@@ -155,6 +155,8 @@ enum OnboardingType {
 model Profile {
   id Int @id @default(autoincrement())
 
+  companyName String?
+
   email          String         @unique
   employeeName   String
   middleName     String
