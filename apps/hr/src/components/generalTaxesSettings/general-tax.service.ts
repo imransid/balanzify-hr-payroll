@@ -16,6 +16,8 @@ export class GeneralTaxService {
     });
   }
 
+  //
+
   async findAll(page: number = 1, limit: number = 10, companyId: string) {
     const skip = (page - 1) * limit;
 

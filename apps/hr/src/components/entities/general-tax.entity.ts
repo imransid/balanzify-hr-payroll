@@ -36,7 +36,7 @@ export class GeneralTax {
   companyId?: string;
 
   @Field({ nullable: true })
-  ein?: string;
+  ein?: number;
 
   @Field(() => Int, { nullable: true })
   profileId?: number;

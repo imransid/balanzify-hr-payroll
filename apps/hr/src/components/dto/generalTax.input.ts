@@ -64,6 +64,11 @@ export class CreateGeneralTaxInput {
   @IsOptional()
   @IsInt()
   profileId?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsInt()
+  ein?: number;
 }
 
 @InputType()
